@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env
+.idea/
+.vscode/
+neo4j_data/
+neo4j_plugins/
+*.sqlite3

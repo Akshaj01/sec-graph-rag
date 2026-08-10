@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  neo4j:
+    image: neo4j:5.23.0
+    container_name: neo4j_graphrag
+    ports:
+      - "7474:7474" # HTTP port for Neo4j Browser
+      - "7687:7687" # Bolt port for Python Driver
+    environment:
+      - NEO4J_AUTH=neo4j/password # Default credentials (change in production)
+      # APOC Configuration
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+      # Automatically download and install APOC plugin on startup
+      - NEO4J_PLUGINS=["apoc"]
+    volumes:
+      - neo4j_data:/data # Persist database data
+      - neo4j_plugins:/plugins
+    restart: unless-stopped
+
+volumes:
+  neo4j_data:
+  neo4j_plugins:
