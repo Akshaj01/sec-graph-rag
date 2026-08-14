@@ -14,7 +14,14 @@ class Settings(BaseSettings):
     
     # SEC EDGAR API Requirements
     # The SEC requires a user agent string in the format: Company Name admin@company.com
-    USER_AGENT_EMAIL: str = "your.name@example.com" 
+    USER_AGENT_EMAIL: str = "your.name@example.com"
+
+    # Step C: ingest / chunk cache
+    INGEST_CACHE_PATH: str = "./data/ingest_cache.db"
+    # ~4 chars/token is a practical English approximation (avoids a tokenizer dependency in Step C)
+    CHUNK_SIZE_TOKENS: int = 3000
+    CHUNK_OVERLAP_TOKENS: int = 200
+    CHARS_PER_TOKEN: int = 4
 
     # Config to load from .env file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")

@@ -11,3 +11,5 @@ env/
 neo4j_data/
 neo4j_plugins/
 *.sqlite3
+*.db
+data/
