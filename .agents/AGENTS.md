@@ -26,5 +26,5 @@ To prevent unqueryable node explosion, enforce this strict schema in all extract
 - Step B: Pydantic Schemas & Ontology Definitions (`schemas.py`) [COMPLETED]
 - Step C: SEC 10-K Fetching, Chunking & Hash Caching (`ingest.py` / SQLite) [COMPLETED]
 - Step D: Schema Extraction with Gemini/Claude (`extractor.py`) [COMPLETED]
-- Step E: Entity Resolution & Canonical Mapping (`resolver.py`)
+- Step E: Entity Resolution & Canonical Mapping (`resolver.py`) [COMPLETED]
 - Step F: Idempotent Neo4j Cypher Writes (`graph_writer.py`)

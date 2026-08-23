@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     EXTRACTION_MAX_TOKENS: int = 4096
     EXTRACTION_CACHE_PATH: str = "./data/extraction_cache.db"
 
+    # Step E: entity resolution
+    EMBEDDING_MODEL: str = "text-embedding-3-small"
+    ENTITY_SIMILARITY_THRESHOLD: float = 0.92
+
     # Config to load from .env file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
