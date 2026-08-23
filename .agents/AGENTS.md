@@ -21,19 +21,18 @@ To prevent unqueryable node explosion, enforce this strict schema in all extract
 - **Allowed Entity Types (6)**: Company, Subsidiary, Supplier, ProductLine, RiskFactor, Executive
 - **Allowed Relationship Types (8)**: OWNS_SUBSIDIARY, SUPPLIED_BY, COMPETES_WITH, EXPOSED_TO_RISK, PRODUCES_PRODUCT, DEPENDS_ON, LED_BY, OPERATES_IN_SEGMENT
 
-## Phase 1 Build Roadmap (COMPLETE — code written)
+## Phase 1 Build Roadmap (COMPLETE — live-verified on PC)
 - Step A: Environment & Docker Setup (`docker-compose.yml`, `config.py`, `requirements.txt`) [COMPLETED]
 - Step B: Pydantic Schemas & Ontology Definitions (`schemas.py`) [COMPLETED]
 - Step C: SEC 10-K Fetching, Chunking & Hash Caching (`ingest.py` / SQLite) [COMPLETED]
 - Step D: Schema Extraction with Gemini/Claude (`extractor.py`) [COMPLETED]
 - Step E: Entity Resolution & Canonical Mapping (`resolver.py`) [COMPLETED]
-- Step F: Idempotent Neo4j Cypher Writes (`graph_writer.py`) [COMPLETED]
+- Step F: Idempotent Neo4j Cypher Writes (`graph_writer.py`) [COMPLETED + live smoke test on PC]
 
-## Immediate next (before Phase 2)
-1. Start Neo4j: `docker compose up -d`
-2. Run: `.venv/bin/python graph_writer.py AAPL`
-3. Verify in Neo4j Browser (`http://localhost:7474`) that Company `APPLE` exists and edges carry `source_chunk_ids`
-4. Re-run writer once to confirm idempotent MERGE (counts stay flat)
+PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in Neo4j; Company `APPLE` with `mention_count=5`. See `HANDOFF.md` for setup notes (Docker Desktop, `EXTRACTION_MAX_TOKENS=16384` for dense Item 1 chunks).
+
+## Immediate next → Phase 2
+Propose pgvector setup (embed same chunks, shared chunk ids, HNSW index) — **plan only** until user confirms. Do not skip Learning Protocol.
 
 ## BASWE Project 1 — remaining phases (follow in order)
 Do **not** invent a different architecture. These are the curriculum phases after graph extraction:
