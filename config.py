@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     CHUNK_OVERLAP_TOKENS: int = 200
     CHARS_PER_TOKEN: int = 4
 
+    # Step D: Claude structured extraction
+    CLAUDE_MODEL: str = "claude-sonnet-4-5"
+    EXTRACTION_MAX_RETRIES: int = 3
+    EXTRACTION_MAX_TOKENS: int = 4096
+    EXTRACTION_CACHE_PATH: str = "./data/extraction_cache.db"
+
     # Config to load from .env file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

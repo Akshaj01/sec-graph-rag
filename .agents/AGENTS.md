@@ -23,8 +23,8 @@ To prevent unqueryable node explosion, enforce this strict schema in all extract
 
 ## Phase 1 Build Roadmap
 - Step A: Environment & Docker Setup (`docker-compose.yml`, `config.py`, `requirements.txt`) [COMPLETED]
-- Step B: Pydantic Schemas & Ontology Definitions (`schemas.py`)
-- Step C: SEC 10-K Fetching, Chunking & Hash Caching (`ingest.py` / SQLite)
-- Step D: Schema Extraction with Gemini/Claude (`extractor.py`)
+- Step B: Pydantic Schemas & Ontology Definitions (`schemas.py`) [COMPLETED]
+- Step C: SEC 10-K Fetching, Chunking & Hash Caching (`ingest.py` / SQLite) [COMPLETED]
+- Step D: Schema Extraction with Gemini/Claude (`extractor.py`) [COMPLETED]
 - Step E: Entity Resolution & Canonical Mapping (`resolver.py`)
 - Step F: Idempotent Neo4j Cypher Writes (`graph_writer.py`)

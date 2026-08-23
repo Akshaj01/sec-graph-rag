@@ -182,7 +182,13 @@ class IngestCache:
                 """,
                 (filing_hash, ticker, cik, accession_number, filing_date, _utc_now()),
             )
-            conn.execute("DELETE FROM chunks WHERE filing_hash = ?", (filing_hash,))
+            # Drop any prior rows for this accession OR this hash.
+            # WHY: chunk_id is accession-based; a re-chunk with a new filing_hash
+            # would otherwise collide with leftover rows from the old hash.
+            conn.execute(
+                "DELETE FROM chunks WHERE filing_hash = ? OR accession_number = ?",
+                (filing_hash, accession_number),
+            )
             conn.executemany(
                 """
                 INSERT INTO chunks (
