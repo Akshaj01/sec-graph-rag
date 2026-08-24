@@ -386,9 +386,16 @@ def resolve_company(
     max_chunks: Optional[int] = None,
     threshold: Optional[float] = None,
     enable_soft_match: Optional[bool] = None,
+    confirm: bool = False,
+    skip_budget_check: bool = False,
 ) -> ResolvedGraph:
     """Extract (cached when possible), then resolve entities for a ticker."""
-    run: ExtractionRunResult = extract_company(ticker, max_chunks=max_chunks)
+    run: ExtractionRunResult = extract_company(
+        ticker,
+        max_chunks=max_chunks,
+        confirm=confirm,
+        skip_budget_check=skip_budget_check,
+    )
     return resolve_extractions(
         run.results,
         ticker=run.ticker,

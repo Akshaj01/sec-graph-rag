@@ -154,12 +154,16 @@ def write_company(
     *,
     max_chunks: Optional[int] = None,
     enable_soft_match: Optional[bool] = None,
+    confirm: bool = False,
+    skip_budget_check: bool = False,
 ) -> Dict[str, object]:
     """Resolve a company (cached extract when possible), then MERGE into Neo4j."""
     graph = resolve_company(
         ticker,
         max_chunks=max_chunks,
         enable_soft_match=enable_soft_match,
+        confirm=confirm,
+        skip_budget_check=skip_budget_check,
     )
     stats = write_graph(graph)
     return {
@@ -198,8 +202,16 @@ if __name__ == "__main__":
 
     symbol = sys.argv[1] if len(sys.argv) > 1 else "AAPL"
     run_all = "--all" in sys.argv
+    budget_only = "--budget" in sys.argv
+    confirmed = "--confirm" in sys.argv
     max_chunks = None if run_all else 5
 
-    result = write_company(symbol, max_chunks=max_chunks)
+    if budget_only:
+        from budget import estimate_ticker_budget
+
+        print(json.dumps(estimate_ticker_budget(symbol, max_chunks=max_chunks).model_dump(), indent=2))
+        sys.exit(0)
+
+    result = write_company(symbol, max_chunks=max_chunks, confirm=confirmed)
     counts = smoke_counts()
     print(json.dumps({"result": result, "neo4j": counts}, indent=2))

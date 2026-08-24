@@ -231,29 +231,46 @@ def extract_company(
     *,
     max_chunks: Optional[int] = None,
     force_refresh: bool = False,
+    confirm: bool = False,
+    skip_budget_check: bool = False,
 ) -> ExtractionRunResult:
     """
     Ingest (or load cached chunks), then run extraction over each chunk.
 
     max_chunks: optional cap for cheap smoke tests (e.g. max_chunks=1).
+    confirm: must be True to spend on uncached chunks (see budget.py).
     """
     ingest_result = ingest_company(ticker)
     chunks = ingest_result.chunks
     if max_chunks is not None:
         chunks = chunks[:max_chunks]
 
-    client = _build_client()
+    if not skip_budget_check:
+        from budget import estimate_extraction_budget, require_budget_confirmation
+
+        budget = estimate_extraction_budget(ingest_result, max_chunks=max_chunks)
+        require_budget_confirmation(budget, confirmed=confirm)
+
     cache = ExtractionCache(settings.EXTRACTION_CACHE_PATH)
+    client: Optional[instructor.Instructor] = None
 
     results: List[ChunkExtractionResult] = []
     cache_hits = 0
     for chunk in chunks:
-        result = extract_chunk(
-            chunk,
-            client=client,
-            cache=cache,
-            force_refresh=force_refresh,
-        )
+        if not force_refresh and cache.get(chunk.chunk_hash) is not None:
+            result = extract_chunk(
+                chunk,
+                cache=cache,
+                force_refresh=False,
+            )
+        else:
+            client = client or _build_client()
+            result = extract_chunk(
+                chunk,
+                client=client,
+                cache=cache,
+                force_refresh=force_refresh,
+            )
         if result.cache_hit:
             cache_hits += 1
         results.append(result)
@@ -272,9 +289,22 @@ if __name__ == "__main__":
     import sys
 
     symbol = sys.argv[1] if len(sys.argv) > 1 else "AAPL"
-    # Default to 1 chunk for a cheap first run; pass --all to process every chunk.
     run_all = "--all" in sys.argv
-    run = extract_company(symbol, max_chunks=None if run_all else 1)
+    budget_only = "--budget" in sys.argv
+    confirmed = "--confirm" in sys.argv
+    max_chunks = None if run_all else 1
+
+    if budget_only:
+        from budget import estimate_ticker_budget
+
+        print(json.dumps(estimate_ticker_budget(symbol, max_chunks=max_chunks).model_dump(), indent=2))
+        sys.exit(0)
+
+    run = extract_company(
+        symbol,
+        max_chunks=max_chunks if not run_all else None,
+        confirm=confirmed,
+    )
 
     summary = {
         "ticker": run.ticker,

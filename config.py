@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     EXTRACTION_MAX_TOKENS: int = 4096
     EXTRACTION_CACHE_PATH: str = "./data/extraction_cache.db"
 
+    # Cost guardrails (USD). Run `python budget.py TICKER` before full corpus.
+    MAX_EXTRACTION_BUDGET_USD: Optional[float] = 5.0
+    EXTRACTION_INPUT_COST_PER_MTOK: float = 3.0
+    EXTRACTION_OUTPUT_COST_PER_MTOK: float = 15.0
+    EMBEDDING_COST_PER_MTOK: float = 0.02
+
     # Step E: entity resolution
     EMBEDDING_MODEL: str = "text-embedding-3-small"
     ENTITY_SIMILARITY_THRESHOLD: float = 0.92
