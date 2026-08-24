@@ -38,6 +38,21 @@ class Settings(BaseSettings):
     # Step E: entity resolution
     EMBEDDING_MODEL: str = "text-embedding-3-small"
     ENTITY_SIMILARITY_THRESHOLD: float = 0.92
+    EMBEDDING_DIMENSIONS: int = 1536  # text-embedding-3-small output size
+
+    # Step G: Postgres + pgvector
+    POSTGRES_HOST: str = "localhost"
+    POSTGRES_PORT: int = 5432
+    POSTGRES_USER: str = "secgraph"
+    POSTGRES_PASSWORD: str = "password"
+    POSTGRES_DB: str = "secgraph"
+
+    @property
+    def postgres_dsn(self) -> str:
+        return (
+            f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+            f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        )
 
     # Config to load from .env file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")

@@ -20,6 +20,26 @@ services:
       - neo4j_plugins:/plugins
     restart: unless-stopped
 
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: pgvector_graphrag
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: secgraph
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: secgraph
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U secgraph -d secgraph"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   neo4j_data:
   neo4j_plugins:
+  postgres_data:

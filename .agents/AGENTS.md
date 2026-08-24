@@ -32,7 +32,12 @@ To prevent unqueryable node explosion, enforce this strict schema in all extract
 PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in Neo4j; Company `APPLE` with `mention_count=5`. See `HANDOFF.md` for setup notes (Docker Desktop, `EXTRACTION_MAX_TOKENS=16384` for dense Item 1 chunks).
 
 ## Immediate next → Phase 2
-Propose pgvector setup (embed same chunks, shared chunk ids, HNSW index) — **plan only** until user confirms. Do not skip Learning Protocol.
+- Step G: Postgres + pgvector in Docker [COMPLETED — `docker-compose.yml`, `vector_db.py`, `config.py`]
+- Step H: Embed chunks + store in pgvector (shared `chunk_id`) [COMPLETED — `embedder.py`]
+- Step I: Entity cross-links in vector metadata [COMPLETED — `entity_ids` TEXT[] + `--link-entities`]
+- Step J: HNSW index + recall@k smoke test [COMPLETED — `recall_eval.py`]
+
+**Phase 2 COMPLETE.** Next: Phase 3 (route questions to graph vs vectors) — plan only until user confirms. Do not skip Learning Protocol.
 
 ## BASWE Project 1 — remaining phases (follow in order)
 Do **not** invent a different architecture. These are the curriculum phases after graph extraction:
