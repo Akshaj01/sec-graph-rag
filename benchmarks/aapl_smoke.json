@@ -1,0 +1,221 @@
+{
+  "name": "aapl_smoke",
+  "version": "1",
+  "corpus_notes": "Hand-labeled against AAPL 5-chunk smoke (accession 0000320193-25-000079). Graph has PRODUCES_PRODUCT, EXPOSED_TO_RISK, COMPETES_WITH, SUPPLIED_BY only. Not a 50-100 portfolio set -- harness proof for Phase 5.",
+  "items": [
+    {
+      "id": "hop0_applecare",
+      "question": "What is AppleCare?",
+      "hop": 0,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "vector",
+      "gold_keywords": ["AppleCare", "support", "service"],
+      "gold_chunk_ids": ["0000320193-25-000079:Item1:0"],
+      "notes": "Definition-style; vector passage in Item 1."
+    },
+    {
+      "id": "hop0_apple_university",
+      "question": "What is Apple University?",
+      "hop": 0,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "vector",
+      "gold_keywords": ["Apple University", "leadership", "culture"],
+      "gold_chunk_ids": ["0000320193-25-000079:Item1:1"],
+      "notes": "Prose definition in Item 1 chunk 1."
+    },
+    {
+      "id": "hop0_app_store",
+      "question": "What is the App Store according to Apple's filing?",
+      "hop": 0,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "vector",
+      "gold_keywords": ["App Store", "applications", "download"],
+      "gold_chunk_ids": ["0000320193-25-000079:Item1:0"],
+      "notes": "Single-fact platform description."
+    },
+    {
+      "id": "hop0_seasonality",
+      "question": "What does the filing say about seasonality of Apple's business?",
+      "hop": 0,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "vector",
+      "gold_keywords": ["seasonal", "holiday"],
+      "gold_entity_ids": ["BUSINESSSEASONALITY"],
+      "notes": "Narrative / risk prose; keyword match is soft."
+    },
+    {
+      "id": "hop1_products",
+      "question": "What product lines does Apple produce?",
+      "hop": 1,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["iPhone", "Mac", "iPad"],
+      "gold_entity_ids": ["IPHONE", "MAC", "IPAD"],
+      "gold_chunk_ids": ["0000320193-25-000079:Item1:0"],
+      "notes": "Single PRODUCES_PRODUCT hop from APPLE."
+    },
+    {
+      "id": "hop1_iphone",
+      "question": "Does Apple produce the iPhone?",
+      "hop": 1,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["iPhone"],
+      "gold_entity_ids": ["IPHONE"],
+      "notes": "Narrow single-edge check."
+    },
+    {
+      "id": "hop1_competitors",
+      "question": "Who or what does Apple compete with according to the knowledge graph?",
+      "hop": 1,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["Android", "Windows"],
+      "gold_entity_ids": ["ANDROID", "WINDOWS"],
+      "gold_chunk_ids": ["0000320193-25-000079:Item1A:2"],
+      "notes": "COMPETES_WITH hop."
+    },
+    {
+      "id": "hop1_gaming_competitors",
+      "question": "Which gaming platforms does Apple compete with?",
+      "hop": 1,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["PlayStation", "Xbox", "Nintendo"],
+      "gold_entity_ids": ["PLAYSTATION", "XBOX", "NINTENDO"],
+      "notes": "Subset of COMPETES_WITH."
+    },
+    {
+      "id": "hop1_china_risk",
+      "question": "What risks is Apple exposed to related to China trade or tariffs?",
+      "hop": 1,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "both",
+      "gold_keywords": ["China", "tariff"],
+      "gold_chunk_ids": ["0000320193-25-000079:Item1A:0"],
+      "notes": "EXPOSED_TO_RISK + narrative; both is reasonable."
+    },
+    {
+      "id": "hop1_component_shortage",
+      "question": "What component supply shortage risks is Apple exposed to?",
+      "hop": 1,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["component", "shortage"],
+      "gold_chunk_ids": ["0000320193-25-000079:Item1A:1"],
+      "notes": "Risk entity hop."
+    },
+    {
+      "id": "hop1_suppliers",
+      "question": "Which countries or regions supply Apple according to the graph?",
+      "hop": 1,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["China", "Taiwan", "Vietnam"],
+      "gold_entity_ids": ["CHINAMAINLAND", "TAIWAN", "VIETNAM"],
+      "notes": "SUPPLIED_BY hop (regions modeled as supplier nodes in smoke extract)."
+    },
+    {
+      "id": "hop1_services_products",
+      "question": "What services like Apple Music and Apple TV does Apple produce or offer?",
+      "hop": 1,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["Apple Music", "Apple TV"],
+      "gold_entity_ids": ["APPLEMUSIC", "APPLETV"],
+      "notes": "PRODUCES_PRODUCT for services brand lines."
+    },
+    {
+      "id": "hop2_compete_vs_supply_risk",
+      "question": "Compare Apple's competition risks to its supply chain or component shortage risks.",
+      "hop": 2,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "both",
+      "gold_keywords": ["competition", "shortage"],
+      "notes": "Needs evidence across COMPETES_WITH / EXPOSED_TO_RISK (and often vector prose)."
+    },
+    {
+      "id": "hop2_hardware_and_services",
+      "question": "What hardware devices and subscription services does Apple produce?",
+      "hop": 2,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["iPhone", "Apple Music", "AppleCare"],
+      "notes": "Aggregation across many PRODUCES_PRODUCT edges."
+    },
+    {
+      "id": "hop2_suppliers_and_trade",
+      "question": "How do Apple's geographic suppliers relate to its China trade and tariff risks?",
+      "hop": 2,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "both",
+      "gold_keywords": ["China", "Taiwan", "tariff"],
+      "notes": "Join SUPPLIED_BY geography with trade-risk narrative."
+    },
+    {
+      "id": "hop2_platforms_competition",
+      "question": "Which product platforms does Apple produce that face competition from Android or Windows?",
+      "hop": 2,
+      "must_refuse": false,
+      "ticker": "AAPL",
+      "expected_route": "both",
+      "gold_keywords": ["iPhone", "Mac", "Android", "Windows"],
+      "notes": "Products + competitors; multi-relation reasoning."
+    },
+    {
+      "id": "oos_tesla",
+      "question": "What battery supply risks does Tesla face in its latest 10-K?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "notes": "Wrong company; corpus is AAPL-only smoke."
+    },
+    {
+      "id": "oos_crypto",
+      "question": "How many Bitcoin does Apple hold on its balance sheet?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "notes": "Not in Item 1/1A/7 smoke extract; should refuse rather than invent."
+    },
+    {
+      "id": "oos_ceo_salary",
+      "question": "What was Tim Cook's exact total compensation last year?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "notes": "Proxy/comp detail not in ingested sections."
+    },
+    {
+      "id": "oos_msft_azure",
+      "question": "What percentage of Microsoft revenue comes from Azure?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "notes": "Out-of-corpus company + metric."
+    }
+  ]
+}

@@ -1,0 +1,1143 @@
+{
+  "suite_name": "aapl_smoke",
+  "suite_version": "1",
+  "hybrid": {
+    "suite_name": "aapl_smoke",
+    "suite_version": "1",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop0_applecare",
+        "mode": "hybrid",
+        "question": "What is AppleCare?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "AppleCare is Apple's portfolio of fee-based service and support products. The offerings provide priority access to Apple technical support, access to the global Apple authorized service network for repair and replacement services, and in many cases additional coverage for instances of accidental damage or theft and loss, depending on the country and type of product.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AppleCare",
+          "support",
+          "service"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 9329.5,
+        "estimated_cost_usd": 0.044166,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_apple_university",
+        "mode": "hybrid",
+        "question": "What is Apple University?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple University is a program offered by Apple that provides training on leadership, management and influence, as well as Apple culture and values. It is part of Apple's investment in resources to help employees develop and achieve their career goals.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Apple University",
+          "leadership",
+          "culture"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 9121.7,
+        "estimated_cost_usd": 0.043512,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_app_store",
+        "mode": "hybrid",
+        "question": "What is the App Store according to Apple's filing?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to Apple's filing, the App Store is a platform that allows customers to discover and download applications and digital content, such as books, music, video, games and podcasts.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "App Store",
+          "applications",
+          "download"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 7644.8,
+        "estimated_cost_usd": 0.042735,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_seasonality",
+        "mode": "hybrid",
+        "question": "What does the filing say about seasonality of Apple's business?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple's filing states that the Company has historically experienced higher net sales in its first quarter compared to other quarters in its fiscal year due in part to seasonal holiday demand. Additionally, new product and service introductions can significantly impact net sales, cost of sales, and operating expenses. The timing of product introductions can also affect net sales to indirect distribution channels as these channels are filled with new inventory following a product launch, and channel inventory of older products often declines as the launch of a newer product approaches. Net sales can also be affected when consumers and distributors anticipate a product introduction.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "seasonal",
+          "holiday"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 13575.7,
+        "estimated_cost_usd": 0.046194,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_products",
+        "mode": "hybrid",
+        "question": "What product lines does Apple produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces a wide range of product lines including hardware devices (iPhone, iPad, Mac, Apple Watch, Apple Vision Pro, Apple TV 4K, AirPods, HomePod), digital services and platforms (App Store, Apple Music, Apple TV+, Apple Arcade, Apple News+, Apple Fitness+), payment services (Apple Pay, Apple Card), support services (AppleCare), and educational programs (Apple University).",
+        "claim_count": 18,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "iPad"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 15591.3,
+        "estimated_cost_usd": 0.012369,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_iphone",
+        "mode": "hybrid",
+        "question": "Does Apple produce the iPhone?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Yes, Apple produces the iPhone. The iPhone is Apple's line of smartphones based on its iOS operating system.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "iPhone"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 5382.5,
+        "estimated_cost_usd": 0.005343,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_competitors",
+        "mode": "hybrid",
+        "question": "Who or what does Apple compete with according to the knowledge graph?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to the knowledge graph, Apple competes with Android (for smartphones and tablets), Windows (for personal computers and tablets), and gaming platforms including Nintendo, PlayStation, and Xbox.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Android",
+          "Windows"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 6911.5,
+        "estimated_cost_usd": 0.004683,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_gaming_competitors",
+        "mode": "hybrid",
+        "question": "Which gaming platforms does Apple compete with?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple competes with three gaming platforms: Nintendo, PlayStation, and Xbox.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "PlayStation",
+          "Xbox",
+          "Nintendo"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 6031.7,
+        "estimated_cost_usd": 0.00387,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_china_risk",
+        "mode": "hybrid",
+        "question": "What risks is Apple exposed to related to China trade or tariffs?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple is exposed to significant risks related to China trade and tariffs. The company faces risks from restrictions on international trade, including tariffs and controls on imports/exports of goods, technology, or data, which can increase costs or limit availability of products and components. A significant majority of Apple's manufacturing is performed by outsourcing partners located primarily in China mainland, among other Asian countries. Beginning in the second quarter of 2025, new tariffs were announced on imports to the U.S., including additional tariffs on imports from China and other countries where Apple has significant supply chain operations. In response, several countries have imposed or threatened reciprocal tariffs and retaliatory measures. These restrictive measures can require Apple to change suppliers, restructure business relationships and operations, refrain from offering certain products or services, and increase product prices. Such changes can be expensive, time-consuming, and disruptive to Apple's business. Trade disputes can also negatively impact the macroeconomic environment and result in reduced consumer spending and negative sentiment for Apple's products.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "China",
+          "tariff"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 27088.2,
+        "estimated_cost_usd": 0.06174,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_component_shortage",
+        "mode": "hybrid",
+        "question": "What component supply shortage risks is Apple exposed to?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple is exposed to significant component supply shortage risks because it obtains certain components from single or limited sources. Many components are subject to industry-wide shortages and significant commodity pricing fluctuations. For example, the global semiconductor industry has experienced high demand and shortages that adversely affected Apple's ability to obtain sufficient quantities of components and products on commercially reasonable terms. New products often utilize custom components available from only one source, and when components use new technologies, initial capacity constraints may exist until suppliers' yields mature or manufacturing capacities increase. Apple may not be able to extend or renew supply agreements on similar terms or obtain sufficient quantities from suppliers in a timely manner, or successfully identify alternative sources. Component suppliers may also fail, consolidate, or decide to concentrate on common components instead of customized ones, further limiting Apple's ability to obtain components on commercially reasonable terms.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "component",
+          "shortage"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 24246.9,
+        "estimated_cost_usd": 0.060729,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_suppliers",
+        "mode": "hybrid",
+        "question": "Which countries or regions supply Apple according to the graph?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to the graph, Apple is supplied by six countries or regions: China mainland, India, Japan, South Korea, Taiwan, and Vietnam. These locations host outsourcing partners that perform a significant majority of the Company's manufacturing.",
+        "claim_count": 7,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "China",
+          "Taiwan",
+          "Vietnam"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 8137.5,
+        "estimated_cost_usd": 0.005184,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_services_products",
+        "mode": "hybrid",
+        "question": "What services like Apple Music and Apple TV does Apple produce or offer?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple offers Apple Music, a curated listening experience with on-demand radio stations, and Apple TV, which offers exclusive original content and live sports.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Apple Music",
+          "Apple TV"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 5848.3,
+        "estimated_cost_usd": 0.005688,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_compete_vs_supply_risk",
+        "mode": "hybrid",
+        "question": "Compare Apple's competition risks to its supply chain or component shortage risks.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple faces significant risks from both competition and supply chain/component shortages. Competition risks include highly competitive global markets subject to rapid technological change, substantial competition from well-resourced rivals, and aggressive price-cutting that lowers product margins. Apple also holds minority market share in key product categories. Supply chain and component shortage risks include dependence on single or limited sources for certain components, industry-wide component shortages and pricing fluctuations, and reliance on outsourcing partners (primarily located outside the U.S.) for manufacturing and logistics. Both risk categories pose material threats to Apple's business operations and financial performance.",
+        "claim_count": 9,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "competition",
+          "shortage"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 16359.2,
+        "estimated_cost_usd": 0.016677,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_hardware_and_services",
+        "mode": "hybrid",
+        "question": "What hardware devices and subscription services does Apple produce?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces a wide range of hardware devices including iPhone, iPad, Mac, Apple Watch, Apple Vision Pro, Apple TV 4K, AirPods, and HomePod. The company also offers numerous subscription services including Apple Music, Apple TV+, Apple Arcade, Apple News+, Apple Fitness+, and AppleCare.",
+        "claim_count": 14,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "iPhone",
+          "Apple Music",
+          "AppleCare"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 13907.2,
+        "estimated_cost_usd": 0.01086,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_suppliers_and_trade",
+        "mode": "hybrid",
+        "question": "How do Apple's geographic suppliers relate to its China trade and tariff risks?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": false,
+        "regenerated": false,
+        "summary": "",
+        "claim_count": 0,
+        "cited_chunk_ids": [],
+        "route_effective": null,
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": null,
+        "latency_ms": 3189.8,
+        "estimated_cost_usd": null,
+        "error": "InstructorRetryException: <failed_attempts>\n\n<generation number=\"1\">\n<exception>\n    1 validation error for list[any]\n  List should have at most 1 item after validation, not 2 [type=too_long, input_value=['{\"template_id\": \"compan...in its 10-K filings.\"}'], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/too_long\n</exception>\n<completion>\n    Message(id='msg_011CeP2krmyCC8NurGuiHjYj', container=None, content=[ToolUseBlock(id='toolu_012EAKLSyWBUnPheS24BSY1W', caller=DirectCaller(type='direct'), input={'template_id': 'company_suppliers', 'entity_mentions': ['Apple'], 'rationale': \"Identify Apple's suppliers and their geographic locations to understand supply chain exposure related to China trade and tariff risks.\"}, name='GraphQueryPlan', type='tool_use', toolset_name=None), ToolUseBlock(id='toolu_01VEjU6JwpXLbDVbqvpPvf8x', caller=DirectCaller(type='direct'), input={'template_id': 'company_risks', 'entity_mentions': ['Apple'], 'rationale': 'Identify the specific tariff and China trade risks that Apple discloses in its 10-K filings.'}, name='GraphQueryPlan', type='tool_use', toolset_name=None)], model='claude-haiku-4-5-20251001', role='assistant', stop_details=None, stop_reason='tool_use', stop_sequence=None, type='message', usage=Usage(cache_creation=None, cache_creation_input_tokens=0, cache_read_input_tokens=0, inference_geo=None, input_tokens=1093, output_tokens=199, output_tokens_details=None, server_tool_use=None, service_tier=None))\n</completion>\n</generation>\n\n<generation number=\"2\">\n<exception>\n    Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.2: `tool_use` ids were found without `tool_result` blocks immediately after: toolu_012EAKLSyWBUnPheS24BSY1W, toolu_01VEjU6JwpXLbDVbqvpPvf8x. Each `tool_use` block must have a corresponding `tool_result` block in the next message.'}, 'request_id': 'req_011CeP2kxifJXtUy58tVCcwH'}\n</exception>\n<completion>\n    Message(id='msg_011CeP2krmyCC8NurGuiHjYj', container=None, content=[ToolUseBlock(id='toolu_012EAKLSyWBUnPheS24BSY1W', caller=DirectCaller(type='direct'), input={'template_id': 'company_suppliers', 'entity_mentions': ['Apple'], 'rationale': \"Identify Apple's suppliers and their geographic locations to understand supply chain exposure related to China trade and tariff risks.\"}, name='GraphQueryPlan', type='tool_use', toolset_name=None), ToolUseBlock(id='toolu_01VEjU6JwpXLbDVbqvpPvf8x', caller=DirectCaller(type='direct'), input={'template_id': 'company_risks', 'entity_mentions': ['Apple'], 'rationale': 'Identify the specific tariff and China trade risks that Apple discloses in its 10-K filings.'}, name='GraphQueryPlan', type='tool_use', toolset_name=None)], model='claude-haiku-4-5-20251001', role='assistant', stop_details=None, stop_reason='tool_use', stop_sequence=None, type='message', usage=Usage(cache_creation=None, cache_creation_input_tokens=0, cache_read_input_tokens=0, inference_geo=None, input_tokens=1093, output_tokens=199, output_tokens_details=None, server_tool_use=None, service_tier=None))\n</completion>\n</generation>\n\n</failed_attempts>\n\n<last_exception>\n    Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.2: `tool_use` ids were found without `tool_result` blocks immediately after: toolu_012EAKLSyWBUnPheS24BSY1W, toolu_01VEjU6JwpXLbDVbqvpPvf8x. Each `tool_use` block must have a corresponding `tool_result` block in the next message.'}, 'request_id': 'req_011CeP2kxifJXtUy58tVCcwH'}\n</last_exception>",
+        "score": 0.0
+      },
+      {
+        "item_id": "hop2_platforms_competition",
+        "mode": "hybrid",
+        "question": "Which product platforms does Apple produce that face competition from Android or Windows?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Based on the available evidence, Apple produces iPhone, iPad, Mac, and Apple Watch. However, the provided evidence does not contain information about which of these products face competition from Android or Windows specifically. While these platforms are commonly known to compete with Android and Windows, the evidence pack does not include competitive information to support this claim.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "Android",
+          "Windows"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 9726.2,
+        "estimated_cost_usd": 0.00792,
+        "error": null,
+        "score": 0.0
+      },
+      {
+        "item_id": "oos_tesla",
+        "mode": "hybrid",
+        "question": "What battery supply risks does Tesla face in its latest 10-K?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided is from Apple Inc.'s 10-K filing, not Tesla's. Therefore, I cannot answer questions about Tesla's battery supply risks based on this evidence. The allowed citation chunks all relate to Apple Inc. (filing number 0000320193-25-000079), covering Apple's business description, risk factors, and operations. No information about Tesla or battery supply risks specific to Tesla is present in the provided evidence.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 9725.8,
+        "estimated_cost_usd": 0.044334,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_crypto",
+        "mode": "hybrid",
+        "question": "How many Bitcoin does Apple hold on its balance sheet?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence from Apple's 2025 Form 10-K does not contain any information about Bitcoin holdings on Apple's balance sheet. The evidence includes sections on business operations, risk factors, products, services, and general financial matters, but does not mention Bitcoin or cryptocurrency holdings.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 8029.9,
+        "estimated_cost_usd": 0.042903,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_ceo_salary",
+        "mode": "hybrid",
+        "question": "What was Tim Cook's exact total compensation last year?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence does not contain information about Tim Cook's exact total compensation for last year. The evidence consists of excerpts from Apple's 2025 Form 10-K filing covering business description, risk factors, and human capital matters, but does not include executive compensation details that would typically be found in the proxy statement or other sections of SEC filings.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 10349.3,
+        "estimated_cost_usd": 0.043848,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_msft_azure",
+        "mode": "hybrid",
+        "question": "What percentage of Microsoft revenue comes from Azure?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence does not contain information about Microsoft or Azure revenue. All the evidence chunks are from Apple Inc.'s 2025 Form 10-K filing, which discusses Apple's products (iPhone, Mac, iPad, etc.), services, business operations, and risk factors. There is no data available to answer the question about what percentage of Microsoft revenue comes from Azure.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 8826.0,
+        "estimated_cost_usd": 0.043788,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 1.0,
+      "hop_1": 1.0,
+      "hop_2": 0.5,
+      "oos": 1.0
+    },
+    "mean_latency_ms": 10951.1,
+    "mean_cost_usd": 0.028765,
+    "mean_score": 0.9,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "aapl_smoke",
+    "suite_version": "1",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop0_applecare",
+        "mode": "vector_only",
+        "question": "What is AppleCare?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "AppleCare is Apple's portfolio of fee-based service and support products. The offerings provide priority access to Apple technical support, access to the global Apple authorized service network for repair and replacement services, and in many cases additional coverage for instances of accidental damage or theft and loss, depending on the country and type of product.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AppleCare",
+          "support",
+          "service"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 10278.0,
+        "estimated_cost_usd": 0.043686,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_apple_university",
+        "mode": "vector_only",
+        "question": "What is Apple University?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple University is a program offered by Apple that provides training on leadership, management and influence, as well as Apple culture and values. It is part of Apple's investment in resources to help employees develop and achieve their career goals.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Apple University",
+          "leadership",
+          "culture"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 7784.4,
+        "estimated_cost_usd": 0.043032,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_app_store",
+        "mode": "vector_only",
+        "question": "What is the App Store according to Apple's filing?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to Apple's filing, the App Store is a platform that allows customers to discover and download applications and digital content, such as books, music, video, games and podcasts.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "App Store",
+          "applications",
+          "download"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 6188.2,
+        "estimated_cost_usd": 0.042255,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_seasonality",
+        "mode": "vector_only",
+        "question": "What does the filing say about seasonality of Apple's business?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple's filing states that the Company has historically experienced higher net sales in its first quarter compared to other quarters in its fiscal year due in part to seasonal holiday demand. Additionally, new product and service introductions can significantly impact net sales, cost of sales, and operating expenses. The timing of product introductions can also affect net sales to indirect distribution channels as these channels are filled with new inventory following a product launch, and channel inventory of older products often declines as the launch of a newer product approaches. Net sales can also be affected when consumers and distributors anticipate a product introduction.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "seasonal",
+          "holiday"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 10162.8,
+        "estimated_cost_usd": 0.045714,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_products",
+        "mode": "vector_only",
+        "question": "What product lines does Apple produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces five main product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables, Home and Accessories (including smartwatches, wireless headphones, spatial computers, media streaming devices, and smart speakers), and Services (including advertising, AppleCare, cloud services, digital content, and payment services).",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "iPad"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 14715.1,
+        "estimated_cost_usd": 0.046236,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_iphone",
+        "mode": "vector_only",
+        "question": "Does Apple produce the iPhone?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Yes, Apple produces the iPhone. According to Apple's 2025 Form 10-K, the Company designs, manufactures and markets smartphones, and iPhone is Apple's line of smartphones based on its iOS operating system.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 5261.1,
+        "estimated_cost_usd": 0.041925,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_competitors",
+        "mode": "vector_only",
+        "question": "Who or what does Apple compete with according to the knowledge graph?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to the knowledge graph evidence, Apple competes with companies that have significant technical, marketing, distribution and other resources, as well as established hardware, software and service offerings with large customer bases. Competitors seek to compete primarily through aggressive pricing and very low cost structures, and by imitating Apple's products and infringing on its intellectual property. Apple faces competition in the global smartphone, personal computer, tablet and wearables markets, where it holds a minority market share. Some competitors have broad product lines, low-priced products, large installed bases of active devices, and large customer bases, with certain competitors having the resources to provide products and services at little or no profit or even at a loss.",
+        "claim_count": 7,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [
+          "Android",
+          "Windows"
+        ],
+        "keyword_recall": 0.0,
+        "correct_refuse": null,
+        "latency_ms": 15018.6,
+        "estimated_cost_usd": 0.048225,
+        "error": null,
+        "score": 0.0
+      },
+      {
+        "item_id": "hop1_gaming_competitors",
+        "mode": "vector_only",
+        "question": "Which gaming platforms does Apple compete with?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to Apple's 2025 Form 10-K, Apple competes with PlayStation, Nintendo, and Xbox gaming platforms. The filing specifically mentions these platforms in the context of third-party developer support, noting that developers compare the perceived benefits of creating software for Apple's products versus competitors' platforms, including these gaming platforms.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "PlayStation",
+          "Xbox",
+          "Nintendo"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 6901.9,
+        "estimated_cost_usd": 0.043092,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_china_risk",
+        "mode": "vector_only",
+        "question": "What risks is Apple exposed to related to China trade or tariffs?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple faces significant risks related to China trade and tariffs. Beginning in the second quarter of 2025, new U.S. tariffs were announced on imports, including additional tariffs on imports from China and other countries where Apple has significant supply chain operations. In response, several countries have imposed or threatened reciprocal tariffs and retaliatory measures. A significant majority of Apple's manufacturing is performed by outsourcing partners located primarily in China mainland and other Asian countries. These tariffs and trade restrictions can increase costs, limit product availability, require expensive supply chain restructuring, reduce consumer demand, and create uncertainty. The ultimate impact remains uncertain and depends on whether additional tariffs are imposed, the extent of retaliatory measures, and the overall magnitude and duration of these measures.",
+        "claim_count": 12,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "China",
+          "tariff"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 23603.3,
+        "estimated_cost_usd": 0.053622,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_component_shortage",
+        "mode": "vector_only",
+        "question": "What component supply shortage risks is Apple exposed to?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple is exposed to several component supply shortage risks. The company relies on single or limited sources for many components, making it vulnerable to industry-wide shortages and significant commodity pricing fluctuations. The global semiconductor industry has previously experienced high demand and supply shortages that adversely affected Apple's ability to obtain sufficient quantities of components on commercially reasonable terms. Apple's new products often utilize custom components available from only one source, and initial capacity constraints may exist with new technologies until suppliers' yields mature or manufacturing capacities increase. Component suppliers may fail, consolidate, or shift focus away from customized components, further limiting Apple's ability to obtain sufficient quantities. Additionally, restrictions on international trade such as tariffs can increase costs or limit availability of components and raw materials. Because Apple relies on single-source partners for many components and final assembly is performed primarily in Asia, business interruptions affecting these sources would exacerbate negative consequences.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "component",
+          "shortage"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 22596.4,
+        "estimated_cost_usd": 0.054111,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_suppliers",
+        "mode": "vector_only",
+        "question": "Which countries or regions supply Apple according to the graph?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to the evidence provided, the filing mentions that a significant majority of Apple's manufacturing is performed by outsourcing partners located primarily in China mainland, India, Japan, South Korea, Taiwan, and Vietnam, in addition to sourcing from partners and facilities located in the U.S. The filing also notes that Apple relies on partners primarily located in Asia for final assembly of substantially all of its hardware products, and uses single-source partners in the U.S., Asia, and Europe to supply and manufacture many components. However, the evidence does not contain specific graph-based relationship data identifying which countries or regions supply Apple.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "China",
+          "Taiwan",
+          "Vietnam"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 11176.9,
+        "estimated_cost_usd": 0.045834,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_services_products",
+        "mode": "vector_only",
+        "question": "What services like Apple Music and Apple TV does Apple produce or offer?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple offers several services similar to Apple Music and Apple TV. Apple Music is a subscription-based music service that offers users a curated listening experience with on-demand radio stations. Apple TV is a service that offers exclusive original content and live sports. In addition to these, Apple offers other digital content services including Apple Arcade (a game service), Apple Fitness+ (a personalized fitness service), and Apple News+ (a news and magazine service). Apple also operates the App Store platform where customers can discover and download applications and digital content such as books, music, video, games, and podcasts.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Apple Music",
+          "Apple TV"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 9495.4,
+        "estimated_cost_usd": 0.045168,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_compete_vs_supply_risk",
+        "mode": "vector_only",
+        "question": "Compare Apple's competition risks to its supply chain or component shortage risks.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple faces significant risks in both competition and supply chain/component shortages. Competition risks include aggressive price competition, rapid technological change, minority market share in key product categories, and competitors imitating Apple's products and infringing on its intellectual property. Supply chain and component shortage risks include dependence on single or limited sources for many critical components, concentration of manufacturing primarily in China, India, Japan, South Korea, Taiwan and Vietnam, industry-wide component shortages (particularly semiconductors), and vulnerability to trade restrictions and tariffs. Both risk categories are characterized as potentially having material adverse effects on Apple's business, though supply chain risks appear more operationally acute given the company's reliance on single-source suppliers and the recent imposition of new U.S. tariffs on key manufacturing regions.",
+        "claim_count": 12,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "competition",
+          "shortage"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 21373.4,
+        "estimated_cost_usd": 0.054159,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_hardware_and_services",
+        "mode": "vector_only",
+        "question": "What hardware devices and subscription services does Apple produce?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces a wide range of hardware devices and subscription services. Hardware devices include smartphones (iPhone), personal computers (Mac laptops and desktops), tablets (iPad), smartwatches (Apple Watch), wireless headphones (AirPods, AirPods Pro, AirPods Max, and Beats products), a spatial computer (Apple Vision Pro), media streaming devices (Apple TV 4K), smart speakers (HomePod and HomePod mini), and accessories. Subscription services include Apple Arcade (gaming), Apple Fitness+ (personalized fitness), Apple Music (music streaming with on-demand radio), Apple News+ (news and magazines), Apple TV+ (original content and live sports), AppleCare (service and support), cloud services for content storage and syncing, and payment services including Apple Card and Apple Pay.",
+        "claim_count": 14,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone",
+          "Apple Music",
+          "AppleCare"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 21568.9,
+        "estimated_cost_usd": 0.052107,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_suppliers_and_trade",
+        "mode": "vector_only",
+        "question": "How do Apple's geographic suppliers relate to its China trade and tariff risks?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple's geographic suppliers are directly exposed to China trade and tariff risks because a significant majority of Apple's manufacturing is performed by outsourcing partners located primarily in China mainland, India, Japan, South Korea, Taiwan, and Vietnam. Beginning in the second quarter of 2025, new U.S. tariffs were announced on imports from these specific countries where Apple's suppliers are concentrated. These tariffs can increase costs, limit component availability, require Apple to change suppliers or restructure operations, and force the company to increase product prices. The geographic concentration of Apple's supply chain in countries subject to tariffs creates significant risk, especially since Apple relies on single or limited sources for many critical components and the global supply chain is highly concentrated, making it difficult to quickly mitigate tariff impacts.",
+        "claim_count": 8,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "China",
+          "Taiwan",
+          "tariff"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 19948.0,
+        "estimated_cost_usd": 0.049986,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_platforms_competition",
+        "mode": "vector_only",
+        "question": "Which product platforms does Apple produce that face competition from Android or Windows?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces several product platforms that face competition from Android or Windows: iPhone (smartphones) faces competition from Android, Mac (personal computers) faces competition from Windows, iPad (tablets) faces competition from both Android and Windows, and wearables face competition in their respective markets. The filing specifically mentions that Apple competes in the smartphone, personal computer, tablet, and wearables markets where it holds a minority market share.",
+        "claim_count": 8,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "Android",
+          "Windows"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 10956.5,
+        "estimated_cost_usd": 0.047145,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_tesla",
+        "mode": "vector_only",
+        "question": "What battery supply risks does Tesla face in its latest 10-K?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided is from Apple Inc.'s 10-K filing, not Tesla's. Therefore, I cannot answer questions about Tesla's battery supply risks based on this evidence. The allowed citation chunks all relate to Apple Inc. (filing number 0000320193-25-000079), covering Apple's business description, risk factors, and operations. No information about Tesla or battery supply risks specific to Tesla is present in the provided evidence.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 7362.1,
+        "estimated_cost_usd": 0.043254,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_crypto",
+        "mode": "vector_only",
+        "question": "How many Bitcoin does Apple hold on its balance sheet?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence from Apple's 2025 Form 10-K does not contain any information about Bitcoin holdings on Apple's balance sheet. The evidence includes sections on business operations, risk factors, products, services, and general financial matters, but does not mention Bitcoin or cryptocurrency holdings.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 6550.9,
+        "estimated_cost_usd": 0.042423,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_ceo_salary",
+        "mode": "vector_only",
+        "question": "What was Tim Cook's exact total compensation last year?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence does not contain information about Tim Cook's exact total compensation for last year. The evidence consists of excerpts from Apple's 2025 Form 10-K filing covering business description, risk factors, and human capital matters, but does not include executive compensation details that would typically be found in the proxy statement or other sections of SEC filings.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 8674.2,
+        "estimated_cost_usd": 0.043743,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_msft_azure",
+        "mode": "vector_only",
+        "question": "What percentage of Microsoft revenue comes from Azure?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence does not contain information about Microsoft or Azure revenue. All the evidence chunks are from Apple Inc.'s 2025 Form 10-K filing, which discusses Apple's business operations, products (iPhone, Mac, iPad, etc.), services, risk factors, and competitive landscape. There is no data available to answer the question about what percentage of Microsoft revenue comes from Azure.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 8194.4,
+        "estimated_cost_usd": 0.043398,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 1.0,
+      "hop_1": 0.875,
+      "hop_2": 1.0,
+      "oos": 1.0
+    },
+    "mean_latency_ms": 12390.5,
+    "mean_cost_usd": 0.046456,
+    "mean_score": 0.95,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); null hop = no items run"
+  },
+  "notes": "Step R comparison; paste accuracy_by_hop into README in Step S."
+}

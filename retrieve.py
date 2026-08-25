@@ -28,11 +28,26 @@ def retrieve(
     *,
     ticker: Optional[str] = None,
     log_route: bool = True,
+    force_route: Optional[RetrievalRoute] = None,
 ) -> HybridRetrievalResult:
     """
     Route → execute graph / vector / both based on effective_route.
+
+    force_route: skip the router (Phase 5 vector-only baseline uses VECTOR).
     """
-    decision = route_question(question, log=log_route)
+    if force_route is not None:
+        decision = RouteDecision(
+            question=question,
+            model_route=force_route,
+            effective_route=force_route,
+            confidence=1.0,
+            rationale=f"Forced route={force_route.value} (benchmark / override).",
+            low_confidence_fallback=False,
+            model="forced",
+        )
+    else:
+        decision = route_question(question, log=log_route)
+
     route = decision.effective_route
 
     graph_result: Optional[GraphRetrievalResult] = None

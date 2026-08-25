@@ -1,8 +1,8 @@
 # SEC GraphRAG — Handoff
 
-**Last updated:** 2026-08-24 (end of Phase 3)  
+**Last updated:** 2026-08-25 (Phase 5 complete — Phases 1–5)  
 **Repo:** https://github.com/Akshaj01/sec-graph-rag (private)  
-**Latest relevant commit:** `c1bfedc` — Phase 3 router + graph/vector retrieval
+**Latest relevant commit:** pending — Phases 4–5 + README + API
 
 Use this file + `.agents/AGENTS.md` to continue in a **new Cursor chat**. Chat history will not transfer.
 
@@ -27,7 +27,7 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 
 **Done when (full Project 1):** FastAPI answers with validated citations; README opens with hybrid vs vector-only accuracy by hop count.
 
-**Where we are now:** Phases **1–3 complete** (ingest → graph + vectors → route → retrieve). **No answer generation yet** — that is Phase 4.
+**Where we are now:** Phases **1–5 complete** (Project 1 curriculum). Optional future: expand corpus / larger benchmark set.
 
 ---
 
@@ -38,8 +38,8 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | 1 Graph extraction | **DONE** | Live AAPL Neo4j smoke test |
 | 2 pgvector index | **DONE** | Shared `chunk_id`, HNSW, recall@3 = 1.0 (tiny labeled set) |
 | 3 Route + retrieve | **DONE** | Router + graph templates + vector search + `retrieve.py` glue |
-| 4 Grounded answer + citations | **NEXT** | Plan first, then implement |
-| 5 Benchmark vs vector-only | TODO | After Phase 4 |
+| 4 Grounded answer + citations | **DONE** | Live AAPL smoke: cites valid, no regenerate |
+| 5 Benchmark vs vector-only | **DONE** | Q–T: suite, runner, README table, FastAPI `/ask` |
 
 ---
 
@@ -113,7 +113,7 @@ ingest → extract (Claude) → resolve → graph_writer (Neo4j MERGE)
 question → router (K)
             ├─ graph (L)  → Neo4j facts + source_chunk_ids
             └─ vector (M) → passages + chunk_ids
-            (Phase 4 will merge these into a cited answer)
+            → answer.py (N+O+P): labeled evidence → draft → validate cites → CLI smoke OK
 ```
 
 ---
@@ -152,29 +152,41 @@ Do **not** use neo4j.com Google/Aura login for this project.
 
 ## What is NOT done (do not claim on resume yet)
 
-- FastAPI Q&A endpoint
-- Final natural-language answer with citation validation
-- Hybrid vs vector-only accuracy by hop count (Phase 5 table)
-- Multi-company corpus at scale
-- Public README portfolio artifact
+- Large multi-company corpus / 50–100 Q portfolio-grade benchmark (current table is AAPL smoke-scale)
+- Treating smoke keyword scores as production accuracy
 
 ---
 
-## NEXT → Phase 4 (plan first)
+## Phase 4 — DONE (live-verified PC, 2026-08-24)
 
-Curriculum requirements:
+| Step | File(s) | Status |
+|------|---------|--------|
+| N Format + draft answer | `answer.py`, `config.py` (`ANSWER_*`) | **DONE** |
+| O Citation validator + regenerate | `validate_citations`, `generate_validated_answer` | **DONE** |
+| P CLI smoke | `python answer.py "..."` | **DONE** |
 
-1. Convert graph paths to readable statements; keep vector passages
-2. Deduplicate; label graph-derived vs retrieved text in the prompt
-3. Require a **citation per claim**
-4. Validate each citation resolves to a **retrieved** `chunk_id`; reject/regenerate if not
+**Verified smoke:**
+- `"What product lines does Apple produce?"` → route `graph`, 18 GRAPH facts, `citations_valid=true`, `regenerated=false`, cites `Item1:0` / `Item1:1`
+- `"What is AppleCare?"` → route `vector`, 5 VECTOR passages, `citations_valid=true`, `regenerated=false`, cites `Item1:0`
 
-Suggested step breakdown (propose, then wait for user confirm):
+FastAPI `/ask` live at `api.py` (see README).
 
-- **Step N:** Answer schema (`claims[]` + `citation_chunk_ids[]`) + prompt that consumes `retrieve.py` output
-- **Step O:** Citation validator (every cite ∈ retrieved graph chunk ids ∪ vector chunk ids)
-- **Step P:** CLI/smoke: ask AAPL questions → printed answer + citations
-- Later: FastAPI wrapper (can be Phase 4 end or early Phase 5)
+## Phase 5 — DONE (2026-08-25)
+
+| Step | File(s) | Status |
+|------|---------|--------|
+| Q Labeled suite + schemas | `benchmark_schema.py`, `benchmarks/aapl_smoke.json`, `benchmark.py` | **DONE** |
+| R Hybrid vs vector-only runner | `benchmark_runner.py` | **DONE** |
+| S README accuracy table | `README.md` | **DONE** |
+| T FastAPI `/ask` | `api.py` | **DONE** |
+
+**API smoke:** `POST /ask` {"question":"What is AppleCare?","ticker":"AAPL"} → `citations_valid=true`, route `vector`.
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn api:app --host 127.0.0.1 --port 8000
+# POST http://127.0.0.1:8000/ask  body: {"question":"What is AppleCare?"}
+# Docs: http://127.0.0.1:8000/docs
+```
 
 ---
 
@@ -185,13 +197,9 @@ You are continuing the SEC GraphRAG project on PC.
 Read `.agents/AGENTS.md` and `HANDOFF.md` completely. Obey the Learning Protocol:
 one step at a time, explain WHY, wait for my confirmation before coding.
 
-Phases 1–3 are COMPLETE and live-verified:
-- Phase 1: Neo4j graph (AAPL 60 nodes / 59 rels, Company id APPLE)
-- Phase 2: pgvector HNSW + entity_ids + shared chunk_id (recall@3=1.0 on tiny set)
-- Phase 3: router.py + graph_retriever.py + vector_retriever.py + retrieve.py
+Phases 1–5 COMPLETE (grounded answers, benchmark harness, README table, FastAPI /ask).
 
-Immediate task: propose Phase 4 (merge graph+vector evidence into a grounded answer
-with per-claim citation validation) — plan only, do not implement until I confirm.
+Optional next: expand corpus, grow labeled benchmark set, harden hop-2 answer failures.
 
 Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit My Resume/.
 ```
@@ -216,6 +224,19 @@ $env:EXTRACTION_MAX_TOKENS = "16384"
 .\.venv\Scripts\python.exe graph_retriever.py "What product lines does Apple produce?"
 .\.venv\Scripts\python.exe vector_retriever.py "What is AppleCare?"
 .\.venv\Scripts\python.exe retrieve.py "How is Apple exposed to China trade risks?"
+
+# Phase 4 Steps N+O (draft + citation validation)
+.\.venv\Scripts\python.exe answer.py "What product lines does Apple produce?"
+.\.venv\Scripts\python.exe answer.py "What is AppleCare?"
+
+# Phase 5 Step Q (list labeled suite — no paid eval yet)
+.\.venv\Scripts\python.exe benchmark.py
+
+# Phase 5 Step R (runner — >4 calls need --confirm)
+.\.venv\Scripts\python.exe benchmark_runner.py --confirm
+
+# Phase 5 Step T (API)
+.\.venv\Scripts\python.exe -m uvicorn api:app --host 127.0.0.1 --port 8000
 ```
 
 ---
@@ -229,6 +250,9 @@ $env:EXTRACTION_MAX_TOKENS = "16384"
 | Cost | `budget.py` |
 | Vectors | `vector_db.py`, `embedder.py`, `recall_eval.py` |
 | Route / retrieve | `router.py`, `graph_retriever.py`, `vector_retriever.py`, `retrieve.py` |
-| Docs | `HANDOFF.md`, `.agents/AGENTS.md` |
+| Answer (Phase 4) | `answer.py` (N+O: draft + citation validation) |
+| Benchmark (Phase 5) | `benchmark_schema.py`, `benchmarks/`, `benchmark_runner.py` |
+| API | `api.py` |
+| Docs | `README.md`, `HANDOFF.md`, `.agents/AGENTS.md` |
 
 **Do not commit:** `.env`, `./data/*.db`, `My Resume/`

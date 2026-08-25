@@ -44,8 +44,24 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 - Step L: Graph retrieval path (parameterized Cypher templates) [COMPLETED — `graph_retriever.py`]
 - Step M: Vector retrieval path (wire to existing pgvector search) [COMPLETED — `vector_retriever.py`, `retrieve.py`]
 
-**Phase 3 COMPLETE (retrieval only).** Next: Phase 4 (merge into grounded answer with citations) — plan only until user confirms. Do not skip Learning Protocol.
+**Phase 3 COMPLETE (retrieval only).**
 
+## Phase 4 — Merge into one grounded answer [COMPLETED — live AAPL smoke 2026-08-24]
+- Step N: Format evidence + structured draft answer (`answer.py`) [COMPLETED]
+- Step O: Citation validator (cite ∈ retrieved chunk ids; reject/regenerate) [COMPLETED]
+- Step P: CLI smoke [COMPLETED] — FastAPI deferred to Phase 5 wrap
+
+**Phase 4 COMPLETE.**
+
+## Phase 5 — Benchmark vs plain vector RAG [COMPLETED]
+- Step Q: Labeled suite + schemas [COMPLETED]
+- Step R: Hybrid vs vector-only runner [COMPLETED]
+- Step S: README accuracy table [COMPLETED]
+- Step T: FastAPI `/ask` (`api.py`) [COMPLETED]
+
+**Phase 5 COMPLETE.** Project 1 curriculum done on AAPL smoke scale.
+
+Do not skip Learning Protocol.
 See `HANDOFF.md` for full PC verification notes, credentials, CLI commands, and the copy-paste prompt for a new chat.
 
 ## BASWE Project 1 — remaining phases (follow in order)

@@ -67,6 +67,23 @@ class Settings(BaseSettings):
     # Step M: vector retrieval
     VECTOR_RETRIEVAL_K: int = 5
 
+    # Step N/O: grounded answer + citation validation
+    ANSWER_MODEL: str = "claude-sonnet-4-5"
+    ANSWER_MAX_RETRIES: int = 2
+    ANSWER_MAX_TOKENS: int = 2048
+    # Extra full regenerate attempts after citation validation fails (0 = validate only).
+    ANSWER_CITATION_REGENERATE_ATTEMPTS: int = 1
+
+    # Step R: Haiku-ish pricing for router/graph-plan cost estimates
+    HAIKU_INPUT_COST_PER_MTOK: float = 0.80
+    HAIKU_OUTPUT_COST_PER_MTOK: float = 4.0
+    # Keyword recall threshold for binary "pass" notes (soft accuracy still uses raw recall)
+    BENCHMARK_KEYWORD_PASS_THRESHOLD: float = 0.5
+
+    # Step T: FastAPI
+    API_HOST: str = "0.0.0.0"
+    API_PORT: int = 8000
+
     # Config to load from .env file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
