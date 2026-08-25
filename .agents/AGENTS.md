@@ -46,6 +46,8 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 
 **Phase 3 COMPLETE (retrieval only).** Next: Phase 4 (merge into grounded answer with citations) — plan only until user confirms. Do not skip Learning Protocol.
 
+See `HANDOFF.md` for full PC verification notes, credentials, CLI commands, and the copy-paste prompt for a new chat.
+
 ## BASWE Project 1 — remaining phases (follow in order)
 Do **not** invent a different architecture. These are the curriculum phases after graph extraction:
 

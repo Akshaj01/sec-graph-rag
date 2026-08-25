@@ -1,164 +1,234 @@
 # SEC GraphRAG — Handoff
 
-## How context works across machines (read this)
+**Last updated:** 2026-08-24 (end of Phase 3)  
+**Repo:** https://github.com/Akshaj01/sec-graph-rag (private)  
+**Latest relevant commit:** `c1bfedc` — Phase 3 router + graph/vector retrieval
 
-Cursor chat history does **not** reliably transfer between machines.
-A new Cursor agent only knows what is in:
+Use this file + `.agents/AGENTS.md` to continue in a **new Cursor chat**. Chat history will not transfer.
 
-1. **This repo on GitHub** (code + docs)
-2. **`.agents/AGENTS.md`** — rules, ontology, Learning Protocol, Phase 1–5 roadmap
-3. **`HANDOFF.md`** (this file) — current status + what to do next
-4. **Whatever you paste** into the first chat message
+---
 
-It does **not** need the BASWE PowerPoint/PDF in the repo — the curriculum steps that matter are already summarized in `.agents/AGENTS.md` (Phases 1–5).
+## How context works
 
-Optional: keep the BASWE PDF locally for *your* reading (iCloud/Drive/USB), outside git.
+A new agent only knows:
+
+1. This GitHub repo (code + docs)
+2. **`.agents/AGENTS.md`** — Learning Protocol, ontology, Phases 1–5 roadmap
+3. **`HANDOFF.md`** (this file) — current status, verified results, next step
+4. Whatever you paste into the first message
+
+Do **not** invent architecture. Follow BASWE Project 1 phases in order.
 
 ---
 
 ## Project goal
 
-Knowledge Graph RAG over SEC **10-K** filings (BASWE Project 1).
-Extract a closed-world graph, resolve entities, MERGE into Neo4j, and index the **same chunks** in pgvector with shared `chunk_id`s.
+Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 
-Repo: https://github.com/Akshaj01/sec-graph-rag (private)
+**Done when (full Project 1):** FastAPI answers with validated citations; README opens with hybrid vs vector-only accuracy by hop count.
 
-## Status — Phase 1 + Phase 2 COMPLETE (live-verified on PC, 2026-08-23)
+**Where we are now:** Phases **1–3 complete** (ingest → graph + vectors → route → retrieve). **No answer generation yet** — that is Phase 4.
 
-### Phase 1 — graph extraction
+---
 
-| Step | Status | Main files |
-|------|--------|------------|
-| A Environment & Docker | DONE | `docker-compose.yml`, `config.py`, `requirements.txt` |
-| B Pydantic ontology | DONE | `schemas.py` |
-| C Fetch / chunk / hash cache | DONE | `ingest.py` |
-| D Claude structured extraction | DONE | `extractor.py` |
-| E Entity resolution | DONE | `resolver.py` |
-| F Idempotent Neo4j writes | DONE (live) | `graph_writer.py` |
-| Budget / confirm gate | DONE | `budget.py` |
+## Status checklist
 
-### Phase 2 — vector index alongside the graph
+| Phase | Status | Notes |
+|-------|--------|-------|
+| 1 Graph extraction | **DONE** | Live AAPL Neo4j smoke test |
+| 2 pgvector index | **DONE** | Shared `chunk_id`, HNSW, recall@3 = 1.0 (tiny labeled set) |
+| 3 Route + retrieve | **DONE** | Router + graph templates + vector search + `retrieve.py` glue |
+| 4 Grounded answer + citations | **NEXT** | Plan first, then implement |
+| 5 Benchmark vs vector-only | TODO | After Phase 4 |
 
-| Step | Status | Main files |
-|------|--------|------------|
-| G Postgres + pgvector | DONE | `docker-compose.yml`, `vector_db.py`, `docker/postgres/init.sql` |
-| H Embed chunks (shared `chunk_id`) | DONE | `embedder.py` |
-| I Entity cross-links (`entity_ids`) | DONE | `embedder.py --link-entities` |
-| J HNSW + recall@k | DONE | `recall_eval.py` |
+---
 
-## PC setup (completed 2026-08-23)
+## Phase 1 — DONE (live-verified PC)
 
-- [x] `.venv` (Python 3.13) + `pip install -r requirements.txt`
-- [x] `.env` locally (never commit): `USER_AGENT_EMAIL`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`
-- [x] Docker Desktop + `docker compose up -d` (Neo4j **and** Postgres)
-- [x] AAPL graph smoke test + Neo4j Browser verification
-- [x] AAPL embeddings + entity_ids + HNSW recall@3 = **1.0** on 5 labeled queries
+| Step | File(s) |
+|------|---------|
+| A Env / Docker | `docker-compose.yml`, `config.py`, `requirements.txt` |
+| B Ontology | `schemas.py` |
+| C Ingest / chunk cache | `ingest.py` → `./data/ingest_cache.db` |
+| D Claude extract | `extractor.py` → `./data/extraction_cache.db` |
+| E Resolve | `resolver.py` |
+| F Neo4j MERGE | `graph_writer.py` |
+| Budget gate | `budget.py` — estimate first; `--confirm` required for paid extract |
 
-### Graph smoke test (AAPL, 5 chunks)
+**AAPL smoke (5 chunks), filing `0000320193-25-000079`:**
+- 64 → **60** canonical entities; Neo4j **60 nodes / 59 rels**
+- Company id: **`APPLE`** (`mention_count=5`)
+- Set `EXTRACTION_MAX_TOKENS=16384` in `.env` (4096 truncates dense Item 1)
 
-- Filing: `0000320193-25-000079`
-- Extraction: 64 raw entities → **60 canonical** after resolution
-- Neo4j: **60 nodes**, **59 relationships**
-- Apple Inc. (`id: APPLE`): `mention_count=5`
-- Soft-match enabled (OpenAI embeddings)
+---
 
-### Vector smoke test (same 5 chunks)
+## Phase 2 — DONE (live-verified PC)
 
-- pgvector `0.8.6` / Postgres 16
-- 5 rows in `chunk_embeddings`, all with `entity_ids`
-- HNSW index: `idx_chunk_embeddings_hnsw`
-- `python recall_eval.py --k=3` → mean recall@3 **1.0**
+| Step | File(s) |
+|------|---------|
+| G Postgres + pgvector | `docker-compose.yml`, `docker/postgres/init.sql`, `vector_db.py` |
+| H Embed chunks | `embedder.py` (cache by `chunk_hash`) |
+| I `entity_ids` on rows | `embedder.py --link-entities` (normalized to match Neo4j ids) |
+| J HNSW + recall@k | `recall_eval.py` |
 
-### Known config notes
+**AAPL vector smoke (same 5 chunks):**
+- Table `chunk_embeddings`: 5 rows, all with `entity_ids`
+- HNSW: `idx_chunk_embeddings_hnsw`
+- `python recall_eval.py --k=3` → mean recall@3 **1.0** (5 hand-labeled queries — not a portfolio benchmark)
 
-- Dense Item 1: set `EXTRACTION_MAX_TOKENS=16384` in `.env` (default 4096 can truncate).
-- Paid extraction requires `--confirm`; estimate first with `python budget.py AAPL`.
-- Local Neo4j is **not** Neo4j Aura / Google login. Browser: `neo4j://localhost:7687` / `neo4j` / `password`.
-- Postgres: `secgraph` / `password` on `localhost:5432`.
+**Cross-link key:** `chunk_id` format `{accession}:{section}:{index}`  
+Example: `0000320193-25-000079:Item1:0`
 
-### Useful Cypher (Neo4j Browser)
+---
 
-```cypher
-MATCH (n) RETURN count(n) AS nodes
+## Phase 3 — DONE (live-verified PC, 2026-08-24)
+
+| Step | File(s) | What it does |
+|------|---------|--------------|
+| K Router | `router.py` | Haiku few-shot → `graph` \| `vector` \| `both`; confidence &lt; 0.75 → `both`; log `./data/route_log.db` |
+| L Graph path | `graph_retriever.py` | Plan allowlisted template + resolve mentions → **parameterized Cypher only** (never model Cypher) |
+| M Vector path | `vector_retriever.py` | Embed question → HNSW top-k; returns `chunk_id`, text, `entity_ids`, score |
+| Glue | `retrieve.py` | `route_question` → run graph and/or vector |
+
+**Router design notes (important for next agent):**
+- Confidence is **LLM self-reported**, not a calibrated classifier
+- Prompt includes **low-confidence few-shot examples** so Haiku can return scores below ~0.75
+- `model_route` = what Haiku said; `effective_route` = after threshold fallback
+
+**Graph templates (allowlist only):**  
+`company_products`, `company_risks`, `company_competitors`, `company_suppliers`, `company_subsidiaries`, `entity_outgoing`
+
+**Verified smoke:**
+- `"What product lines does Apple produce?"` → template `company_products`, entity `APPLE`, many `PRODUCES_PRODUCT` facts with `source_chunk_ids`
+- `"What is AppleCare?"` → router `vector` only → passages (Item1:0 has `APPLECARE` in `entity_ids`)
+
+---
+
+## Pipeline (as implemented)
+
+```text
+ingest → extract (Claude) → resolve → graph_writer (Neo4j MERGE)
+       ↘ embed (OpenAI) → pgvector (HNSW, entity_ids, shared chunk_id)
+
+question → router (K)
+            ├─ graph (L)  → Neo4j facts + source_chunk_ids
+            └─ vector (M) → passages + chunk_ids
+            (Phase 4 will merge these into a cited answer)
 ```
 
-```cypher
-MATCH (c:Company {id: 'APPLE'})-[r]->(n) RETURN c, r, n LIMIT 25
-```
+---
 
-```cypher
-MATCH (n) RETURN labels(n)[0] AS type, count(*) AS count ORDER BY count DESC
-```
+## Local credentials (Docker — not Neo4j Aura)
 
-## What to do NEXT → Phase 3
+| Service | Connect |
+|---------|---------|
+| Neo4j Browser | http://localhost:7474 — user `neo4j` / password `password` — bolt `neo4j://localhost:7687` |
+| Postgres | `localhost:5432` — db/user `secgraph` / password `password` |
 
-**Step K done:** `router.py` — classify questions → `graph` | `vector` | `both` (low confidence → both); logs to `./data/route_log.db`.
+Do **not** use neo4j.com Google/Aura login for this project.
 
-**Step L done:** `graph_retriever.py` — plan template + resolve entities → run allowlisted parameterized Cypher only.
-
-**Step M done:** `vector_retriever.py` + `retrieve.py` — embed question → HNSW top-k passages; glue runs graph/vector/both from router.
-
-**Phase 3 COMPLETE (retrieval only).** Next: Phase 4 — merge into one grounded answer with citation validation.
-
-Learning Protocol: plan → explain WHY → wait for confirmation → code.
-
-### Try Phase 3
-
-```powershell
-.\.venv\Scripts\python.exe router.py "What products does Apple produce?"
-.\.venv\Scripts\python.exe graph_retriever.py "What product lines does Apple produce?"
-.\.venv\Scripts\python.exe vector_retriever.py "What is AppleCare?"
-.\.venv\Scripts\python.exe retrieve.py "How is Apple exposed to China trade risks?"
-```
+---
 
 ## Locked decisions (do not silently change)
 
 - Sections: Item **1 / 1A / 7** only
 - Chunk ~**3000** tokens / ~**200** overlap
-- Claude + Instructor → `KnowledgeGraphExtraction`
-- Soft-match + chunk embeddings: OpenAI `text-embedding-3-small`, threshold **0.92**
-- Neo4j: **MERGE**, constraints on `id`, `source_chunk_ids` on edges
-- Cross-link key: **`chunk_id`** (same in Neo4j citations and pgvector rows)
-- Learning Protocol: one step; explain WHY; wait for confirmation
-- Recommended: `EXTRACTION_MAX_TOKENS=16384` for dense 10-K Item 1 chunks
+- Claude + Instructor for structured extraction; Haiku for router / graph plan
+- Embeddings: OpenAI `text-embedding-3-small`, soft-match threshold **0.92**
+- Neo4j: **MERGE**, uniqueness on `id`, `source_chunk_ids` on edges
+- Cross-link: shared **`chunk_id`**
+- Graph queries: **parameterized Cypher templates only** — never LLM-emitted Cypher
+- Learning Protocol: one step; explain WHY; wait for confirmation before coding
+- `EXTRACTION_MAX_TOKENS=16384` recommended in `.env`
+- Paid extraction: `budget.py` first, then `--confirm`
 
 ## Closed-world ontology
 
 **Entities:** Company, Subsidiary, Supplier, ProductLine, RiskFactor, Executive  
+
 **Rels:** OWNS_SUBSIDIARY, SUPPLIED_BY, COMPETES_WITH, EXPOSED_TO_RISK, PRODUCES_PRODUCT, DEPENDS_ON, LED_BY, OPERATES_IN_SEGMENT
 
-## Pipeline
+---
+
+## What is NOT done (do not claim on resume yet)
+
+- FastAPI Q&A endpoint
+- Final natural-language answer with citation validation
+- Hybrid vs vector-only accuracy by hop count (Phase 5 table)
+- Multi-company corpus at scale
+- Public README portfolio artifact
+
+---
+
+## NEXT → Phase 4 (plan first)
+
+Curriculum requirements:
+
+1. Convert graph paths to readable statements; keep vector passages
+2. Deduplicate; label graph-derived vs retrieved text in the prompt
+3. Require a **citation per claim**
+4. Validate each citation resolves to a **retrieved** `chunk_id`; reject/regenerate if not
+
+Suggested step breakdown (propose, then wait for user confirm):
+
+- **Step N:** Answer schema (`claims[]` + `citation_chunk_ids[]`) + prompt that consumes `retrieve.py` output
+- **Step O:** Citation validator (every cite ∈ retrieved graph chunk ids ∪ vector chunk ids)
+- **Step P:** CLI/smoke: ask AAPL questions → printed answer + citations
+- Later: FastAPI wrapper (can be Phase 4 end or early Phase 5)
+
+---
+
+## Copy-paste into a NEW Cursor chat
 
 ```text
-ingest → extract (Claude) → resolve → graph_writer (Neo4j MERGE)
-       ↘ embed (OpenAI) → pgvector (HNSW, entity_ids, shared chunk_id)
+You are continuing the SEC GraphRAG project on PC.
+Read `.agents/AGENTS.md` and `HANDOFF.md` completely. Obey the Learning Protocol:
+one step at a time, explain WHY, wait for my confirmation before coding.
+
+Phases 1–3 are COMPLETE and live-verified:
+- Phase 1: Neo4j graph (AAPL 60 nodes / 59 rels, Company id APPLE)
+- Phase 2: pgvector HNSW + entity_ids + shared chunk_id (recall@3=1.0 on tiny set)
+- Phase 3: router.py + graph_retriever.py + vector_retriever.py + retrieve.py
+
+Immediate task: propose Phase 4 (merge graph+vector evidence into a grounded answer
+with per-claim citation validation) — plan only, do not implement until I confirm.
+
+Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit My Resume/.
 ```
 
-## Verified on MacBook (extraction + resolution only)
-
-- AAPL filing `0000320193-25-000079`
-- 5-chunk resolve: 53 → 49 entities; Apple Inc. → 1 node (`mention_count=5`)
-- Docker was **not** available on the MacBook; Neo4j + pgvector were live-tested on PC
-
-## Copy-paste into a NEW Cursor chat (Phase 3 start)
-
-```text
-You are continuing the SEC GraphRAG project.
-Read `.agents/AGENTS.md` and `HANDOFF.md` completely.
-
-Phase 1 and Phase 2 are COMPLETE (Neo4j graph + pgvector HNSW, AAPL recall@3 = 1.0).
-Obey the Learning Protocol: one step at a time, explain WHY, wait for my confirmation before coding.
-
-Immediate task: propose Phase 3 (route questions to graph vs vectors) — plan only, do not implement until I confirm.
-```
+---
 
 ## Windows quick commands
 
 ```powershell
+# Infra
 docker compose up -d
+
+# Phase 1–2 (usually cached / free after first run)
 $env:EXTRACTION_MAX_TOKENS = "16384"
 .\.venv\Scripts\python.exe budget.py AAPL
 .\.venv\Scripts\python.exe graph_writer.py AAPL --confirm
 .\.venv\Scripts\python.exe embedder.py AAPL --link-entities
 .\.venv\Scripts\python.exe recall_eval.py --k=3
+
+# Phase 3
+.\.venv\Scripts\python.exe router.py --demo
+.\.venv\Scripts\python.exe graph_retriever.py "What product lines does Apple produce?"
+.\.venv\Scripts\python.exe vector_retriever.py "What is AppleCare?"
+.\.venv\Scripts\python.exe retrieve.py "How is Apple exposed to China trade risks?"
 ```
+
+---
+
+## File map (high signal)
+
+| Area | Files |
+|------|-------|
+| Config | `config.py`, `.env` (local only) |
+| Ingest / extract / resolve / write | `ingest.py`, `extractor.py`, `resolver.py`, `graph_writer.py`, `schemas.py` |
+| Cost | `budget.py` |
+| Vectors | `vector_db.py`, `embedder.py`, `recall_eval.py` |
+| Route / retrieve | `router.py`, `graph_retriever.py`, `vector_retriever.py`, `retrieve.py` |
+| Docs | `HANDOFF.md`, `.agents/AGENTS.md` |
+
+**Do not commit:** `.env`, `./data/*.db`, `My Resume/`
