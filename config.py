@@ -54,6 +54,19 @@ class Settings(BaseSettings):
             f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
 
+    # Step K: question router (graph vs vector)
+    ROUTER_MODEL: str = "claude-haiku-4-5"
+    ROUTER_CONFIDENCE_THRESHOLD: float = 0.75
+    ROUTER_MAX_RETRIES: int = 2
+    ROUTER_MAX_TOKENS: int = 256
+    ROUTER_LOG_PATH: str = "./data/route_log.db"
+
+    # Step L: graph retrieval (parameterized templates)
+    GRAPH_RETRIEVAL_LIMIT: int = 25
+
+    # Step M: vector retrieval
+    VECTOR_RETRIEVAL_K: int = 5
+
     # Config to load from .env file
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

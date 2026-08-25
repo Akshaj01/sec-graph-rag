@@ -108,7 +108,7 @@ def search_similar_chunks(
     """
     Cosine nearest-neighbor search over chunk_embeddings.
 
-    Returns chunk_id, section, score (1 - cosine distance), entity_ids.
+    Returns chunk_id, section, text, score (1 - cosine distance), entity_ids.
     """
     if k < 1:
         raise ValueError("k must be >= 1")
@@ -119,7 +119,7 @@ def search_similar_chunks(
             if ticker:
                 cur.execute(
                     """
-                    SELECT chunk_id, section, entity_ids,
+                    SELECT chunk_id, section, text, entity_ids,
                            1 - (embedding <=> %s::vector) AS score
                     FROM chunk_embeddings
                     WHERE ticker = %s
@@ -131,7 +131,7 @@ def search_similar_chunks(
             else:
                 cur.execute(
                     """
-                    SELECT chunk_id, section, entity_ids,
+                    SELECT chunk_id, section, text, entity_ids,
                            1 - (embedding <=> %s::vector) AS score
                     FROM chunk_embeddings
                     ORDER BY embedding <=> %s::vector
@@ -145,8 +145,9 @@ def search_similar_chunks(
         {
             "chunk_id": r[0],
             "section": r[1],
-            "entity_ids": list(r[2] or []),
-            "score": float(r[3]),
+            "text": r[2],
+            "entity_ids": list(r[3] or []),
+            "score": float(r[4]),
         }
         for r in rows
     ]

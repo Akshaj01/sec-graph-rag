@@ -37,7 +37,14 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 - Step I: Entity cross-links in vector metadata [COMPLETED — `entity_ids` TEXT[] + `--link-entities`]
 - Step J: HNSW index + recall@k smoke test [COMPLETED — `recall_eval.py`]
 
-**Phase 2 COMPLETE.** Next: Phase 3 (route questions to graph vs vectors) — plan only until user confirms. Do not skip Learning Protocol.
+**Phase 2 COMPLETE.**
+
+## Phase 3 — Route questions to graph vs vectors
+- Step K: Router schema + classifier (`router.py`) [COMPLETED — Haiku few-shot, confidence → BOTH, SQLite log]
+- Step L: Graph retrieval path (parameterized Cypher templates) [COMPLETED — `graph_retriever.py`]
+- Step M: Vector retrieval path (wire to existing pgvector search) [COMPLETED — `vector_retriever.py`, `retrieve.py`]
+
+**Phase 3 COMPLETE (retrieval only).** Next: Phase 4 (merge into grounded answer with citations) — plan only until user confirms. Do not skip Learning Protocol.
 
 ## BASWE Project 1 — remaining phases (follow in order)
 Do **not** invent a different architecture. These are the curriculum phases after graph extraction:
