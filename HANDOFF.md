@@ -154,6 +154,78 @@ Do **not** use neo4j.com Google/Aura login for this project.
 
 - Large multi-company corpus / 50–100 Q portfolio-grade benchmark (current table is AAPL smoke-scale)
 - Treating smoke keyword scores as production accuracy
+- Actually running `grow_corpus.py` — it's built and unit-tested (mocked write/embed steps),
+  but not live-verified: this dev environment has no Docker daemon, no
+  `ANTHROPIC_API_KEY`/`OPENAI_API_KEY`, and no route to SEC EDGAR. Run it on the PC
+  per "Growing the corpus" below.
+
+---
+
+## Growing the corpus (multi-company batch tool — 2026-09-02)
+
+`grow_corpus.py` batches Steps C–J (ingest → extract → resolve → Neo4j write →
+pgvector embed) across multiple tickers in one run instead of the one-ticker-
+at-a-time commands below. Every underlying Step is unchanged; this only adds
+an outer loop, an aggregate budget gate before any spend, and a per-ticker
+try/except so one bad ticker (no 10-K, nonstandard filing structure) doesn't
+kill the batch.
+
+```powershell
+# Dry run: aggregate cost estimate only, no spend
+.\.venv\Scripts\python.exe grow_corpus.py MSFT JPM XOM PFE --budget
+
+# Real run: full filings (all Item 1/1A/7 chunks), Neo4j + pgvector
+.\.venv\Scripts\python.exe grow_corpus.py MSFT JPM XOM PFE --confirm
+
+# Cheap smoke test across several tickers first
+.\.venv\Scripts\python.exe grow_corpus.py MSFT JPM --confirm --max-chunks 5
+
+# Extra aggregate safety cap on top of the per-ticker MAX_EXTRACTION_BUDGET_USD
+.\.venv\Scripts\python.exe grow_corpus.py MSFT JPM XOM --confirm --max-total-usd 20
+```
+
+A JSON report (per-ticker status, entities/relationships merged, chunks
+embedded) is written to `./data/corpus_growth_<timestamp>.json`.
+
+**Suggested starter set** (sector-diverse, away from AAPL's tech/consumer
+profile, for a more portfolio-credible benchmark once expanded):
+`MSFT, GOOGL, JPM, XOM, JNJ, WMT, PFE, KO, DIS, BA` — pick your own; nothing
+is hardcoded as a default (a batch tool defaulting to real spend across N
+companies with no args felt like the wrong default).
+
+### Two correctness fixes that shipped alongside this tool
+
+Both were latent bugs that only matter once a second company exists — the
+AAPL smoke corpus never exercised them:
+
+1. **Entity id collisions across companies** (`resolver.py`). Canonical
+   Neo4j ids were built from normalized name text alone (e.g.
+   `RiskFactor("Cybersecurity")` → `CYBERSECURITY`). A second company's
+   similarly-named risk factor / product line / executive would `MERGE`
+   onto the *same* node, blending unrelated descriptions and mention
+   counts — worst for `Executive`, where two unrelated people sharing a
+   common name would become one node. Fixed by namespacing
+   `RiskFactor`/`ProductLine`/`Executive` ids with the ticker
+   (`canonical_entity_id()` in `resolver.py`, mirrored in `embedder.py`'s
+   `entity_ids_for_chunk` so pgvector's `entity_ids` column stays in sync).
+   `Company`/`Subsidiary`/`Supplier` stay globally deduped on purpose — a
+   shared supplier or a company named as another's competitor should
+   resolve to one node.
+   **Migration note:** this changes the id scheme for those three types.
+   If AAPL is already written to your local Neo4j, re-running
+   `grow_corpus.py`/`graph_writer.py` for AAPL will create new
+   ticker-prefixed nodes alongside the old unprefixed ones rather than
+   updating them in place. Reset the Neo4j volume (`docker compose down -v`
+   then `docker compose up -d`) before growing the corpus for a clean graph.
+2. **Vector retrieval silently defaulted to AAPL** (`vector_retriever.py`).
+   `retrieve_vector`'s `default_ticker` was `"AAPL"`, so any question that
+   didn't literally contain "apple"/"aapl" or an ALL-CAPS ticker token would
+   still search only Apple's chunks — even after other companies were
+   embedded. Default is now `None` (full-index search) so growing the
+   corpus actually makes other companies reachable through `answer.py`/
+   `api.py`'s default behavior. `guess_ticker()` still only recognizes
+   Apple by name; pass `ticker` explicitly (the API's `ticker` field, or
+   `retrieve_vector(..., ticker=...)`) for a scoped multi-company answer.
 
 ---
 

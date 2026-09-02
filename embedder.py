@@ -24,7 +24,7 @@ from pydantic import BaseModel
 from config import settings
 from extractor import ExtractionCache
 from ingest import DocumentChunk, ingest_company
-from resolver import normalize_name
+from resolver import canonical_entity_id
 from vector_db import (
     count_by_ticker,
     ensure_schema,
@@ -78,8 +78,10 @@ def entity_ids_for_chunk(
     Build sorted unique entity ids for a chunk from extraction cache.
 
     Returns None if no extraction is cached (caller can leave [] or skip).
-    WHY normalize_name: Neo4j nodes use resolver canonical ids; raw Claude
-    ids like APPLEINC must become APPLE to join cleanly.
+    WHY canonical_entity_id (not raw normalize_name): Neo4j nodes use the same
+    resolver canonical ids, including the ticker prefix on Risk/Product/
+    Executive nodes — this must match exactly or entity_ids silently stops
+    cross-linking once a chunk's company has same-named entities elsewhere.
     """
     cache = cache or ExtractionCache(settings.EXTRACTION_CACHE_PATH)
     extraction = cache.get(chunk.chunk_hash)
@@ -88,7 +90,7 @@ def entity_ids_for_chunk(
 
     ids: set[str] = set()
     for entity in extraction.entities:
-        canonical = normalize_name(entity.name) or entity.id.upper()
+        canonical = canonical_entity_id(entity.name, entity.type, chunk.ticker) or entity.id.upper()
         if canonical:
             ids.add(canonical)
     return sorted(ids)

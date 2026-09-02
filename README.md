@@ -68,6 +68,21 @@ docker compose up -d
 Neo4j Browser: http://localhost:7474 (`neo4j` / `password`)  
 Postgres: `localhost:5432` / `secgraph` / `password`
 
+## Growing the corpus
+
+`grow_corpus.py` batches ingest → extract → resolve → Neo4j write → pgvector
+embed across multiple tickers, with an aggregate cost estimate gated behind
+`--confirm`:
+
+```powershell
+.\.venv\Scripts\python.exe grow_corpus.py MSFT JPM XOM PFE --budget    # estimate only
+.\.venv\Scripts\python.exe grow_corpus.py MSFT JPM XOM PFE --confirm   # full filings
+```
+
+See `HANDOFF.md` → "Growing the corpus" for usage, a suggested starter
+ticker list, and two id/routing fixes that only matter once a second company
+is in the corpus.
+
 ## Phase status
 
 | Phase | Status |

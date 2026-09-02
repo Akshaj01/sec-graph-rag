@@ -65,8 +65,13 @@ def guess_ticker(question: str) -> Optional[str]:
     """
     Lightweight ticker hint for filtering the vector index.
 
-    WHY: multi-company corpora need scoping; AAPL smoke tests default to AAPL
-    when no clear ticker token is present.
+    WHY: single-company (AAPL) questions rarely spell out the ticker, so this
+    keeps that case scoped. It is intentionally narrow — it only recognizes
+    Apple by name and bare uppercase ticker tokens — so it will miss most
+    natural-language mentions of other companies (e.g. "Microsoft"). That's
+    fine: retrieve_vector's default_ticker=None means an unrecognized
+    question falls through to a full-index search rather than silently
+    landing on the wrong company.
     """
     lowered = question.lower()
     if "apple" in lowered or "aapl" in lowered:
@@ -84,13 +89,21 @@ def retrieve_vector(
     *,
     k: Optional[int] = None,
     ticker: Optional[str] = None,
-    default_ticker: Optional[str] = "AAPL",
+    default_ticker: Optional[str] = None,
 ) -> VectorRetrievalResult:
     """
     Embed the question and return top-k similar chunks from pgvector.
 
-    ticker=None with default_ticker set scopes to that company (smoke-test friendly).
-    Pass ticker="" or default_ticker=None to search the full index.
+    ticker=None searches the full index unless guess_ticker recognizes a
+    company from the question text, or a caller passes default_ticker to
+    force a scope (e.g. a single-company smoke test). Pass ticker="" to force
+    a full-index search even when guess_ticker would otherwise match.
+
+    WHY not default to AAPL: once the corpus holds more than one company, an
+    unscoped default silently hides every other company's chunks behind an
+    Apple-only search. A full-index search is the safe default; callers that
+    know the company (the API's `ticker` field, benchmark harness) should
+    pass it explicitly.
     """
     k = settings.VECTOR_RETRIEVAL_K if k is None else k
     ensure_schema()

@@ -131,6 +131,37 @@ def normalize_name(name: str) -> str:
     return "".join(tokens)
 
 
+# Types namespaced by ticker when building canonical ids (see canonical_entity_id).
+# Company/Subsidiary/Supplier stay globally deduped: a supplier or a company named
+# as another's competitor should resolve to one shared node across filings.
+TICKER_SCOPED_ENTITY_TYPES = {
+    EntityType.RISK_FACTOR,
+    EntityType.PRODUCT_LINE,
+    EntityType.EXECUTIVE,
+}
+
+
+def canonical_entity_id(name: str, entity_type: EntityType, ticker: Optional[str] = None) -> str:
+    """
+    Build the canonical Neo4j node id for one entity mention.
+
+    WHY ticker-scope Risk/Product/Executive: a single-company corpus never hits
+    this, but a multi-company one will — two filings both extracting a
+    RiskFactor named "Cybersecurity" (or two unrelated Executives who share a
+    common name) would otherwise MERGE onto one shared node and blend
+    unrelated descriptions/mention counts. Prefixing with ticker keeps each
+    company's instance distinct without touching the types that SHOULD merge
+    globally (shared suppliers, companies referenced as each other's
+    competitors/subsidiaries).
+    """
+    base = normalize_name(name)
+    if not base:
+        return ""
+    if entity_type in TICKER_SCOPED_ENTITY_TYPES and ticker:
+        return f"{ticker.upper()}_{base}"
+    return base
+
+
 def _cosine(a: Sequence[float], b: Sequence[float]) -> float:
     dot = sum(x * y for x, y in zip(a, b))
     na = math.sqrt(sum(x * x for x in a))
@@ -247,7 +278,9 @@ def _cluster_mentions(
     return list(clusters_map.values()), hard_merge_groups, soft_merges
 
 
-def _pick_canonical(mentions: List[_Mention], member_idxs: List[int]) -> CanonicalEntity:
+def _pick_canonical(
+    mentions: List[_Mention], member_idxs: List[int], *, ticker: Optional[str] = None
+) -> CanonicalEntity:
     members = [mentions[i] for i in member_idxs]
     # Prefer highest confidence; break ties with longer (usually more complete) name.
     best = max(members, key=lambda m: (m.confidence, len(m.name)))
@@ -255,7 +288,7 @@ def _pick_canonical(mentions: List[_Mention], member_idxs: List[int]) -> Canonic
     chunk_ids = sorted({m.chunk_id for m in members})
     descriptions = [m.description for m in members if m.description]
     description = max(descriptions, key=len) if descriptions else None
-    canonical_id = normalize_name(best.name) or best.original_id.upper()
+    canonical_id = canonical_entity_id(best.name, best.type, ticker) or best.original_id.upper()
 
     return CanonicalEntity(
         id=canonical_id,
@@ -316,7 +349,7 @@ def resolve_extractions(
     used_ids: Dict[str, int] = {}
 
     for member_idxs in clusters:
-        canonical = _pick_canonical(mentions, member_idxs)
+        canonical = _pick_canonical(mentions, member_idxs, ticker=ticker)
         # Disambiguate rare id collisions across different types/names.
         base_id = canonical.id
         if base_id in used_ids:
