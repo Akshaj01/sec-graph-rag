@@ -54,6 +54,8 @@ class CanonicalEntity(BaseModel):
     source_chunk_ids: List[str] = Field(default_factory=list)
     confidence: float
     mention_count: int
+    # True when this Company is the filing issuer (for home_ticker on global MERGE).
+    is_issuer: bool = False
 
 
 class ResolvedRelationship(BaseModel):
@@ -138,6 +140,11 @@ TICKER_SCOPED_ENTITY_TYPES = {
     EntityType.RISK_FACTOR,
     EntityType.PRODUCT_LINE,
     EntityType.EXECUTIVE,
+}
+GLOBAL_ENTITY_TYPES = {
+    EntityType.COMPANY,
+    EntityType.SUBSIDIARY,
+    EntityType.SUPPLIER,
 }
 
 
@@ -302,6 +309,26 @@ def _pick_canonical(
     )
 
 
+def mark_issuer_company(entities: List[CanonicalEntity]) -> Optional[str]:
+    """
+    Mark the primary issuer Company in a single filing's resolved graph.
+
+    Heuristic: among Company entities, the highest mention_count is the issuer
+    (the 10-K talks about itself far more than about competitors/agencies).
+    Returns the issuer entity id, or None if there is no Company entity.
+    """
+    companies = [e for e in entities if e.type == EntityType.COMPANY]
+    if not companies:
+        return None
+    issuer = max(
+        companies,
+        key=lambda e: (e.mention_count, e.confidence, len(e.name)),
+    )
+    for e in entities:
+        e.is_issuer = e.id == issuer.id and e.type == EntityType.COMPANY
+    return issuer.id
+
+
 def resolve_extractions(
     results: Sequence[ChunkExtractionResult],
     *,
@@ -391,6 +418,7 @@ def resolve_extractions(
                         existing.context = rel.context
 
     canonical_entities.sort(key=lambda e: (e.type.value, e.name.lower()))
+    mark_issuer_company(canonical_entities)
     relationships = sorted(
         rel_acc.values(),
         key=lambda r: (r.type.value, r.source_entity_id, r.target_entity_id),

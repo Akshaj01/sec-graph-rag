@@ -8,17 +8,26 @@ BASWE requirements covered here:
   - MERGE (not CREATE)
   - source_chunk_ids on edges for citation provenance
   - uniqueness constraints on entity id per label
+
+Global entities (Company/Subsidiary/Supplier) share one node across filings.
+Their provenance is multi-valued (`tickers` list); `home_ticker` is set only
+when the filing issuer writes that Company, so a competitor mention cannot
+clobber Apple's identity to NFLX.
 """
 
 from __future__ import annotations
 
-from typing import Dict, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from neo4j import GraphDatabase, Driver
 from pydantic import BaseModel
 
 from config import settings
-from resolver import ResolvedGraph, resolve_company
+from resolver import (
+    GLOBAL_ENTITY_TYPES,
+    ResolvedGraph,
+    resolve_company,
+)
 from schemas import EntityType, RelationshipType
 
 # Allowlists only — used to safely interpolate labels / rel types into Cypher.
@@ -61,11 +70,18 @@ def ensure_constraints(driver: Driver) -> int:
     return ensured
 
 
-def _merge_entity(tx, entity, *, ticker: Optional[str], accession_number: Optional[str]) -> None:
-    label = entity.type.value
-    if label not in _ENTITY_LABELS:
-        raise ValueError(f"Refusing unknown entity label: {label}")
+def _uniq_append(values: List[str], item: Optional[str]) -> List[str]:
+    out = list(values)
+    if item and item not in out:
+        out.append(item)
+    return out
 
+
+def _merge_scoped_entity(
+    tx, entity, *, ticker: Optional[str], accession_number: Optional[str]
+) -> None:
+    """Ticker-scoped types: node belongs to one filing company; replace props."""
+    label = entity.type.value
     cypher = f"""
     MERGE (n:{label} {{id: $id}})
     SET n.name = $name,
@@ -90,6 +106,133 @@ def _merge_entity(tx, entity, *, ticker: Optional[str], accession_number: Option
         ticker=ticker,
         accession_number=accession_number,
     )
+
+
+def _merge_global_entity(
+    tx, entity, *, ticker: Optional[str], accession_number: Optional[str]
+) -> None:
+    """
+    Globally deduped types: accumulate filing tickers; pin home_ticker on issuer.
+
+    Idempotent across re-runs of the same ticker because source_chunk_ids are
+    unioned (re-adding the same chunks is a no-op) and tickers are de-duped.
+    """
+    label = entity.type.value
+    is_issuer = bool(entity.is_issuer and entity.type == EntityType.COMPANY)
+
+    row = tx.run(
+        f"MATCH (n:{label} {{id: $id}}) RETURN n AS n",
+        id=entity.id,
+    ).single()
+
+    if row is None:
+        prev_tickers: List[str] = []
+        prev_chunks: List[str] = []
+        prev_aliases: List[str] = []
+        prev_home: Optional[str] = None
+        prev_name: Optional[str] = None
+        prev_description: Optional[str] = None
+        prev_confidence = 0.0
+        prev_accession: Optional[str] = None
+    else:
+        n = row["n"]
+        prev_tickers = list(n.get("tickers") or [])
+        # Migrate nodes written before tickers[] existed.
+        legacy = n.get("ticker")
+        if not prev_tickers and legacy:
+            prev_tickers = [legacy]
+        prev_chunks = list(n.get("source_chunk_ids") or [])
+        prev_aliases = list(n.get("aliases") or [])
+        prev_home = n.get("home_ticker")
+        prev_name = n.get("name")
+        prev_description = n.get("description")
+        prev_confidence = float(n.get("confidence") or 0.0)
+        prev_accession = n.get("accession_number")
+
+    tickers = _uniq_append(prev_tickers, ticker)
+    chunks = sorted(set(prev_chunks) | set(entity.source_chunk_ids or []))
+    aliases = sorted(set(prev_aliases) | set(entity.aliases or []))
+
+    home_ticker = prev_home
+    if entity.type == EntityType.COMPANY:
+        if is_issuer and ticker:
+            home_ticker = ticker
+        legacy_ticker = home_ticker
+    else:
+        # Subsidiaries/suppliers: never claim an issuer home; keep first ticker.
+        home_ticker = None
+        if row is not None and row["n"].get("ticker"):
+            legacy_ticker = row["n"].get("ticker")
+        else:
+            legacy_ticker = ticker
+
+    if is_issuer or not prev_name:
+        name = entity.name
+    else:
+        name = prev_name
+
+    if is_issuer and entity.description:
+        description = entity.description
+    elif entity.description and (
+        not prev_description or len(entity.description) > len(prev_description)
+    ):
+        description = entity.description
+    else:
+        description = prev_description
+
+    if is_issuer:
+        accession = accession_number
+    else:
+        accession = prev_accession or accession_number
+
+    confidence = max(prev_confidence, float(entity.confidence or 0.0))
+    mention_count = len(chunks)
+
+    cypher = f"""
+    MERGE (n:{label} {{id: $id}})
+    SET n.name = $name,
+        n.aliases = $aliases,
+        n.description = $description,
+        n.confidence = $confidence,
+        n.mention_count = $mention_count,
+        n.source_chunk_ids = $source_chunk_ids,
+        n.tickers = $tickers,
+        n.home_ticker = $home_ticker,
+        n.ticker = $legacy_ticker,
+        n.accession_number = $accession_number,
+        n.updated_at = datetime()
+    """
+    tx.run(
+        cypher,
+        id=entity.id,
+        name=name,
+        aliases=aliases,
+        description=description,
+        confidence=confidence,
+        mention_count=mention_count,
+        source_chunk_ids=chunks,
+        tickers=tickers,
+        home_ticker=home_ticker,
+        legacy_ticker=legacy_ticker,
+        accession_number=accession,
+    )
+
+
+def _merge_entity(
+    tx, entity, *, ticker: Optional[str], accession_number: Optional[str]
+) -> None:
+    label = entity.type.value
+    if label not in _ENTITY_LABELS:
+        raise ValueError(f"Refusing unknown entity label: {label}")
+
+    if entity.type in GLOBAL_ENTITY_TYPES:
+        _merge_global_entity(
+            tx, entity, ticker=ticker, accession_number=accession_number
+        )
+    else:
+        _merge_scoped_entity(
+            tx, entity, ticker=ticker, accession_number=accession_number
+        )
 
 
 def _merge_relationship(tx, rel) -> None:
@@ -182,7 +325,9 @@ def smoke_counts(driver: Optional[Driver] = None) -> Dict[str, object]:
             rels = session.run("MATCH ()-[r]->() RETURN count(r) AS c").single()["c"]
             apple = session.run(
                 "MATCH (c:Company {id: 'APPLE'}) RETURN c.name AS name, "
-                "c.mention_count AS mentions, size(c.source_chunk_ids) AS chunks"
+                "c.mention_count AS mentions, c.home_ticker AS home_ticker, "
+                "c.tickers AS tickers, c.ticker AS ticker, "
+                "size(c.source_chunk_ids) AS chunks"
             ).single()
         return {
             "nodes": nodes,
@@ -190,6 +335,9 @@ def smoke_counts(driver: Optional[Driver] = None) -> Dict[str, object]:
             "apple_name": apple["name"] if apple else None,
             "apple_mentions": apple["mentions"] if apple else None,
             "apple_chunks": apple["chunks"] if apple else None,
+            "apple_home_ticker": apple["home_ticker"] if apple else None,
+            "apple_tickers": list(apple["tickers"] or []) if apple else None,
+            "apple_ticker": apple["ticker"] if apple else None,
         }
     finally:
         if own_driver:
