@@ -34,10 +34,21 @@ from schemas import EntityType, RelationshipType
 _ENTITY_LABELS: Set[str] = {e.value for e in EntityType}
 _REL_TYPES: Set[str] = {r.value for r in RelationshipType}
 
+# Outgoing edges that assert the *filing issuer's* business. A competitor
+# mention must not invent PRODUCES_PRODUCT / risks / etc. on global Company APPLE.
+ISSUER_OWNED_REL_TYPES: Set[RelationshipType] = {
+    RelationshipType.PRODUCES_PRODUCT,
+    RelationshipType.EXPOSED_TO_RISK,
+    RelationshipType.LED_BY,
+    RelationshipType.OWNS_SUBSIDIARY,
+    RelationshipType.OPERATES_IN_SEGMENT,
+}
+
 
 class WriteStats(BaseModel):
     entities_merged: int = 0
     relationships_merged: int = 0
+    relationships_skipped: int = 0
     constraints_ensured: int = 0
     ticker: Optional[str] = None
     accession_number: Optional[str] = None
@@ -235,10 +246,55 @@ def _merge_entity(
         )
 
 
-def _merge_relationship(tx, rel) -> None:
+def should_skip_issuer_owned_edge(
+    rel,
+    entities_by_id: Dict[str, object],
+) -> bool:
+    """
+    Skip issuer-owned edges whose source Company is not this filing's issuer.
+
+    WHY: Meta's 10-K can mention Apple/iOS and extract
+    APPLE-[:PRODUCES_PRODUCT]->META_IOS; that must not land on global APPLE.
+    Cross-company edges (COMPETES_WITH, SUPPLIED_BY) are still allowed.
+    """
+    if rel.type not in ISSUER_OWNED_REL_TYPES:
+        return False
+    src = entities_by_id.get(rel.source_entity_id)
+    if src is None:
+        return False
+    if getattr(src, "type", None) != EntityType.COMPANY:
+        return False
+    return not bool(getattr(src, "is_issuer", False))
+
+
+def _merge_relationship(
+    tx,
+    rel,
+    *,
+    writing_ticker: Optional[str] = None,
+) -> None:
     rel_type = rel.type.value
     if rel_type not in _REL_TYPES:
         raise ValueError(f"Refusing unknown relationship type: {rel_type}")
+
+    row = tx.run(
+        f"""
+        MATCH (a {{id: $src}})-[r:{rel_type}]->(b {{id: $tgt}})
+        RETURN r.source_chunk_ids AS chunks, r.write_tickers AS write_tickers
+        """,
+        src=rel.source_entity_id,
+        tgt=rel.target_entity_id,
+    ).single()
+
+    if row is None:
+        prev_chunks: List[str] = []
+        prev_tickers: List[str] = []
+    else:
+        prev_chunks = list(row["chunks"] or [])
+        prev_tickers = list(row["write_tickers"] or [])
+
+    chunks = sorted(set(prev_chunks) | set(rel.source_chunk_ids or []))
+    write_tickers = _uniq_append(prev_tickers, writing_ticker)
 
     # Endpoints may have different labels; match by id across any ontology label.
     cypher = f"""
@@ -248,6 +304,7 @@ def _merge_relationship(tx, rel) -> None:
     SET r.confidence = $confidence,
         r.context = $context,
         r.source_chunk_ids = $source_chunk_ids,
+        r.write_tickers = $write_tickers,
         r.updated_at = datetime()
     """
     tx.run(
@@ -256,7 +313,8 @@ def _merge_relationship(tx, rel) -> None:
         tgt=rel.target_entity_id,
         confidence=rel.confidence,
         context=rel.context,
-        source_chunk_ids=rel.source_chunk_ids,
+        source_chunk_ids=chunks,
+        write_tickers=write_tickers,
     )
 
 
@@ -264,6 +322,13 @@ def write_graph(graph: ResolvedGraph, *, driver: Optional[Driver] = None) -> Wri
     """MERGE all canonical entities and relationships into Neo4j."""
     own_driver = driver is None
     driver = driver or get_driver()
+    entities_by_id = {e.id: e for e in graph.entities}
+    kept_rels = [
+        rel
+        for rel in graph.relationships
+        if not should_skip_issuer_owned_edge(rel, entities_by_id)
+    ]
+    skipped = len(graph.relationships) - len(kept_rels)
     try:
         constraints = ensure_constraints(driver)
         with driver.session() as session:
@@ -275,18 +340,85 @@ def write_graph(graph: ResolvedGraph, *, driver: Optional[Driver] = None) -> Wri
                         ticker=graph.ticker,
                         accession_number=graph.accession_number,
                     )
-                for rel in graph.relationships:
-                    _merge_relationship(tx, rel)
+                for rel in kept_rels:
+                    _merge_relationship(tx, rel, writing_ticker=graph.ticker)
 
             session.execute_write(_write_all)
 
         return WriteStats(
             entities_merged=len(graph.entities),
-            relationships_merged=len(graph.relationships),
+            relationships_merged=len(kept_rels),
+            relationships_skipped=skipped,
             constraints_ensured=constraints,
             ticker=graph.ticker,
             accession_number=graph.accession_number,
         )
+    finally:
+        if own_driver:
+            driver.close()
+
+
+def cleanup_cross_issuer_edges(
+    *,
+    driver: Optional[Driver] = None,
+) -> Dict[str, int]:
+    """
+    Delete issuer-owned edges whose target is ticker-scoped to a *different*
+    issuer than the source Company's home_ticker (e.g. APPLE→META_IOS).
+
+    Also deletes issuer-owned edges whose write_tickers list is non-empty and
+    does not include the source home_ticker (foreign-only provenance).
+    """
+    own_driver = driver is None
+    driver = driver or get_driver()
+    # Safe: rel types are from our allowlist constants, not user input.
+    rel_union = "|".join(sorted(t.value for t in ISSUER_OWNED_REL_TYPES))
+    try:
+        with driver.session() as session:
+            mismatched = session.run(
+                f"""
+                MATCH (c:Company)-[r:{rel_union}]->(n)
+                WHERE c.home_ticker IS NOT NULL
+                  AND n.ticker IS NOT NULL
+                  AND n.ticker <> c.home_ticker
+                WITH r
+                DELETE r
+                RETURN count(*) AS deleted
+                """
+            ).single()
+            foreign_write = session.run(
+                f"""
+                MATCH (c:Company)-[r:{rel_union}]->(n)
+                WHERE c.home_ticker IS NOT NULL
+                  AND r.write_tickers IS NOT NULL
+                  AND size(r.write_tickers) > 0
+                  AND NOT c.home_ticker IN r.write_tickers
+                WITH r
+                DELETE r
+                RETURN count(*) AS deleted
+                """
+            ).single()
+            # Product ids prefixed with another ticker (covers nodes without .ticker).
+            prefix_leak = session.run(
+                f"""
+                MATCH (c:Company)-[r:{rel_union}]->(n)
+                WHERE c.home_ticker IS NOT NULL
+                  AND n.id CONTAINS '_'
+                  AND NOT n.id STARTS WITH c.home_ticker + '_'
+                  AND any(t IN ['AAPL','AMZN','GOOGL','JNJ','JPM','META','MSFT','NFLX','NVDA','XOM']
+                       WHERE n.id STARTS WITH t + '_' AND t <> c.home_ticker)
+                WITH r
+                DELETE r
+                RETURN count(*) AS deleted
+                """
+            ).single()
+        return {
+            "deleted_ticker_mismatch": int(mismatched["deleted"] if mismatched else 0),
+            "deleted_foreign_write_tickers": int(
+                foreign_write["deleted"] if foreign_write else 0
+            ),
+            "deleted_prefix_leak": int(prefix_leak["deleted"] if prefix_leak else 0),
+        }
     finally:
         if own_driver:
             driver.close()
@@ -347,6 +479,10 @@ def smoke_counts(driver: Optional[Driver] = None) -> Dict[str, object]:
 if __name__ == "__main__":
     import json
     import sys
+
+    if "--cleanup-cross-issuer" in sys.argv:
+        print(json.dumps(cleanup_cross_issuer_edges(), indent=2))
+        sys.exit(0)
 
     symbol = sys.argv[1] if len(sys.argv) > 1 else "AAPL"
     run_all = "--all" in sys.argv

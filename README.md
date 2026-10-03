@@ -13,7 +13,8 @@ Built as an end-to-end systems project (not a ChatGPT wrapper): closed-world sch
 | Embeddings alone blur *relationships* (who competes with whom, what risks attach to which issuer) | Graph path over a fixed ontology + parameterized Cypher templates |
 | LLMs invent citations | Every claim’s `chunk_id` must appear in *this* retrieval’s allowlist (else reject / regenerate) |
 | Multi-company graphs silently merge the wrong nodes | Ticker-scoped risks/products/execs; shared companies keep `home_ticker` + `tickers[]` |
-| “RAG demos” skip measurement | Hop-stratified **hybrid vs vector-only** suite with honest keyword-recall caveats |
+| Cross-filing extract invents edges on global companies (e.g. Meta→`APPLE` products) | Issuer-owned write gate + retrieve-time chunk ticker filter on graph evidence |
+| “RAG demos” skip measurement | Hop-stratified **hybrid vs vector-only** suite with LLM-as-judge (keyword secondary) |
 
 ---
 
@@ -47,21 +48,27 @@ Question → Haiku router (graph | vector | both)
 
 ## Benchmark (hybrid vs vector-only)
 
-Suite: `multi_company_smoke` v1 — **24** hand-labeled questions on a local **10-ticker** corpus  
-(`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7).  
-Metric: **keyword recall** on answer text (OOS = correct refuse). Not a 50–100 Q human eval.
+Suite: `multi_company_smoke` v2 — **24** hand-labeled questions on a local **10-ticker** corpus  
+(`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7).
+
+**Primary metric:** LLM-as-judge (Haiku + Instructor) correctness vs hand-authored `required_facts` / `gold_answer`.  
+OOS items score as correct refuse. Keyword recall is kept as a **secondary** field in the JSON report.  
+Not a 50–100 Q human panel — still an automated grade, but much closer to answer quality than substring hits.
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
-| Hop 0 (definitions) | 0.47 | 0.47 | 6 |
-| Hop 1 (single edge) | **0.94** | 0.69 | 8 |
-| Hop 2 (compare / multi-rel) | **1.00** | 0.78 | 6 |
+| Hop 0 (definitions) | 0.50 | **0.58** | 6 |
+| Hop 1 (single edge) | **0.81** | **0.81** | 8 |
+| Hop 2 (compare / multi-rel) | **0.90** | 0.69 | 6 |
 | OOS (must refuse) | **1.00** | **1.00** | 4 |
-| **Overall mean** | **0.85** | 0.71 | 24 |
+| **Overall mean** | **0.79** | 0.76 | 24 |
 
-Report: [`benchmarks/results/multi_company_smoke_full_rebench.json`](benchmarks/results/multi_company_smoke_full_rebench.json)
+Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json)  
+(answers from the prior full rebench; scores refreshed with the v2 judge — no answer re-run)
 
-**How to read it:** After evidence capping, multi-template graph plans, and false-refuse fixes, **hybrid leads overall and on hop 1–2** — where relationship structure should matter. Hop 0 is weaker (definition asks; keyword metric). Scores are automated keyword hits, not human accuracy.
+**How to read it:** Under fact-checklist judging, **hybrid still leads overall**, with the clearest gap on **hop 2** (0.90 vs 0.69) where multi-relation structure should matter. Hop 0 is weak for both (false refuses on some definitions). Keyword-only scores previously overstated hop 1–2; the judge catches partial / contradictory answers those needles missed.
+
+**Systems fix from eval:** Graph retrieve once cited Meta accession chunks on an Apple products question (global `APPLE` node + Meta-written `PRODUCES_PRODUCT` edges). Fixed with an issuer-owned write gate, retrieve-time chunk ticker filter, and `python graph_writer.py --cleanup-cross-issuer`.
 
 ---
 
@@ -108,11 +115,14 @@ python grow_corpus.py MSFT JPM --budget
 python grow_corpus.py MSFT JPM --confirm --max-chunks 5   # cheap smoke
 ```
 
-**Benchmark (paid):**
+**Benchmark (paid answer run; judge is cheaper Haiku):**
 
 ```bash
 python benchmark_runner.py --suite benchmarks/multi_company_smoke.json --limit 2
 python benchmark_runner.py --suite benchmarks/multi_company_smoke.json --confirm
+# Re-score saved answers with LLM judge (no answer re-run):
+python benchmark_runner.py --suite benchmarks/multi_company_smoke.json \
+  --rejudge benchmarks/results/multi_company_smoke_full_rebench.json --confirm
 ```
 
 Neo4j Browser: http://localhost:7474 (`neo4j` / `password` by default) · API docs: http://127.0.0.1:8000/docs
@@ -127,7 +137,7 @@ Neo4j Browser: http://localhost:7474 (`neo4j` / `password` by default) · API do
 | Vectors | `embedder.py`, `vector_db.py` |
 | Retrieve / answer / API | `router.py`, `graph_retriever.py`, `vector_retriever.py`, `answer.py`, `api.py` |
 | Batch growth / budget | `grow_corpus.py`, `budget.py` |
-| Eval | `benchmarks/`, `benchmark_runner.py` |
+| Eval | `benchmarks/`, `benchmark_runner.py`, `benchmark_judge.py`, `chunk_ticker.py` |
 | Dev notes | `HANDOFF.md` |
 
 ---

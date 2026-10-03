@@ -23,6 +23,7 @@ from neo4j import Driver
 from pydantic import BaseModel, Field
 
 from config import settings
+from chunk_ticker import filter_chunk_ids_for_ticker
 from graph_writer import get_driver
 from resolver import normalize_name
 
@@ -194,6 +195,27 @@ def _dedupe_facts(facts: List[GraphFact]) -> List[GraphFact]:
             continue
         seen.add(key)
         out.append(f)
+    return out
+
+
+def filter_facts_for_ticker(
+    facts: List[GraphFact],
+    ticker: Optional[str],
+) -> List[GraphFact]:
+    """
+    Strip foreign-issuer chunk ids from graph facts; drop facts with none left.
+
+    Keeps competitor *nodes* (e.g. COMPETES_WITH → META); only citation
+    provenance is ticker-scoped.
+    """
+    if not ticker:
+        return facts
+    out: List[GraphFact] = []
+    for fact in facts:
+        kept = filter_chunk_ids_for_ticker(fact.source_chunk_ids, ticker)
+        if not kept:
+            continue
+        out.append(fact.model_copy(update={"source_chunk_ids": kept}))
     return out
 
 
@@ -411,12 +433,16 @@ def run_template(
 def retrieve_graph(
     question: str,
     *,
+    ticker: Optional[str] = None,
     client: Optional[instructor.Instructor] = None,
     driver: Optional[Driver] = None,
     limit: Optional[int] = None,
 ) -> GraphRetrievalResult:
     """
     End-to-end Step L: plan → resolve → parameterized template query(ies).
+
+    When `ticker` is set, strip foreign-issuer chunk ids from returned facts
+    so Meta filing provenance cannot enter an AAPL evidence pack.
     """
     plan = plan_graph_query(question, client=client)
     own = driver is None
@@ -452,6 +478,7 @@ def retrieve_graph(
             limit=limit,
             driver=driver,
         )
+        facts = filter_facts_for_ticker(facts, ticker)
         return GraphRetrievalResult(
             question=question,
             template_id=template_ids[0],

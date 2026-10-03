@@ -62,7 +62,15 @@ class BenchmarkItem(BaseModel):
     )
     gold_keywords: List[str] = Field(
         default_factory=list,
-        description="Case-insensitive needles; Step R scores hit rate in summary+claims.",
+        description="Legacy case-insensitive needles (secondary metric).",
+    )
+    required_facts: List[str] = Field(
+        default_factory=list,
+        description="Atomic facts a correct answer should cover; primary LLM-judge checklist.",
+    )
+    gold_answer: str = Field(
+        default="",
+        description="Short reference answer for the LLM judge (not shown to the system under test).",
     )
     gold_entity_ids: List[str] = Field(
         default_factory=list,
@@ -74,7 +82,13 @@ class BenchmarkItem(BaseModel):
     )
     notes: str = Field(default="", description="Why this item is labeled this way.")
 
-    @field_validator("gold_keywords", "gold_entity_ids", "gold_chunk_ids", mode="before")
+    @field_validator(
+        "gold_keywords",
+        "required_facts",
+        "gold_entity_ids",
+        "gold_chunk_ids",
+        mode="before",
+    )
     @classmethod
     def _none_to_list(cls, v):  # noqa: ANN001
         return v or []
@@ -131,12 +145,17 @@ class BenchmarkItemResult(BaseModel):
     keyword_hits: List[str] = Field(default_factory=list)
     keyword_misses: List[str] = Field(default_factory=list)
     keyword_recall: Optional[float] = None
+    judge_correctness: Optional[float] = None
+    judge_fact_hits: List[str] = Field(default_factory=list)
+    judge_fact_misses: List[str] = Field(default_factory=list)
+    judge_hallucination: Optional[bool] = None
+    judge_rationale: str = ""
     correct_refuse: Optional[bool] = None
     # Cost / latency
     latency_ms: Optional[float] = None
     estimated_cost_usd: Optional[float] = None
     error: Optional[str] = None
-    # 0–1 item score (refuse accuracy or keyword recall)
+    # 0–1 item score (refuse accuracy or LLM-judge correctness; keyword is secondary)
     score: Optional[float] = None
 
 

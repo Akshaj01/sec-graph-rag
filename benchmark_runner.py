@@ -1,15 +1,17 @@
 """
 Phase 5 Step R: Run labeled suite under hybrid vs vector-only.
 
-Scoring:
+Scoring (primary = judge):
   - must_refuse: score=1 if draft.refused else 0
-  - else: case-insensitive gold_keyword recall over summary+claims
+  - else: LLM-as-judge correctness vs required_facts / gold_answer
     (refused non-OOS => score 0)
+  - keyword recall kept as a secondary field on each result
+
+Also supports --rejudge PATH to re-score saved answers without re-answering.
 
 Cost: rough USD from chars≈tokens and .env rates (not a billing invoice).
-Full suite is paid — use --limit / --ids for smoke; --confirm for all items.
-
-Out of scope: README table (Step S), FastAPI (Step T).
+Full answer suite is paid — use --limit / --ids for smoke; --confirm for all items.
+Rejudge is cheap Haiku calls (~one per answered item).
 """
 
 from __future__ import annotations
@@ -18,11 +20,13 @@ import argparse
 import json
 import time
 from datetime import datetime, timezone
+from enum import Enum
 from pathlib import Path
 from typing import List, Optional, Sequence
 
 from answer import AnswerResult, answer_question
 from benchmark import DEFAULT_SUITE_PATH, load_suite
+from benchmark_judge import apply_verdict_to_fields, judge_answer
 from benchmark_schema import (
     BenchmarkComparison,
     BenchmarkItem,
@@ -35,6 +39,12 @@ from config import settings
 from router import RetrievalRoute
 
 RESULTS_DIR = Path(__file__).resolve().parent / "benchmarks" / "results"
+
+
+class ScoreMode(str, Enum):
+    JUDGE = "judge"
+    KEYWORD = "keyword"
+    BOTH = "both"  # judge primary; still fill keyword_* fields
 
 
 def _answer_text(result: AnswerResult) -> str:
@@ -57,22 +67,91 @@ def score_keywords(text: str, gold_keywords: Sequence[str]) -> tuple[List[str], 
     return hits, misses, recall
 
 
-def score_item(item: BenchmarkItem, answer: AnswerResult) -> tuple[float, Optional[bool], List[str], List[str], Optional[float]]:
+def score_item_keyword(
+    item: BenchmarkItem,
+    answer_text: str,
+    *,
+    refused: bool,
+) -> tuple[float, List[str], List[str], Optional[float]]:
+    """Legacy keyword recall. Returns (score, hits, misses, keyword_recall)."""
+    hits, misses, recall = score_keywords(answer_text, item.gold_keywords)
+    if refused:
+        return 0.0, hits, misses, recall
+    if not item.gold_keywords:
+        ok = 1.0 if answer_text.strip() else 0.0
+        return ok, hits, misses, recall
+    return recall, hits, misses, recall
+
+
+def _score_answer_fields(
+    item: BenchmarkItem,
+    *,
+    answer_text: str,
+    refused: bool,
+    citations_valid: bool,
+    score_mode: ScoreMode,
+) -> dict:
     """
-    Returns (score, correct_refuse, hits, misses, keyword_recall).
+    Returns scoring kwargs for BenchmarkItemResult.
+    OOS refuse is binary; non-OOS uses judge (primary) and/or keywords.
     """
     if item.must_refuse:
-        correct = bool(answer.draft.refused)
-        return (1.0 if correct else 0.0), correct, [], [], None
+        correct = bool(refused)
+        return {
+            "score": 1.0 if correct else 0.0,
+            "correct_refuse": correct,
+            "keyword_hits": [],
+            "keyword_misses": [],
+            "keyword_recall": None,
+            "judge_correctness": None,
+            "judge_fact_hits": [],
+            "judge_fact_misses": [],
+            "judge_hallucination": None,
+            "judge_rationale": "",
+        }
 
-    hits, misses, recall = score_keywords(_answer_text(answer), item.gold_keywords)
-    if answer.draft.refused:
-        return 0.0, None, hits, misses, recall
-    if not item.gold_keywords:
-        # No needles: require valid citations and a non-empty summary.
-        ok = 1.0 if answer.citations_valid and answer.draft.summary.strip() else 0.0
-        return ok, None, hits, misses, recall
-    return recall, None, hits, misses, recall
+    kw_score, hits, misses, recall = score_item_keyword(
+        item, answer_text, refused=refused
+    )
+
+    out: dict = {
+        "keyword_hits": hits,
+        "keyword_misses": misses,
+        "keyword_recall": recall,
+        "correct_refuse": None,
+        "judge_correctness": None,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": None,
+        "judge_rationale": "",
+        "score": kw_score,
+    }
+
+    if score_mode == ScoreMode.KEYWORD:
+        # Prefer citations+nonempty when no gold keywords (old behavior).
+        if not item.gold_keywords and not refused:
+            out["score"] = (
+                1.0 if citations_valid and answer_text.strip() else 0.0
+            )
+        return out
+
+    # Judge path (JUDGE or BOTH)
+    if refused:
+        out["judge_correctness"] = 0.0
+        out["judge_rationale"] = "Non-OOS item refused; scored 0."
+        out["score"] = 0.0
+        return out
+
+    if not item.required_facts and not item.gold_answer.strip():
+        # Fall back to keywords if gold not authored yet.
+        out["judge_rationale"] = "No required_facts/gold_answer; using keyword recall."
+        out["judge_correctness"] = kw_score
+        out["score"] = kw_score
+        return out
+
+    verdict = judge_answer(item, answer_text, refused=False)
+    out.update(apply_verdict_to_fields(verdict))
+    return out
 
 
 def estimate_cost_usd(
@@ -111,6 +190,8 @@ def estimate_cost_usd(
 def run_one(
     item: BenchmarkItem,
     mode: BenchmarkMode,
+    *,
+    score_mode: ScoreMode = ScoreMode.JUDGE,
 ) -> BenchmarkItemResult:
     force = RetrievalRoute.VECTOR if mode == BenchmarkMode.VECTOR_ONLY else None
     t0 = time.perf_counter()
@@ -122,10 +203,16 @@ def run_one(
             force_route=force,
         )
         latency_ms = (time.perf_counter() - t0) * 1000.0
-        score, correct_refuse, hits, misses, kw_recall = score_item(item, answer)
         cited: List[str] = []
         for claim in answer.draft.claims:
             cited.extend(claim.citation_chunk_ids)
+        scoring = _score_answer_fields(
+            item,
+            answer_text=_answer_text(answer),
+            refused=answer.draft.refused,
+            citations_valid=answer.citations_valid,
+            score_mode=score_mode,
+        )
         return BenchmarkItemResult(
             item_id=item.id,
             mode=mode,
@@ -139,13 +226,9 @@ def run_one(
             claim_count=len(answer.draft.claims),
             cited_chunk_ids=sorted(set(cited)),
             route_effective=answer.retrieval.routing.effective_route.value,
-            keyword_hits=hits,
-            keyword_misses=misses,
-            keyword_recall=kw_recall,
-            correct_refuse=correct_refuse,
             latency_ms=round(latency_ms, 1),
             estimated_cost_usd=estimate_cost_usd(mode, answer),
-            score=score,
+            **scoring,
         )
     except Exception as exc:  # noqa: BLE001 — keep suite running
         latency_ms = (time.perf_counter() - t0) * 1000.0
@@ -198,7 +281,11 @@ def aggregate_report(
         mean_latency_ms=round(sum(latencies) / len(latencies), 1) if latencies else None,
         mean_cost_usd=round(sum(costs) / len(costs), 6) if costs else None,
         mean_score=round(sum(scores) / len(scores), 4) if scores else None,
-        notes="score=keyword_recall (or refuse accuracy for OOS); null hop = no items run",
+        notes=(
+            "score=LLM-judge correctness vs required_facts "
+            "(or refuse accuracy for OOS); keyword_recall is secondary; "
+            "null hop = no items run"
+        ),
     )
 
 
@@ -227,16 +314,18 @@ def run_suite(
     suite: BenchmarkSuite,
     items: Sequence[BenchmarkItem],
     modes: Sequence[BenchmarkMode],
+    *,
+    score_mode: ScoreMode = ScoreMode.JUDGE,
 ) -> BenchmarkComparison:
     hybrid_results: List[BenchmarkItemResult] = []
     vector_results: List[BenchmarkItemResult] = []
 
     for mode in modes:
-        print(f"\n=== mode={mode.value} items={len(items)} ===")
+        print(f"\n=== mode={mode.value} items={len(items)} score_mode={score_mode.value} ===")
         bucket = hybrid_results if mode == BenchmarkMode.HYBRID else vector_results
         for i, item in enumerate(items, start=1):
             print(f"[{i}/{len(items)}] {mode.value} {item.id} ...", flush=True)
-            row = run_one(item, mode)
+            row = run_one(item, mode, score_mode=score_mode)
             bucket.append(row)
             status = f"score={row.score}" if row.error is None else f"ERROR {row.error}"
             print(
@@ -264,7 +353,70 @@ def run_suite(
         suite_version=suite.version,
         hybrid=hybrid_report,
         vector_only=vector_report,
-        notes="Step R comparison; paste accuracy_by_hop into README in Step S.",
+        notes=(
+            f"score_mode={score_mode.value}; primary score is LLM-judge "
+            "correctness vs required_facts (keyword_recall secondary)."
+        ),
+    )
+
+
+def _result_answer_text(row: BenchmarkItemResult) -> str:
+    return (row.summary or "").strip()
+
+
+def rejudge_comparison(
+    suite: BenchmarkSuite,
+    comp: BenchmarkComparison,
+    *,
+    score_mode: ScoreMode = ScoreMode.JUDGE,
+) -> BenchmarkComparison:
+    """Re-score saved answers with the current suite gold + judge (no answer calls)."""
+    items_by_id = {i.id: i for i in suite.items}
+
+    def _rejudge_report(report: BenchmarkReport) -> BenchmarkReport:
+        new_rows: List[BenchmarkItemResult] = []
+        for i, row in enumerate(report.results, start=1):
+            item = items_by_id.get(row.item_id)
+            if item is None:
+                print(f"  skip unknown item_id={row.item_id}", flush=True)
+                new_rows.append(row)
+                continue
+            if row.error:
+                new_rows.append(row)
+                continue
+            print(
+                f"[{i}/{len(report.results)}] rejudge {report.mode.value} {row.item_id} ...",
+                flush=True,
+            )
+            scoring = _score_answer_fields(
+                item,
+                answer_text=_result_answer_text(row),
+                refused=row.refused,
+                citations_valid=row.citations_valid,
+                score_mode=score_mode,
+            )
+            data = row.model_dump()
+            data.update(scoring)
+            new_row = BenchmarkItemResult.model_validate(data)
+            new_rows.append(new_row)
+            print(
+                f"  -> score={new_row.score} judge={new_row.judge_correctness} "
+                f"kw={new_row.keyword_recall}",
+                flush=True,
+            )
+        return aggregate_report(suite, report.mode, new_rows)
+
+    return BenchmarkComparison(
+        suite_name=suite.name,
+        suite_version=suite.version,
+        hybrid=_rejudge_report(comp.hybrid) if comp.hybrid.results else comp.hybrid,
+        vector_only=(
+            _rejudge_report(comp.vector_only) if comp.vector_only.results else comp.vector_only
+        ),
+        notes=(
+            f"Rejudged with suite v{suite.version}, score_mode={score_mode.value}. "
+            "Answers unchanged; scores refreshed via LLM judge."
+        ),
     )
 
 
@@ -299,9 +451,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         help="Comma-separated: hybrid,vector_only",
     )
     parser.add_argument(
+        "--score-mode",
+        type=str,
+        default=ScoreMode.JUDGE.value,
+        choices=[m.value for m in ScoreMode],
+        help="Primary scoring: judge (default), keyword, or both (judge primary)",
+    )
+    parser.add_argument(
+        "--rejudge",
+        type=Path,
+        default=None,
+        help="Re-score an existing comparison JSON (no answer calls; Haiku judge only)",
+    )
+    parser.add_argument(
         "--confirm",
         action="store_true",
-        help="Required when running more than 4 item×mode calls (paid)",
+        help="Required when running more than 4 paid answer or judge calls",
     )
     parser.add_argument(
         "--out",
@@ -312,6 +477,34 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parser.parse_args(list(argv) if argv is not None else None)
 
     suite = load_suite(args.suite)
+    score_mode = ScoreMode(args.score_mode)
+
+    if args.rejudge is not None:
+        raw = json.loads(args.rejudge.read_text(encoding="utf-8"))
+        comp_in = BenchmarkComparison.model_validate(raw)
+        n_judge = sum(
+            1
+            for report in (comp_in.hybrid, comp_in.vector_only)
+            for r in report.results
+            if not r.error and not r.must_refuse and not r.refused
+        )
+        # OOS + refused still need scoring but are free (no LLM).
+        print(
+            f"Rejudge {args.rejudge} with suite v{suite.version} "
+            f"score_mode={score_mode.value} (~{n_judge} Haiku judge calls, ~${round(n_judge * 0.003, 3)})."
+        )
+        if n_judge > 4 and not args.confirm:
+            print("Refusing: more than 4 judge calls without --confirm.")
+            return 2
+        comp = rejudge_comparison(suite, comp_in, score_mode=score_mode)
+        _print_summary(comp)
+        RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        out_path = args.out or (RESULTS_DIR / f"{suite.name}_judged_{stamp}.json")
+        out_path.write_text(comp.model_dump_json(indent=2), encoding="utf-8")
+        print(f"\nWrote {out_path}")
+        return 0
+
     ids = [x.strip() for x in args.ids.split(",") if x.strip()] if args.ids else None
     items = filter_items(suite, ids=ids, limit=args.limit)
     if not items:
@@ -328,17 +521,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     n_calls = len(items) * len(modes)
     est = estimate_suite_cost_usd(len(items), modes)
     print(
-        f"Selected {len(items)} items × {len(modes)} modes = {n_calls} calls "
-        f"(rough est ${est})."
+        f"Selected {len(items)} items × {len(modes)} modes = {n_calls} answer calls "
+        f"(rough est ${est}); score_mode={score_mode.value}."
     )
     if n_calls > 4 and not args.confirm:
         print(
             "Refusing to run: more than 4 paid calls without --confirm. "
-            "Try --limit 2 or --ids hop1_products,hop0_applecare first."
+            "Try --limit 2 or --ids hop1_aapl_products,hop0_aapl_applecare first."
         )
         return 2
 
-    comp = run_suite(suite, items, modes)
+    comp = run_suite(suite, items, modes, score_mode=score_mode)
     _print_summary(comp)
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)

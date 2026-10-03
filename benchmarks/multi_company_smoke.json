@@ -1,7 +1,7 @@
 {
   "name": "multi_company_smoke",
-  "version": "1",
-  "corpus_notes": "Hand-labeled against the local 10-ticker full Item 1/1A/7 corpus (AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM). Not a 50-100 portfolio eval — hop-stratified multi-company smoke to exercise ticker-scoped products/risks and global Company nodes after the home_ticker fix.",
+  "version": "2",
+  "corpus_notes": "Hand-labeled against the local 10-ticker full Item 1/1A/7 corpus (AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM). Primary score = LLM-as-judge vs required_facts; keyword recall kept as secondary. Not a 50-100 portfolio eval.",
   "items": [
     {
       "id": "hop0_aapl_applecare",
@@ -10,6 +10,11 @@
       "ticker": "AAPL",
       "expected_route": "vector",
       "gold_keywords": ["AppleCare", "support", "service"],
+      "required_facts": [
+        "Names AppleCare as an Apple offering",
+        "Describes it as a service, support, or warranty-related program"
+      ],
+      "gold_answer": "AppleCare is Apple's extended service and support program for its products.",
       "notes": "Definition-style; vector passage in Apple Item 1."
     },
     {
@@ -20,6 +25,11 @@
       "expected_route": "vector",
       "gold_keywords": ["Azure", "cloud"],
       "gold_entity_ids": ["MSFT_AZURE"],
+      "required_facts": [
+        "Identifies Azure as a Microsoft cloud offering",
+        "Ties Azure to cloud computing / cloud services"
+      ],
+      "gold_answer": "Azure is Microsoft's cloud computing platform / set of cloud services.",
       "notes": "Cloud product definition in MSFT Item 1."
     },
     {
@@ -30,6 +40,11 @@
       "expected_route": "vector",
       "gold_keywords": ["Instagram", "photo", "video"],
       "gold_entity_ids": ["META_INSTAGRAM"],
+      "required_facts": [
+        "Identifies Instagram as a Meta app/product/brand",
+        "Mentions social / sharing / photo or video use, or Family of Apps context"
+      ],
+      "gold_answer": "Instagram is one of Meta's apps/products (Family of Apps), used for sharing photos/videos and social content.",
       "notes": "Family of Apps product prose."
     },
     {
@@ -39,6 +54,11 @@
       "ticker": "NVDA",
       "expected_route": "vector",
       "gold_keywords": ["Data Center", "GPU"],
+      "required_facts": [
+        "Mentions Data Center products or platforms",
+        "Mentions GPUs or accelerated compute / AI infrastructure"
+      ],
+      "gold_answer": "NVIDIA describes Data Center offerings built around GPUs and AI/accelerated computing platforms.",
       "notes": "Product/segment prose in NVDA Item 1."
     },
     {
@@ -49,6 +69,11 @@
       "expected_route": "vector",
       "gold_keywords": ["AWS", "cloud"],
       "gold_entity_ids": ["AMZN_AWS"],
+      "required_facts": [
+        "Expands or identifies AWS as Amazon Web Services",
+        "Describes AWS as cloud / technology services or an Amazon segment"
+      ],
+      "gold_answer": "AWS (Amazon Web Services) is Amazon's cloud computing / technology services business segment.",
       "notes": "Amazon Web Services definition."
     },
     {
@@ -59,6 +84,11 @@
       "expected_route": "vector",
       "gold_keywords": ["credit", "risk"],
       "gold_entity_ids": ["JPM_CREDITRISK"],
+      "required_facts": [
+        "Defines or describes credit risk (borrower/obligor default or credit loss)",
+        "Attributes the description to JPMorgan / the Firm"
+      ],
+      "gold_answer": "JPMorgan describes credit risk as the risk of loss from borrower or counterparty default / credit exposure, managed under firm credit risk policies.",
       "notes": "Focused risk definition — avoid asking for all risks (token blowup)."
     },
     {
@@ -69,6 +99,12 @@
       "expected_route": "graph",
       "gold_keywords": ["iPhone", "Mac", "iPad"],
       "gold_entity_ids": ["AAPL_IPHONE", "AAPL_MAC", "AAPL_IPAD"],
+      "required_facts": [
+        "Mentions iPhone",
+        "Mentions Mac",
+        "Mentions iPad"
+      ],
+      "gold_answer": "Apple produces product lines including iPhone, Mac, and iPad (among other hardware/services).",
       "notes": "PRODUCES_PRODUCT hop; ticker-prefixed product ids."
     },
     {
@@ -79,6 +115,11 @@
       "expected_route": "graph",
       "gold_keywords": ["Azure", "Xbox"],
       "gold_entity_ids": ["MSFT_AZURE", "MSFT_XBOX"],
+      "required_facts": [
+        "Mentions Azure (or Intelligent Cloud cloud offerings)",
+        "Mentions Xbox (or More Personal Computing / gaming)"
+      ],
+      "gold_answer": "Microsoft produces offerings including Azure cloud services and Xbox / personal computing products.",
       "notes": "MSFT PRODUCES_PRODUCT hop."
     },
     {
@@ -89,6 +130,12 @@
       "expected_route": "graph",
       "gold_keywords": ["Facebook", "Instagram", "WhatsApp"],
       "gold_entity_ids": ["META_FACEBOOK", "META_INSTAGRAM", "META_WHATSAPP"],
+      "required_facts": [
+        "Mentions Facebook",
+        "Mentions Instagram",
+        "Mentions WhatsApp"
+      ],
+      "gold_answer": "Meta produces apps/products including Facebook, Instagram, and WhatsApp.",
       "notes": "Family of Apps graph hop."
     },
     {
@@ -99,6 +146,11 @@
       "expected_route": "graph",
       "gold_keywords": ["A100", "Automotive"],
       "gold_entity_ids": ["NVDA_A100", "NVDA_AUTOMOTIVE"],
+      "required_facts": [
+        "Mentions a data-center / compute GPU product (e.g. A100 or similar)",
+        "Mentions automotive offerings or another distinct NVIDIA product line"
+      ],
+      "gold_answer": "NVIDIA produces compute GPUs such as the A100 and other lines including automotive platforms.",
       "notes": "NVDA product hop."
     },
     {
@@ -109,6 +161,11 @@
       "expected_route": "graph",
       "gold_keywords": ["Google Cloud", "Google Services"],
       "gold_entity_ids": ["GOOGL_GOOGLECLOUD", "GOOGL_GOOGLESERVICES"],
+      "required_facts": [
+        "Mentions Google Cloud (or cloud offerings)",
+        "Mentions Google Services (or consumer/ads/services segment)"
+      ],
+      "gold_answer": "Alphabet/Google product lines include Google Services and Google Cloud.",
       "notes": "GOOGL segment hop."
     },
     {
@@ -119,6 +176,11 @@
       "expected_route": "graph",
       "gold_keywords": ["commodity", "price"],
       "gold_entity_ids": ["XOM_COMMODITYPRICERISK"],
+      "required_facts": [
+        "States ExxonMobil is exposed to commodity price risk",
+        "Links the risk to oil/gas/energy commodity prices or price volatility"
+      ],
+      "gold_answer": "ExxonMobil is exposed to commodity price risk from volatility in oil, gas, and related energy commodity prices.",
       "notes": "EXPOSED_TO_RISK hop."
     },
     {
@@ -129,6 +191,11 @@
       "expected_route": "graph",
       "gold_keywords": ["MedTech"],
       "gold_entity_ids": ["JNJ_MEDTECH"],
+      "required_facts": [
+        "Answers yes / affirms that J&J produces MedTech",
+        "Names MedTech as a product line or segment"
+      ],
+      "gold_answer": "Yes — Johnson & Johnson produces MedTech products/segment offerings.",
       "notes": "Narrow single-edge check."
     },
     {
@@ -139,6 +206,11 @@
       "expected_route": "graph",
       "gold_keywords": ["Meta"],
       "gold_entity_ids": ["META"],
+      "required_facts": [
+        "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
+        "Frames it as competition / competitive relationship"
+      ],
+      "gold_answer": "Yes — the graph encodes that Apple competes with Meta.",
       "notes": "COMPETES_WITH onto global Company node META."
     },
     {
@@ -148,6 +220,11 @@
       "ticker": "AAPL",
       "expected_route": "graph",
       "gold_keywords": ["iPhone", "Mac", "AppleCare"],
+      "required_facts": [
+        "Mentions at least two hardware devices (e.g. iPhone, Mac, iPad)",
+        "Mentions a service offering (e.g. AppleCare or Services)"
+      ],
+      "gold_answer": "Apple produces hardware such as iPhone and Mac, and services such as AppleCare.",
       "notes": "Aggregate across multiple PRODUCES_PRODUCT edges."
     },
     {
@@ -158,6 +235,12 @@
       "expected_route": "both",
       "gold_keywords": ["Azure", "Xbox"],
       "gold_entity_ids": ["MSFT_AZURE", "MSFT_XBOX"],
+      "required_facts": [
+        "Mentions Azure / Intelligent Cloud offerings",
+        "Mentions Xbox / More Personal Computing",
+        "Draws a contrast or comparison between the two"
+      ],
+      "gold_answer": "Azure sits in Intelligent Cloud (enterprise/cloud services); Xbox sits in More Personal Computing (devices/gaming). They are distinct Microsoft product areas.",
       "notes": "Two product segments in one answer."
     },
     {
@@ -167,6 +250,12 @@
       "ticker": "META",
       "expected_route": "both",
       "gold_keywords": ["Facebook", "Instagram", "Reality Labs"],
+      "required_facts": [
+        "Mentions Facebook and/or Instagram as Family of Apps products",
+        "Mentions Reality Labs as a separate Meta segment/area",
+        "States they are distinct segments or differently focused businesses"
+      ],
+      "gold_answer": "Facebook/Instagram are Family of Apps products; Reality Labs is a separate Meta segment focused on AR/VR and related tech.",
       "notes": "Apps vs Reality Labs aggregation."
     },
     {
@@ -177,6 +266,11 @@
       "expected_route": "both",
       "gold_keywords": ["AWS", "Prime"],
       "gold_entity_ids": ["AMZN_AWS", "AMZN_AMAZONPRIME"],
+      "required_facts": [
+        "Describes AWS as cloud / technology services",
+        "Describes Amazon Prime as a membership/subscription or store-related offering"
+      ],
+      "gold_answer": "AWS is Amazon's cloud services business; Amazon Prime is a membership/subscription offering tied to retail/fulfillment benefits.",
       "notes": "Two AMZN product lines."
     },
     {
@@ -187,6 +281,12 @@
       "expected_route": "graph",
       "gold_keywords": ["Credit", "Market"],
       "gold_entity_ids": ["JPM_CREDITRISK", "JPM_MARKETRISK"],
+      "required_facts": [
+        "Mentions credit risk as a named risk",
+        "Mentions market risk as a named risk",
+        "Distinguishes them (credit = default/credit loss vs market = market-price/market movements) or treats them as separate factors"
+      ],
+      "gold_answer": "JPMorgan names both credit risk and market risk as distinct risk factors: credit risk centers on borrower/counterparty default; market risk on adverse market movements.",
       "notes": "Narrow compare — not 'list all risks'."
     },
     {
@@ -196,6 +296,11 @@
       "ticker": "NVDA",
       "expected_route": "both",
       "gold_keywords": ["A100", "Geopolitical"],
+      "required_facts": [
+        "Names compute products (e.g. data-center GPUs such as A100/H100 or GeForce)",
+        "Mentions geopolitical / export-control / China-related risk exposure"
+      ],
+      "gold_answer": "NVIDIA produces data-center/gaming compute GPUs (e.g. A100) and faces geopolitical risks such as U.S. export controls affecting China and related markets.",
       "notes": "Products + EXPOSED_TO_RISK join."
     },
     {
@@ -206,6 +311,8 @@
       "ticker": "AAPL",
       "expected_route": "refuse",
       "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse — Tesla is not an issuer in this corpus.",
       "notes": "Tesla is not an issuer in this corpus (may appear only as a mentioned name)."
     },
     {
@@ -216,6 +323,8 @@
       "ticker": "AAPL",
       "expected_route": "refuse",
       "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse — Bitcoin holdings not in Item 1/1A/7 extract.",
       "notes": "Not in Item 1/1A/7 extract."
     },
     {
@@ -226,6 +335,8 @@
       "ticker": "AAPL",
       "expected_route": "refuse",
       "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse — executive compensation detail not ingested.",
       "notes": "Proxy/comp detail not ingested."
     },
     {
@@ -236,6 +347,8 @@
       "ticker": "MSFT",
       "expected_route": "refuse",
       "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse — Walmart not in the 10-ticker corpus.",
       "notes": "WMT not in the 10-ticker corpus; scoped away from Walmart filings."
     }
   ]

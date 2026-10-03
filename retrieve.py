@@ -54,7 +54,7 @@ def retrieve(
     vector_result: Optional[VectorRetrievalResult] = None
 
     if route in (RetrievalRoute.GRAPH, RetrievalRoute.BOTH):
-        graph_result = retrieve_graph(question)
+        graph_result = retrieve_graph(question, ticker=ticker)
 
     if route in (RetrievalRoute.VECTOR, RetrievalRoute.BOTH):
         vector_result = retrieve_vector(question, ticker=ticker)
