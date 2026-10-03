@@ -182,9 +182,7 @@ def aggregate_report(
 
     accuracy = {}
     for k, v in by_bucket.items():
-        if not v:
-            accuracy[k] = None
-        else:
+        if v:
             accuracy[k] = round(sum(v) / len(v), 4)
 
     latencies = [r.latency_ms for r in results if r.latency_ms is not None]

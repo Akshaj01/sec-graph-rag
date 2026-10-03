@@ -4,8 +4,33 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings (closed-world 
 
 ## Benchmark (hybrid vs vector-only)
 
-Suite: `aapl_smoke` v1 — **20** hand-labeled questions on an **AAPL 5-chunk** smoke corpus (accession `0000320193-25-000079`).  
-Metric: keyword recall on answer text (OOS = correct refuse). Not a 50–100 Q portfolio eval.
+### Multi-company smoke (current)
+
+Suite: `multi_company_smoke` v1 — **24** hand-labeled questions over the local **10-ticker** Item 1/1A/7 corpus (`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`).  
+Metric: keyword recall on answer text (OOS = correct refuse). **Not** a 50–100 Q portfolio eval.
+
+| Hop / bucket | Hybrid score | Vector-only score | n |
+|--------------|-------------:|------------------:|--:|
+| Hop 0 (definitions) | 0.47 | 0.47 | 6 |
+| Hop 1 (single edge) | **0.94** | 0.69 | 8 |
+| Hop 2 (compare / multi-rel) | **1.00** | 0.78 | 6 |
+| OOS (must refuse) | **1.00** | **1.00** | 4 |
+| **Overall mean** | **0.85** | 0.71 | 24 |
+
+| Mode | Mean latency | Notes |
+|------|-------------:|-------|
+| Hybrid | ~9.7 s | Multi-template graph plans + evidence caps; hop-2 no longer refuses/errors |
+| Vector-only | ~7.2 s | Same hop-0 misses; weaker on graph-style hop 1–2 |
+
+Source report: `benchmarks/results/multi_company_smoke_full_rebench.json`  
+Suite: `benchmarks/multi_company_smoke.json`  
+Re-run (paid): `python benchmark_runner.py --suite benchmarks/multi_company_smoke.json --confirm`
+
+**How to read this table:** After hop-2 packing / multi-template / false-refuse fixes, **hybrid leads overall and on hop 1–2**. Hop 0 dipped (some definition asks refused or missed keywords) — still keyword recall, not human accuracy. OOS refuse is clean on this run.
+
+### AAPL 5-chunk smoke (historical)
+
+Suite: `aapl_smoke` v1 — **20** questions on an **AAPL 5-chunk** smoke corpus (accession `0000320193-25-000079`).
 
 | Hop / bucket | Hybrid score | Vector-only score | n |
 |--------------|-------------:|------------------:|--:|
@@ -15,17 +40,7 @@ Metric: keyword recall on answer text (OOS = correct refuse). Not a 50–100 Q p
 | OOS (must refuse) | **1.00** | **1.00** | 4 |
 | **Overall mean** | 0.90 | **0.95** | 20 |
 
-| Mode | Mean latency | Est. cost / query | Est. total (20 Q) |
-|------|-------------:|------------------:|------------------:|
-| Hybrid | **11.0 s** | **~$0.029** | ~$0.55 |
-| Vector-only | 12.4 s | ~$0.046 | ~$0.93 |
-
-Source report: `benchmarks/results/aapl_smoke_20260825T070159Z.json`  
-Re-run: `python benchmark_runner.py --confirm`
-
-**How to read this table:** On this tiny corpus, product/risk names often appear in the same vector chunks the graph was extracted from, so vector-only keyword scores stay high — including hop 2. Hybrid hop 2 dropped because two compare questions hit answer-generation failures / forced refuse (not because retrieval found nothing). Expand the corpus and question set before treating these numbers as a portfolio claim.
-
-One-time graph ingest cost: run `python budget.py AAPL` before `--confirm` extraction (smoke extract is cached after the first paid run).
+Source report: `benchmarks/results/aapl_smoke_20260825T070159Z.json`
 
 ---
 

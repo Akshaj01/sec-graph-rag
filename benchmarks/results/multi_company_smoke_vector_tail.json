@@ -1,0 +1,622 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "1",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "1",
+    "mode": "hybrid",
+    "results": [],
+    "accuracy_by_hop": {},
+    "mean_latency_ms": null,
+    "mean_cost_usd": null,
+    "mean_score": null,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "1",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop0_nvda_datacenter",
+        "mode": "vector_only",
+        "question": "What does NVIDIA say about its Data Center or compute products?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA describes its Data Center and compute products as a comprehensive platform focused on accelerating compute-intensive workloads such as AI, data processing, graphics, robotics, and scientific computing. The platform includes data center-scale infrastructure featuring extreme co-design of GPUs, CPUs, NVLink switches, DPUs, NICs, and networking, along with software stacks and algorithms. NVIDIA emphasizes that it has transitioned from offering individual components to providing full-scale datacenter solutions, with the Blackwell architecture representing the majority of Data Center revenue in fiscal year 2026. The company positions itself as \"a data center scale AI infrastructure company reshaping all industries,\" with customers including major cloud service providers, AI model makers, enterprises, and public sector entities.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item7:0",
+          "0001045810-26-000021:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Data Center",
+          "GPU"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 21534.3,
+        "estimated_cost_usd": 0.051555,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_amzn_aws",
+        "mode": "vector_only",
+        "question": "What is AWS according to Amazon's 10-K?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to Amazon's 10-K, AWS (Amazon Web Services) is a segment of Amazon that serves developers and enterprises of all sizes, including start-ups, government agencies, and academic institutions. AWS offers a broad set of on-demand technology services, including compute, storage, database, analytics, artificial intelligence and machine learning, and other services.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001018724-26-000004:Item1:0",
+          "0001018724-26-000004:Item7:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AWS"
+        ],
+        "keyword_misses": [
+          "cloud"
+        ],
+        "keyword_recall": 0.5,
+        "correct_refuse": null,
+        "latency_ms": 7506.7,
+        "estimated_cost_usd": 0.049056,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "hop0_jpm_credit_risk",
+        "mode": "vector_only",
+        "question": "How does JPMorgan describe credit risk?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "JPMorgan describes credit risk as the risk associated with the default or change in credit profile of a client, counterparty or customer. The Firm is exposed to credit risk through various channels including consumer businesses (home lending, credit card, auto, and business banking), wholesale businesses (underwriting, lending, market-making, hedging, operating services, and securities financing activities), investment securities portfolio, and cash placed with banks. Credit Risk Management monitors and measures credit risk throughout the Firm and defines credit risk policies, procedures and limits through activities such as maintaining a credit risk policy framework, monitoring credit risk across all portfolio segments, setting concentration limits, assigning credit approval authorities, monitoring criticized exposures and delinquent loans, and estimating credit losses.",
+        "claim_count": 7,
+        "cited_chunk_ids": [
+          "0001628280-26-008131:Item7:18",
+          "0001628280-26-008131:Item7:19"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "credit",
+          "risk"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 15045.3,
+        "estimated_cost_usd": 0.055017,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_products",
+        "mode": "vector_only",
+        "question": "What product lines does Apple produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces five main product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables, Home and Accessories (which includes smartwatches, wireless headphones, spatial computers, media streaming devices, and smart speakers), and Services (including advertising, AppleCare, cloud services, digital content, and payment services).",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "iPad"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 10726.0,
+        "estimated_cost_usd": 0.046203,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_msft_products",
+        "mode": "vector_only",
+        "question": "What product lines or segments does Microsoft produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft operates through three main segments: Productivity and Business Processes, Intelligent Cloud, and More Personal Computing. The Productivity and Business Processes segment includes Microsoft 365 (both Commercial and Consumer), LinkedIn, and Dynamics products. The Intelligent Cloud segment comprises Azure and other cloud services, server products, and enterprise services. The More Personal Computing segment includes Windows and Devices (Surface and PC accessories), XBOX (hardware, content, and services), and Search advertising (Bing, Copilot, Microsoft Edge).",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Azure",
+          "Xbox"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 14755.8,
+        "estimated_cost_usd": 0.050343,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_meta_apps",
+        "mode": "vector_only",
+        "question": "Which apps or product lines does Meta produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta produces several apps and product lines organized into two main segments: Family of Apps and Reality Labs. The Family of Apps includes Facebook, Instagram, Messenger, Meta AI, Threads, and WhatsApp. Reality Labs products include Meta Quest VR devices, AI glasses (Ray-Ban Meta and Oakley Meta glasses), Meta Ray-Ban Display with Meta Neural Band, and the Meta Horizon Store for VR software and content.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram",
+          "WhatsApp"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 17853.4,
+        "estimated_cost_usd": 0.045762,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_nvda_products",
+        "mode": "vector_only",
+        "question": "What products does NVIDIA produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA produces a wide range of products across four main markets: Data Center, Gaming, Professional Visualization, and Automotive. Their product portfolio includes GPUs (graphics processing units), CPUs, DPUs (data processing units), networking equipment, system-on-chips (SoCs), and comprehensive software platforms. Key product lines include data center computing and networking platforms (such as Blackwell and Hopper architectures), GeForce GPUs for gaming, RTX GPUs for professional workstations, and the DRIVE platform for autonomous vehicles.",
+        "claim_count": 11,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Automotive"
+        ],
+        "keyword_misses": [
+          "A100"
+        ],
+        "keyword_recall": 0.5,
+        "correct_refuse": null,
+        "latency_ms": 21722.5,
+        "estimated_cost_usd": 0.049479,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "hop1_googl_products",
+        "mode": "vector_only",
+        "question": "What product lines does Alphabet / Google produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Alphabet/Google produces a wide range of product lines across its business segments. In Google Services, core products include ads, Android, Chrome, devices (Pixel family), Gmail, Google Drive, Google Gemini, Google Maps, Google Photos, Google Play, Search, and YouTube. Google Services also offers consumer subscriptions (YouTube TV, YouTube Music and Premium, NFL Sunday Ticket, Google One), platforms (Google Play apps and in-app purchases), and devices (Pixel phones and Pixel Watch). Google Cloud provides Google Cloud Platform (AI infrastructure, Vertex AI, cybersecurity, data and analytics) and Google Workspace (Gmail, Docs, Calendar, Drive, Meet with Gemini integration). Other Bets includes autonomous transportation services through Waymo and various early-stage technology ventures.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0001652044-26-000018:Item1:0",
+          "0001652044-26-000018:Item1:1",
+          "0001652044-26-000018:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Google Cloud",
+          "Google Services"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 17993.6,
+        "estimated_cost_usd": 0.054897,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_xom_commodity_risk",
+        "mode": "vector_only",
+        "question": "What commodity price risks is ExxonMobil exposed to?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "ExxonMobil is exposed to commodity price risks primarily related to oil, gas, and petrochemical prices. The company's operations and earnings are significantly affected by changes in crude oil prices (such as Brent), natural gas prices (such as Henry Hub and TTF), and petrochemical prices, as well as changes in margins on refined products. Price fluctuations impact different business segments differently: material declines in oil or natural gas prices adversely affect the Upstream segment, while material increases can adversely affect the Energy Products, Chemical Products, and Specialty Products segments. For 2026, ExxonMobil estimates that a $1 per barrel change in Brent price would have approximately $700 million annual after-tax effect on Upstream earnings, a $0.10 per million metric British thermal unit change in Henry Hub would have approximately $90 million effect, and a $0.10 per million metric British thermal unit change in TTF would have approximately $20 million effect (excluding derivatives impact).",
+        "claim_count": 8,
+        "cited_chunk_ids": [
+          "0000034088-26-000045:Item1A:0",
+          "0000034088-26-000045:Item7:7",
+          "0000034088-26-000045:Item7:8"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "commodity",
+          "price"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 16869.4,
+        "estimated_cost_usd": 0.048573,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_jnj_medtech",
+        "mode": "vector_only",
+        "question": "Does Johnson & Johnson produce MedTech products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Yes, Johnson & Johnson produces MedTech products. The company is organized into two business segments: Innovative Medicine and MedTech. The MedTech segment develops and manufactures a broad portfolio of products used in cardiovascular, orthopaedics, surgery, and vision, supporting physicians, hospitals, eye care professionals, and healthcare systems across a wide range of acute and elective procedures.",
+        "claim_count": 7,
+        "cited_chunk_ids": [
+          "0000200406-26-000016:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "MedTech"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 12579.8,
+        "estimated_cost_usd": 0.049617,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_competes_meta",
+        "mode": "vector_only",
+        "question": "Does Apple compete with Meta according to the knowledge graph?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Based on the provided evidence, there is no explicit mention of Meta as a competitor to Apple in the knowledge graph or vector evidence. The evidence discusses Apple's competitive landscape in general terms, mentioning that Apple faces competition from companies with significant resources and established offerings, and that competitors imitate Apple's products. However, Meta is not specifically named as a competitor in any of the allowed citation chunks.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Meta"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 8425.7,
+        "estimated_cost_usd": 0.044439,
+        "error": null,
+        "score": 0.0
+      },
+      {
+        "item_id": "hop2_aapl_hardware_services",
+        "mode": "vector_only",
+        "question": "What hardware devices and services does Apple produce?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces a wide range of hardware devices and services. Hardware devices include: iPhone (smartphones), Mac (personal computers including laptops like MacBook Air and MacBook Pro, and desktops like iMac, Mac mini, Mac Studio, and Mac Pro), iPad (tablets), Apple Watch (smartwatches), AirPods and Beats (wireless headphones), Apple Vision Pro (spatial computer), Apple TV 4K (media streaming device), HomePod (smart speakers), and various accessories. Services include: advertising services, AppleCare (support and warranty services), cloud services, digital content platforms (App Store, Apple Arcade, Apple Fitness+, Apple Music, Apple News+, Apple TV+), and payment services (Apple Card and Apple Pay).",
+        "claim_count": 12,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "AppleCare"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 19718.2,
+        "estimated_cost_usd": 0.05127,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_msft_cloud_vs_personal",
+        "mode": "vector_only",
+        "question": "Compare Microsoft's Intelligent Cloud offerings such as Azure with its More Personal Computing products like Xbox.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft's Intelligent Cloud segment, anchored by Azure, focuses on providing cloud infrastructure, AI services, and developer tools that power modern business operations. Azure offers consumption-based cloud services, AI capabilities, and hybrid cloud solutions, with revenue driven primarily by infrastructure-as-a-service and platform-as-a-service consumption. In contrast, the More Personal Computing segment, which includes Xbox (formerly Gaming), centers on consumer experiences through gaming hardware, content, subscriptions like Xbox Game Pass, and cloud gaming services. Xbox revenue comes from subscriptions, first- and third-party game content, and advertising, with growth dependent on expanding the active user base across multiple platforms including consoles, PC, and mobile devices. While Intelligent Cloud serves businesses and developers with scalable infrastructure and AI tools, More Personal Computing puts consumers at the center with gaming and entertainment experiences.",
+        "claim_count": 12,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Azure",
+          "Xbox"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 26958.2,
+        "estimated_cost_usd": 0.056059,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_meta_apps_vs_reality",
+        "mode": "vector_only",
+        "question": "How do Meta's Family of Apps products like Facebook and Instagram relate to Reality Labs?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta's Family of Apps (FoA) products like Facebook and Instagram relate to Reality Labs (RL) in several key ways. First, they represent Meta's two distinct reporting segments, with FoA generating substantially all revenue from advertising on platforms like Facebook and Instagram, while RL generates revenue from consumer hardware products. Second, the majority of Meta's investments are directed toward developing the Family of Apps - in 2025, 82% of total costs and expenses were recognized in FoA and 18% in RL. Third, Meta's ability to support its Reality Labs efforts to build the next computing platform is dependent on generating sufficient profits from other areas of the business, primarily the Family of Apps. Fourth, both segments benefit from Meta's AI investments, which support initiatives across products including content ranking in apps, advertising tools, and new generative AI experiences. Finally, Meta AI, which is part of the Family of Apps products, is available across their apps as well as on AI glasses, which are Reality Labs products, demonstrating integration between the two segments.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram",
+          "Reality Labs"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 20739.7,
+        "estimated_cost_usd": 0.04992,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_amzn_aws_and_prime",
+        "mode": "vector_only",
+        "question": "What does Amazon say about AWS and Amazon Prime as product lines?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Amazon describes AWS (Amazon Web Services) as a segment that offers a broad set of on-demand technology services, including compute, storage, database, analytics, artificial intelligence and machine learning, and other services to developers and enterprises of all sizes, including start-ups, government agencies, and academic institutions. AWS sales increased 20% in 2025 compared to the prior year, driven primarily by increased customer usage, partially offset by pricing changes from long-term customer contracts. Amazon Prime is described as a membership program that includes fast, free shipping on tens of millions of items, access to award-winning movies and series, live sports, and other benefits. Amazon views Prime membership benefits and other shipping offers as effective worldwide marketing tools and intends to continue offering them indefinitely.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0001018724-26-000004:Item1:0",
+          "0001018724-26-000004:Item7:2",
+          "0001018724-26-000004:Item7:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AWS",
+          "Prime"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 10910.9,
+        "estimated_cost_usd": 0.052467,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_jpm_credit_vs_market",
+        "mode": "vector_only",
+        "question": "Briefly compare JPMorgan's credit risk and market risk as named risk factors.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "JPMorgan identifies both credit risk and market risk as named risk factors in its 10-K filing. Credit risk is defined as the risk associated with the default or change in credit profile of a client, counterparty or customer, encompassing consumer credit risk, wholesale credit risk, and investment portfolio risk. The Firm is exposed to credit risk through its consumer businesses (home lending, credit card, auto, and business banking) and wholesale businesses (underwriting, lending, market-making, hedging, operating services, and securities financing activities). Market risk is defined as the risk associated with the effect of changes in market factors such as interest and foreign exchange rates, equity and commodity prices, credit spreads or implied volatilities, on the value of assets and liabilities held for both short and long term. Market Risk Management uses various metrics including value-at-risk, stress testing, profit and loss drawdowns, earnings-at-risk, economic value sensitivity, and other sensitivity-based measures to capture market risk across the Firm's trading, investment, and client-facing activities.",
+        "claim_count": 8,
+        "cited_chunk_ids": [
+          "0001628280-26-008131:Item1A:3",
+          "0001628280-26-008131:Item1A:4",
+          "0001628280-26-008131:Item7:18",
+          "0001628280-26-008131:Item7:25"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Credit",
+          "Market"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 17301.0,
+        "estimated_cost_usd": 0.056952,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_nvda_products_and_geo_risk",
+        "mode": "vector_only",
+        "question": "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA produces a range of compute products centered around GPUs, CPUs, DPUs, and networking solutions for data centers, including the Blackwell and Rubin architectures for AI and accelerated computing workloads. The company also offers GeForce RTX GPUs for gaming, NVIDIA RTX PRO GPUs for professional visualization, and DRIVE platform solutions for automotive applications. NVIDIA faces significant geopolitical risks, particularly related to U.S. export controls targeting China and other countries, which have restricted sales of high-performance products like the A100, H100, H20, and GB200. These controls have resulted in billions in inventory charges, limited market access, and competitive disadvantages. Additional risks include potential worldwide licensing requirements, supply chain disruptions from geopolitical tensions in regions where manufacturing is concentrated (particularly Asia and Taiwan), cybersecurity threats heightened by geopolitical conflicts, and regulatory scrutiny from multiple countries regarding competition and AI technologies.",
+        "claim_count": 14,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1A:3",
+          "0001045810-26-000021:Item1A:6",
+          "0001045810-26-000021:Item1A:7"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "A100",
+          "Geopolitical"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 27630.3,
+        "estimated_cost_usd": 0.061233,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_tesla_battery",
+        "mode": "vector_only",
+        "question": "What battery supply risks does Tesla face in its latest 10-K?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence does not contain information about Tesla's battery supply risks. The evidence pack consists entirely of excerpts from Apple Inc.'s 2025 Form 10-K filing, which discusses Apple's business risks including supply chain dependencies, component sourcing, manufacturing partners, and various operational risks. No information about Tesla or battery-specific supply chain risks is present in the available evidence.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 6469.9,
+        "estimated_cost_usd": 0.048078,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_aapl_bitcoin",
+        "mode": "vector_only",
+        "question": "How many Bitcoin does Apple hold on its balance sheet?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple's 10-K filing does not disclose any Bitcoin holdings on its balance sheet. The available evidence discusses Apple's cash, cash equivalents, and marketable securities totaling $132.4 billion as of September 27, 2025, but there is no mention of Bitcoin or cryptocurrency assets.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item7:0",
+          "0000320193-25-000079:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": false,
+        "latency_ms": 5649.5,
+        "estimated_cost_usd": 0.038649,
+        "error": null,
+        "score": 0.0
+      },
+      {
+        "item_id": "oos_cook_comp",
+        "mode": "vector_only",
+        "question": "What was Tim Cook's exact total compensation last year?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence does not contain information about Tim Cook's exact total compensation for last year. The evidence consists of excerpts from Apple's 10-K filing that discuss business operations, financial results, product announcements, employee headcount, and various financial and operational matters, but does not include executive compensation details.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:5",
+          "0000320193-25-000079:Item7:0",
+          "0000320193-25-000079:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 5870.7,
+        "estimated_cost_usd": 0.038499,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_wmt_revenue",
+        "mode": "vector_only",
+        "question": "What percentage of Walmart's revenue comes from Sam's Club?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain information about Walmart or Sam's Club revenue. All the evidence chunks are from Microsoft Corporation's 10-K filing and discuss Microsoft's business segments, products, and financial performance. There is no data available to answer the question about what percentage of Walmart's revenue comes from Sam's Club.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item7:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 5875.2,
+        "estimated_cost_usd": 0.047898,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 0.8333,
+      "hop_1": 0.8125,
+      "hop_2": 1.0,
+      "oos": 0.75
+    },
+    "mean_latency_ms": 14863.6,
+    "mean_cost_usd": 0.049808,
+    "mean_score": 0.8571,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); null hop = no items run"
+  },
+  "notes": "Step R comparison; paste accuracy_by_hop into README in Step S."
+}

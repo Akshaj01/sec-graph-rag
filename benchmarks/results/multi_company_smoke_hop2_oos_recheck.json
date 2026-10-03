@@ -1,0 +1,110 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "1",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "1",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop2_meta_apps_vs_reality",
+        "mode": "hybrid",
+        "question": "How do Meta's Family of Apps products like Facebook and Instagram relate to Reality Labs?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": true,
+        "summary": "The evidence provided does not contain information about the relationship between Meta's Family of Apps products (Facebook and Instagram) and Reality Labs. The available evidence focuses on risks, competition, and regulatory matters related to Facebook and Instagram, but does not discuss Reality Labs or how these business segments relate to each other.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:9",
+          "0001628280-26-003942:Item7:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram",
+          "Reality Labs"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 13085.4,
+        "estimated_cost_usd": 0.008865,
+        "error": null,
+        "score": 0.0
+      },
+      {
+        "item_id": "hop2_nvda_products_and_geo_risk",
+        "mode": "hybrid",
+        "question": "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": false,
+        "regenerated": false,
+        "summary": "",
+        "claim_count": 0,
+        "cited_chunk_ids": [],
+        "route_effective": null,
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": null,
+        "latency_ms": 3451.4,
+        "estimated_cost_usd": null,
+        "error": "InstructorRetryException: <failed_attempts>\n\n<generation number=\"1\">\n<exception>\n    1 validation error for list[any]\n  List should have at most 1 item after validation, not 2 [type=too_long, input_value=['{\"template_id\": \"compan...VIDIA is exposed to.\"}'], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/too_long\n</exception>\n<completion>\n    Message(id='msg_011Cff2wPuYa8fEU4kmMHP1w', container=None, content=[ToolUseBlock(id='toolu_01FxGJutFRySifDY3JoX2o8J', caller=DirectCaller(type='direct'), input={'template_id': 'company_products', 'entity_mentions': ['NVIDIA'], 'rationale': 'User is asking about the compute products that NVIDIA produces.'}, name='GraphQueryPlan', type='tool_use', toolset_name=None), ToolUseBlock(id='toolu_01MDYJggiLREqwV9yT3ge6pX', caller=DirectCaller(type='direct'), input={'template_id': 'company_risks', 'entity_mentions': ['NVIDIA'], 'rationale': 'User is asking about geopolitical risks that NVIDIA is exposed to.'}, name='GraphQueryPlan', type='tool_use', toolset_name=None)], model='claude-haiku-4-5-20251001', role='assistant', stop_details=None, stop_reason='tool_use', stop_sequence=None, type='message', usage=Usage(cache_creation=None, cache_creation_input_tokens=0, cache_read_input_tokens=0, inference_geo=None, input_tokens=1096, output_tokens=181, output_tokens_details=None, server_tool_use=None, service_tier=None), diagnostics=None)\n</completion>\n</generation>\n\n<generation number=\"2\">\n<exception>\n    Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.2: `tool_use` ids were found without `tool_result` blocks immediately after: toolu_01FxGJutFRySifDY3JoX2o8J, toolu_01MDYJggiLREqwV9yT3ge6pX. Each `tool_use` block must have a corresponding `tool_result` block in the next message.'}, 'request_id': 'req_011Cff2wV474us2QtBXouDy2'}\n</exception>\n<completion>\n    Message(id='msg_011Cff2wPuYa8fEU4kmMHP1w', container=None, content=[ToolUseBlock(id='toolu_01FxGJutFRySifDY3JoX2o8J', caller=DirectCaller(type='direct'), input={'template_id': 'company_products', 'entity_mentions': ['NVIDIA'], 'rationale': 'User is asking about the compute products that NVIDIA produces.'}, name='GraphQueryPlan', type='tool_use', toolset_name=None), ToolUseBlock(id='toolu_01MDYJggiLREqwV9yT3ge6pX', caller=DirectCaller(type='direct'), input={'template_id': 'company_risks', 'entity_mentions': ['NVIDIA'], 'rationale': 'User is asking about geopolitical risks that NVIDIA is exposed to.'}, name='GraphQueryPlan', type='tool_use', toolset_name=None)], model='claude-haiku-4-5-20251001', role='assistant', stop_details=None, stop_reason='tool_use', stop_sequence=None, type='message', usage=Usage(cache_creation=None, cache_creation_input_tokens=0, cache_read_input_tokens=0, inference_geo=None, input_tokens=1096, output_tokens=181, output_tokens_details=None, server_tool_use=None, service_tier=None), diagnostics=None)\n</completion>\n</generation>\n\n</failed_attempts>\n\n<last_exception>\n    Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.2: `tool_use` ids were found without `tool_result` blocks immediately after: toolu_01FxGJutFRySifDY3JoX2o8J, toolu_01MDYJggiLREqwV9yT3ge6pX. Each `tool_use` block must have a corresponding `tool_result` block in the next message.'}, 'request_id': 'req_011Cff2wV474us2QtBXouDy2'}\n</last_exception>",
+        "score": 0.0
+      },
+      {
+        "item_id": "oos_aapl_bitcoin",
+        "mode": "hybrid",
+        "question": "How many Bitcoin does Apple hold on its balance sheet?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain any information about Apple holding Bitcoin on its balance sheet. The available excerpts cover product announcements, business operations, purchase obligations, intellectual property, and privacy matters, but do not mention Bitcoin or cryptocurrency holdings.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:5",
+          "0000320193-25-000079:Item7:0",
+          "0000320193-25-000079:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 8216.3,
+        "estimated_cost_usd": 0.007548,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_2": 0.0,
+      "oos": 1.0
+    },
+    "mean_latency_ms": 8251.0,
+    "mean_cost_usd": 0.008207,
+    "mean_score": 0.3333,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "1",
+    "mode": "vector_only",
+    "results": [],
+    "accuracy_by_hop": {},
+    "mean_latency_ms": null,
+    "mean_cost_usd": null,
+    "mean_score": null,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); null hop = no items run"
+  },
+  "notes": "Step R comparison; paste accuracy_by_hop into README in Step S."
+}

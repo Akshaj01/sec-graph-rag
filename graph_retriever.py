@@ -104,9 +104,10 @@ _TEMPLATES: Dict[GraphTemplateId, str] = {
 
 
 PLAN_SYSTEM_PROMPT = f"""
-You plan a Neo4j graph lookup for a question about SEC 10-K filings.
+You plan Neo4j graph lookup(s) for a question about SEC 10-K filings.
 
-Choose exactly one template_id from this allowlist:
+Return ONE plan object. Put 1–3 allowlisted template_ids in order (most useful first).
+Allowlist:
 {", ".join(t.value for t in GraphTemplateId)}
 
 Guidance:
@@ -117,21 +118,41 @@ Guidance:
 - company_subsidiaries: subsidiaries owned by a company
 - entity_outgoing: broad "what is connected to X" when no narrower template fits
 
-Also extract entity_mentions: company/product/risk names that appear in the question
-(or are clearly implied, e.g. "Apple" for "AAPL products"). Prefer the primary
-subject company first in the list.
+Multi-aspect questions (compare products AND risks, hardware AND services, etc.):
+include TWO templates (e.g. company_products then company_risks). Do NOT emit multiple
+tool calls — one plan with template_ids=[...].
 
-Never invent Cypher. Only pick template_id + entity names.
+Also extract entity_mentions: company/product/risk names in the question (or clearly
+implied). Prefer the primary subject company first.
+
+Never invent Cypher. Only pick template_ids + entity names.
 """.strip()
 
 
 class GraphQueryPlan(BaseModel):
-    template_id: GraphTemplateId
+    """
+    One structured plan (single tool call).
+
+    template_ids supports hop-2 questions that need two relation types without
+    emitting multiple Instructor tool_use blocks (which crashes the API loop).
+    """
+
+    template_ids: List[GraphTemplateId] = Field(
+        ...,
+        min_length=1,
+        max_length=3,
+        description="Allowlisted templates to run in order (1–3).",
+    )
     entity_mentions: List[str] = Field(
         ...,
         description="Names to resolve to Neo4j ids; primary subject first.",
     )
-    rationale: str = Field(..., description="One sentence why this template fits.")
+    rationale: str = Field(..., description="One sentence why these templates fit.")
+
+    @property
+    def template_id(self) -> GraphTemplateId:
+        """Primary template (first) — kept for older call sites / logs."""
+        return self.template_ids[0]
 
 
 class ResolvedEntity(BaseModel):
@@ -156,11 +177,96 @@ class GraphFact(BaseModel):
 class GraphRetrievalResult(BaseModel):
     question: str
     template_id: GraphTemplateId
+    template_ids: List[GraphTemplateId] = Field(default_factory=list)
     plan_rationale: str
     resolved_entities: List[ResolvedEntity]
     entity_id_used: Optional[str] = None
     facts: List[GraphFact] = Field(default_factory=list)
     cypher_ran: bool = False
+
+
+def _dedupe_facts(facts: List[GraphFact]) -> List[GraphFact]:
+    seen: set = set()
+    out: List[GraphFact] = []
+    for f in facts:
+        key = (f.source_id, f.rel_type, f.target_id)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(f)
+    return out
+
+
+def augment_template_ids(
+    question: str, template_ids: List[GraphTemplateId]
+) -> List[GraphTemplateId]:
+    """
+    Deterministic hop-2 expansion when the planner returns only one template.
+
+    If the question clearly asks about products/services AND risks (or similar
+    multi-aspect pairs), append the missing allowlisted template. Caps at 3.
+    """
+    q = question.lower()
+    out = list(template_ids)
+    have = set(out)
+
+    wants_products = any(
+        w in q
+        for w in (
+            "product",
+            "products",
+            "produce",
+            "produces",
+            "service",
+            "services",
+            "app",
+            "apps",
+            "hardware",
+            "cloud",
+            "compute",
+        )
+    )
+    wants_risks = any(w in q for w in ("risk", "risks", "exposed"))
+    wants_competitors = any(w in q for w in ("compet", "vs ", " versus "))
+
+    def _add(tid: GraphTemplateId) -> None:
+        if tid not in have and len(out) < 3:
+            out.append(tid)
+            have.add(tid)
+
+    if wants_products and wants_risks:
+        _add(GraphTemplateId.COMPANY_PRODUCTS)
+        _add(GraphTemplateId.COMPANY_RISKS)
+    if wants_products and wants_competitors:
+        _add(GraphTemplateId.COMPANY_PRODUCTS)
+        _add(GraphTemplateId.COMPANY_COMPETITORS)
+
+    return out[:3]
+
+
+def merge_template_facts(
+    template_ids: List[GraphTemplateId],
+    *,
+    entity_id: str,
+    limit: Optional[int] = None,
+    driver: Optional[Driver] = None,
+) -> List[GraphFact]:
+    """Run each allowlisted template and merge/dedupe facts."""
+    per = settings.GRAPH_RETRIEVAL_LIMIT if limit is None else limit
+    # Split the limit across templates so hop-2 packs stay bounded.
+    n = max(1, len(template_ids))
+    per_template = max(3, per // n)
+    merged: List[GraphFact] = []
+    for tid in template_ids:
+        merged.extend(
+            run_template(
+                tid,
+                entity_id=entity_id,
+                limit=per_template,
+                driver=driver,
+            )
+        )
+    return _dedupe_facts(merged)
 
 
 def _build_client() -> instructor.Instructor:
@@ -310,7 +416,7 @@ def retrieve_graph(
     limit: Optional[int] = None,
 ) -> GraphRetrievalResult:
     """
-    End-to-end Step L: plan → resolve → parameterized template query.
+    End-to-end Step L: plan → resolve → parameterized template query(ies).
     """
     plan = plan_graph_query(question, client=client)
     own = driver is None
@@ -321,18 +427,18 @@ def retrieve_graph(
         for mention in plan.entity_mentions:
             resolved.append(resolve_mention_to_node(mention, driver=driver))
 
-        # Prefer first resolved mention; else try "APPLE" if question is AAPL-ish — no:
-        # stick to resolved list only.
         entity_id: Optional[str] = None
         for r in resolved:
             if r.resolved and r.entity_id:
                 entity_id = r.entity_id
                 break
 
+        template_ids = augment_template_ids(question, list(plan.template_ids))
         if entity_id is None:
             return GraphRetrievalResult(
                 question=question,
-                template_id=plan.template_id,
+                template_id=template_ids[0],
+                template_ids=template_ids,
                 plan_rationale=plan.rationale,
                 resolved_entities=resolved,
                 entity_id_used=None,
@@ -340,15 +446,16 @@ def retrieve_graph(
                 cypher_ran=False,
             )
 
-        facts = run_template(
-            plan.template_id,
+        facts = merge_template_facts(
+            template_ids,
             entity_id=entity_id,
             limit=limit,
             driver=driver,
         )
         return GraphRetrievalResult(
             question=question,
-            template_id=plan.template_id,
+            template_id=template_ids[0],
+            template_ids=template_ids,
             plan_rationale=plan.rationale,
             resolved_entities=resolved,
             entity_id_used=entity_id,

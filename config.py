@@ -58,7 +58,7 @@ class Settings(BaseSettings):
     ROUTER_MODEL: str = "claude-haiku-4-5"
     ROUTER_CONFIDENCE_THRESHOLD: float = 0.75
     ROUTER_MAX_RETRIES: int = 2
-    ROUTER_MAX_TOKENS: int = 256
+    ROUTER_MAX_TOKENS: int = 512
     ROUTER_LOG_PATH: str = "./data/route_log.db"
 
     # Step L: graph retrieval (parameterized templates)
@@ -70,9 +70,18 @@ class Settings(BaseSettings):
     # Step N/O: grounded answer + citation validation
     ANSWER_MODEL: str = "claude-sonnet-4-5"
     ANSWER_MAX_RETRIES: int = 2
-    ANSWER_MAX_TOKENS: int = 2048
+    # Multi-company / hop-2 evidence packs can be large; 2048 truncated drafts mid-tool-call.
+    ANSWER_MAX_TOKENS: int = 8192
     # Extra full regenerate attempts after citation validation fails (0 = validate only).
     ANSWER_CITATION_REGENERATE_ATTEMPTS: int = 1
+    # Cap evidence sent to the answer model (hop-2 blowups / false refuses).
+    ANSWER_MAX_GRAPH_ITEMS: int = 12
+    ANSWER_MAX_VECTOR_ITEMS: int = 5
+    ANSWER_MAX_VECTOR_CHARS: int = 1200
+    ANSWER_GRAPH_CONTEXT_CHARS: int = 160
+    ANSWER_MAX_PROMPT_CHARS: int = 18000
+    # One extra rewrite when the model refuses despite on-topic GRAPH facts.
+    ANSWER_UNJUSTIFIED_REFUSE_REPAIR: bool = True
 
     # Step R: Haiku-ish pricing for router/graph-plan cost estimates
     HAIKU_INPUT_COST_PER_MTOK: float = 0.80

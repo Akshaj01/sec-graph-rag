@@ -1,0 +1,136 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "1",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "1",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop2_meta_apps_vs_reality",
+        "mode": "hybrid",
+        "question": "How do Meta's Family of Apps products like Facebook and Instagram relate to Reality Labs?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta operates two distinct business segments: Family of Apps (FoA) and Reality Labs (RL). Facebook and Instagram are significant revenue-generating products within the Family of Apps segment, while Reality Labs is a separate segment focused on different products and technologies.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1A:0",
+          "0001628280-26-003942:Item1A:1",
+          "0001628280-26-003942:Item1A:11",
+          "0001628280-26-003942:Item1A:12",
+          "0001628280-26-003942:Item1A:13",
+          "0001628280-26-003942:Item1A:14",
+          "0001628280-26-003942:Item1A:2",
+          "0001628280-26-003942:Item1A:3",
+          "0001628280-26-003942:Item1A:5",
+          "0001628280-26-003942:Item1A:6",
+          "0001628280-26-003942:Item1A:7",
+          "0001628280-26-003942:Item7:0",
+          "0001628280-26-003942:Item7:1",
+          "0001628280-26-003942:Item7:2",
+          "0001628280-26-003942:Item7:5"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram",
+          "Reality Labs"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 10168.9,
+        "estimated_cost_usd": 0.006942,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_nvda_products_and_geo_risk",
+        "mode": "hybrid",
+        "question": "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA produces several compute products including GPUs like the A100, H100, and H20 for data centers, GeForce RTX GPUs for gaming, the Grace data center CPU, and software platforms like CUDA. The company faces significant geopolitical risks primarily related to U.S. export controls on advanced chips to China and other countries, which have resulted in licensing requirements for products like the H100, H20, and GB200, leading to billions in inventory charges. NVIDIA also faces regulatory scrutiny from competition authorities in multiple countries including the EU, U.S., UK, China, South Korea, and Japan regarding its AI and GPU businesses.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1:3",
+          "0001045810-26-000021:Item1A:3",
+          "0001045810-26-000021:Item1A:6",
+          "0001045810-26-000021:Item1A:7",
+          "0001045810-26-000021:Item7:0",
+          "0001045810-26-000021:Item7:2"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "A100",
+          "Geopolitical"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 19678.4,
+        "estimated_cost_usd": 0.016911,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_aapl_bitcoin",
+        "mode": "hybrid",
+        "question": "How many Bitcoin does Apple hold on its balance sheet?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence does not contain any information about Apple holding Bitcoin on its balance sheet. The provided sections cover Apple's business operations, product announcements, purchase obligations, and data privacy matters, but do not mention Bitcoin or cryptocurrency holdings.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:5",
+          "0000320193-25-000079:Item7:0",
+          "0000320193-25-000079:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "correct_refuse": true,
+        "latency_ms": 6335.6,
+        "estimated_cost_usd": 0.007623,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_2": 1.0,
+      "oos": 1.0
+    },
+    "mean_latency_ms": 12061.0,
+    "mean_cost_usd": 0.010492,
+    "mean_score": 1.0,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "1",
+    "mode": "vector_only",
+    "results": [],
+    "accuracy_by_hop": {},
+    "mean_latency_ms": null,
+    "mean_cost_usd": null,
+    "mean_score": null,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); null hop = no items run"
+  },
+  "notes": "Step R comparison; paste accuracy_by_hop into README in Step S."
+}

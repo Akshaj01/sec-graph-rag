@@ -1,0 +1,242 @@
+{
+  "name": "multi_company_smoke",
+  "version": "1",
+  "corpus_notes": "Hand-labeled against the local 10-ticker full Item 1/1A/7 corpus (AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM). Not a 50-100 portfolio eval — hop-stratified multi-company smoke to exercise ticker-scoped products/risks and global Company nodes after the home_ticker fix.",
+  "items": [
+    {
+      "id": "hop0_aapl_applecare",
+      "question": "What is AppleCare?",
+      "hop": 0,
+      "ticker": "AAPL",
+      "expected_route": "vector",
+      "gold_keywords": ["AppleCare", "support", "service"],
+      "notes": "Definition-style; vector passage in Apple Item 1."
+    },
+    {
+      "id": "hop0_msft_azure",
+      "question": "What is Microsoft Azure according to the filing?",
+      "hop": 0,
+      "ticker": "MSFT",
+      "expected_route": "vector",
+      "gold_keywords": ["Azure", "cloud"],
+      "gold_entity_ids": ["MSFT_AZURE"],
+      "notes": "Cloud product definition in MSFT Item 1."
+    },
+    {
+      "id": "hop0_meta_instagram",
+      "question": "What is Instagram as described in Meta's filing?",
+      "hop": 0,
+      "ticker": "META",
+      "expected_route": "vector",
+      "gold_keywords": ["Instagram", "photo", "video"],
+      "gold_entity_ids": ["META_INSTAGRAM"],
+      "notes": "Family of Apps product prose."
+    },
+    {
+      "id": "hop0_nvda_datacenter",
+      "question": "What does NVIDIA say about its Data Center or compute products?",
+      "hop": 0,
+      "ticker": "NVDA",
+      "expected_route": "vector",
+      "gold_keywords": ["Data Center", "GPU"],
+      "notes": "Product/segment prose in NVDA Item 1."
+    },
+    {
+      "id": "hop0_amzn_aws",
+      "question": "What is AWS according to Amazon's 10-K?",
+      "hop": 0,
+      "ticker": "AMZN",
+      "expected_route": "vector",
+      "gold_keywords": ["AWS", "cloud"],
+      "gold_entity_ids": ["AMZN_AWS"],
+      "notes": "Amazon Web Services definition."
+    },
+    {
+      "id": "hop0_jpm_credit_risk",
+      "question": "How does JPMorgan describe credit risk?",
+      "hop": 0,
+      "ticker": "JPM",
+      "expected_route": "vector",
+      "gold_keywords": ["credit", "risk"],
+      "gold_entity_ids": ["JPM_CREDITRISK"],
+      "notes": "Focused risk definition — avoid asking for all risks (token blowup)."
+    },
+    {
+      "id": "hop1_aapl_products",
+      "question": "What product lines does Apple produce?",
+      "hop": 1,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["iPhone", "Mac", "iPad"],
+      "gold_entity_ids": ["AAPL_IPHONE", "AAPL_MAC", "AAPL_IPAD"],
+      "notes": "PRODUCES_PRODUCT hop; ticker-prefixed product ids."
+    },
+    {
+      "id": "hop1_msft_products",
+      "question": "What product lines or segments does Microsoft produce?",
+      "hop": 1,
+      "ticker": "MSFT",
+      "expected_route": "graph",
+      "gold_keywords": ["Azure", "Xbox"],
+      "gold_entity_ids": ["MSFT_AZURE", "MSFT_XBOX"],
+      "notes": "MSFT PRODUCES_PRODUCT hop."
+    },
+    {
+      "id": "hop1_meta_apps",
+      "question": "Which apps or product lines does Meta produce?",
+      "hop": 1,
+      "ticker": "META",
+      "expected_route": "graph",
+      "gold_keywords": ["Facebook", "Instagram", "WhatsApp"],
+      "gold_entity_ids": ["META_FACEBOOK", "META_INSTAGRAM", "META_WHATSAPP"],
+      "notes": "Family of Apps graph hop."
+    },
+    {
+      "id": "hop1_nvda_products",
+      "question": "What products does NVIDIA produce?",
+      "hop": 1,
+      "ticker": "NVDA",
+      "expected_route": "graph",
+      "gold_keywords": ["A100", "Automotive"],
+      "gold_entity_ids": ["NVDA_A100", "NVDA_AUTOMOTIVE"],
+      "notes": "NVDA product hop."
+    },
+    {
+      "id": "hop1_googl_products",
+      "question": "What product lines does Alphabet / Google produce?",
+      "hop": 1,
+      "ticker": "GOOGL",
+      "expected_route": "graph",
+      "gold_keywords": ["Google Cloud", "Google Services"],
+      "gold_entity_ids": ["GOOGL_GOOGLECLOUD", "GOOGL_GOOGLESERVICES"],
+      "notes": "GOOGL segment hop."
+    },
+    {
+      "id": "hop1_xom_commodity_risk",
+      "question": "What commodity price risks is ExxonMobil exposed to?",
+      "hop": 1,
+      "ticker": "XOM",
+      "expected_route": "graph",
+      "gold_keywords": ["commodity", "price"],
+      "gold_entity_ids": ["XOM_COMMODITYPRICERISK"],
+      "notes": "EXPOSED_TO_RISK hop."
+    },
+    {
+      "id": "hop1_jnj_medtech",
+      "question": "Does Johnson & Johnson produce MedTech products?",
+      "hop": 1,
+      "ticker": "JNJ",
+      "expected_route": "graph",
+      "gold_keywords": ["MedTech"],
+      "gold_entity_ids": ["JNJ_MEDTECH"],
+      "notes": "Narrow single-edge check."
+    },
+    {
+      "id": "hop1_aapl_competes_meta",
+      "question": "Does Apple compete with Meta according to the knowledge graph?",
+      "hop": 1,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["Meta"],
+      "gold_entity_ids": ["META"],
+      "notes": "COMPETES_WITH onto global Company node META."
+    },
+    {
+      "id": "hop2_aapl_hardware_services",
+      "question": "What hardware devices and services does Apple produce?",
+      "hop": 2,
+      "ticker": "AAPL",
+      "expected_route": "graph",
+      "gold_keywords": ["iPhone", "Mac", "AppleCare"],
+      "notes": "Aggregate across multiple PRODUCES_PRODUCT edges."
+    },
+    {
+      "id": "hop2_msft_cloud_vs_personal",
+      "question": "Compare Microsoft's Intelligent Cloud offerings such as Azure with its More Personal Computing products like Xbox.",
+      "hop": 2,
+      "ticker": "MSFT",
+      "expected_route": "both",
+      "gold_keywords": ["Azure", "Xbox"],
+      "gold_entity_ids": ["MSFT_AZURE", "MSFT_XBOX"],
+      "notes": "Two product segments in one answer."
+    },
+    {
+      "id": "hop2_meta_apps_vs_reality",
+      "question": "How do Meta's Family of Apps products like Facebook and Instagram relate to Reality Labs?",
+      "hop": 2,
+      "ticker": "META",
+      "expected_route": "both",
+      "gold_keywords": ["Facebook", "Instagram", "Reality Labs"],
+      "notes": "Apps vs Reality Labs aggregation."
+    },
+    {
+      "id": "hop2_amzn_aws_and_prime",
+      "question": "What does Amazon say about AWS and Amazon Prime as product lines?",
+      "hop": 2,
+      "ticker": "AMZN",
+      "expected_route": "both",
+      "gold_keywords": ["AWS", "Prime"],
+      "gold_entity_ids": ["AMZN_AWS", "AMZN_AMAZONPRIME"],
+      "notes": "Two AMZN product lines."
+    },
+    {
+      "id": "hop2_jpm_credit_vs_market",
+      "question": "Briefly compare JPMorgan's credit risk and market risk as named risk factors.",
+      "hop": 2,
+      "ticker": "JPM",
+      "expected_route": "graph",
+      "gold_keywords": ["Credit", "Market"],
+      "gold_entity_ids": ["JPM_CREDITRISK", "JPM_MARKETRISK"],
+      "notes": "Narrow compare — not 'list all risks'."
+    },
+    {
+      "id": "hop2_nvda_products_and_geo_risk",
+      "question": "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+      "hop": 2,
+      "ticker": "NVDA",
+      "expected_route": "both",
+      "gold_keywords": ["A100", "Geopolitical"],
+      "notes": "Products + EXPOSED_TO_RISK join."
+    },
+    {
+      "id": "oos_tesla_battery",
+      "question": "What battery supply risks does Tesla face in its latest 10-K?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "notes": "Tesla is not an issuer in this corpus (may appear only as a mentioned name)."
+    },
+    {
+      "id": "oos_aapl_bitcoin",
+      "question": "How many Bitcoin does Apple hold on its balance sheet?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "notes": "Not in Item 1/1A/7 extract."
+    },
+    {
+      "id": "oos_cook_comp",
+      "question": "What was Tim Cook's exact total compensation last year?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "notes": "Proxy/comp detail not ingested."
+    },
+    {
+      "id": "oos_wmt_revenue",
+      "question": "What percentage of Walmart's revenue comes from Sam's Club?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "MSFT",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "notes": "WMT not in the 10-ticker corpus; scoped away from Walmart filings."
+    }
+  ]
+}

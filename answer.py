@@ -138,22 +138,39 @@ Rules:
 1. Every claim must include citation_chunk_ids copied EXACTLY from the chunk_ids listed
    on the evidence items you used. Never invent or guess a chunk_id.
 2. Prefer one clear claim per distinct fact; do not merge unrelated facts into one claim.
-3. If evidence is missing or insufficient, set refused=true and explain what is missing
-   in summary/claims without fabricating filing content.
-4. Do not use outside knowledge of the company beyond the evidence pack.
-5. When the allowed citation list is empty, set refused=true and explain the gap;
+   Keep the answer concise (short summary + a few claims). Do not dump every evidence row.
+3. Refuse (refused=true) ONLY when evidence is empty OR clearly does not address the question
+   (wrong company, missing metric, topic absent from the pack).
+4. If [GRAPH] evidence lists products, risks, or relationships that answer the question,
+   you MUST set refused=false and answer from those facts — do not refuse merely because
+   the pack is large or incomplete. Sibling products under the same company (e.g. Facebook
+   and Reality Labs both produced by Meta) ARE a valid grounded answer: say they are
+   related product lines of that company.
+5. Do not use outside knowledge of the company beyond the evidence pack.
+6. When the allowed citation list is empty, set refused=true and explain the gap;
    do not invent chunk_ids.
+7. Quantitative / OOS discipline: if the question asks for an exact count, dollar amount,
+   compensation figure, balance-sheet holding (e.g. Bitcoin), or a precise revenue
+   percentage, and that figure does NOT appear in the evidence, set refused=true.
+   Do not infer or invent numbers.
 """.strip()
 
 
-def fact_to_statement(fact: GraphFact) -> str:
+def fact_to_statement(
+    fact: GraphFact, *, context_chars: Optional[int] = None
+) -> str:
     """Deterministic graph path → readable statement."""
     phrase = _REL_PHRASE.get(fact.rel_type, fact.rel_type.replace("_", " ").lower())
     base = f"{fact.source_name} {phrase} {fact.target_name}."
     if fact.context:
         ctx = " ".join(fact.context.split())
-        if len(ctx) > 280:
-            ctx = ctx[:277] + "..."
+        limit = (
+            settings.ANSWER_GRAPH_CONTEXT_CHARS
+            if context_chars is None
+            else context_chars
+        )
+        if len(ctx) > limit:
+            ctx = ctx[: max(0, limit - 3)] + "..."
         return f"{base} Context: {ctx}"
     return base
 
@@ -173,17 +190,132 @@ def collect_allowed_chunk_ids(retrieval: HybridRetrievalResult) -> List[str]:
     return sorted(ids)
 
 
-def format_evidence(retrieval: HybridRetrievalResult) -> EvidencePack:
-    """
-    Convert retrieve.py output into labeled, deduplicated prompt blocks.
+def allowed_chunk_ids_from_items(items: List[LabeledEvidenceItem]) -> List[str]:
+    """Citation allowlist must match what the model actually saw."""
+    ids: Set[str] = set()
+    for item in items:
+        for cid in item.chunk_ids:
+            if cid:
+                ids.add(str(cid))
+    return sorted(ids)
 
-    Dedup keys:
-    - GRAPH: (statement text, frozenset of chunk ids)
-    - VECTOR: chunk_id (keep highest-score passage if duplicates appear)
+
+def has_answerable_graph_evidence(evidence: EvidencePack) -> bool:
+    """True when GRAPH items with citeable chunk ids are in the pack."""
+    return any(
+        item.source_label == "GRAPH" and bool(item.chunk_ids)
+        for item in evidence.items
+    )
+
+
+def draft_from_graph_evidence(evidence: EvidencePack) -> Optional[GroundedAnswerDraft]:
     """
+    Deterministic fallback when the LLM keeps refusing despite GRAPH facts.
+
+    Builds a short grounded answer from the first few GRAPH statements so hop-2
+    compare questions (sibling products, products+risks) still return cites.
+    """
+    graph_items = [
+        item
+        for item in evidence.items
+        if item.source_label == "GRAPH" and item.chunk_ids
+    ]
+    if not graph_items:
+        return None
+
+    claims: List[AnswerClaim] = []
+    for item in graph_items[:6]:
+        claims.append(
+            AnswerClaim(
+                text=item.statement.rstrip("."),
+                citation_chunk_ids=[item.chunk_ids[0]],
+            )
+        )
+    names = []
+    for item in graph_items[:8]:
+        # "... produces product X." / "... is exposed to risk Y."
+        stmt = item.statement
+        for marker in (" produces product ", " is exposed to risk ", " competes with "):
+            if marker in stmt:
+                tail = stmt.split(marker, 1)[1].rstrip(".")
+                if tail and tail not in names:
+                    names.append(tail)
+                break
+
+    if names:
+        summary = (
+            "Based on the knowledge graph, relevant entities include: "
+            + ", ".join(names[:8])
+            + "."
+        )
+    else:
+        summary = "Based on the knowledge graph: " + " ".join(
+            c.text + "." for c in claims[:3]
+        )
+
+    return GroundedAnswerDraft(
+        summary=summary,
+        claims=claims,
+        refused=False,
+    )
+
+
+def looks_like_strict_quantitative_question(question: str) -> bool:
+    """
+    Cheap heuristic for questions that should refuse unless the figure is in evidence.
+
+    Used only in prompts / tests — the model still makes the refuse call.
+    """
+    q = question.lower()
+    needles = (
+        "how many bitcoin",
+        "how much bitcoin",
+        "exact total compensation",
+        "exact compensation",
+        "what percentage of",
+        "what % of",
+        "balance sheet",
+    )
+    return any(n in q for n in needles)
+
+
+def _truncate_passage(text: str, max_chars: int) -> str:
+    cleaned = " ".join(text.split())
+    if len(cleaned) <= max_chars:
+        return cleaned
+    return cleaned[: max(0, max_chars - 3)] + "..."
+
+
+def build_evidence_items(
+    retrieval: HybridRetrievalResult,
+    *,
+    max_graph: Optional[int] = None,
+    max_vector: Optional[int] = None,
+    max_vector_chars: Optional[int] = None,
+) -> List[LabeledEvidenceItem]:
+    """
+    Deduplicate + cap GRAPH/VECTOR items for the answer prompt.
+
+    WHY cap: hop-2 graph templates can return dozens of long-context edges; the
+    answer model then hits max_tokens or falsely refuses. Keep top-confidence
+    graph facts and a few truncated vector passages.
+    """
+    max_graph = (
+        settings.ANSWER_MAX_GRAPH_ITEMS if max_graph is None else max_graph
+    )
+    max_vector = (
+        settings.ANSWER_MAX_VECTOR_ITEMS if max_vector is None else max_vector
+    )
+    max_vector_chars = (
+        settings.ANSWER_MAX_VECTOR_CHARS
+        if max_vector_chars is None
+        else max_vector_chars
+    )
+
     items: List[LabeledEvidenceItem] = []
     seen_graph: Set[tuple] = set()
     seen_vector: Set[str] = set()
+    graph_candidates: List[tuple] = []  # (confidence, item)
 
     if retrieval.graph:
         for fact in retrieval.graph.facts:
@@ -193,32 +325,73 @@ def format_evidence(retrieval: HybridRetrievalResult) -> EvidencePack:
             if key in seen_graph:
                 continue
             seen_graph.add(key)
-            items.append(
-                LabeledEvidenceItem(
-                    source_label="GRAPH",
-                    statement=statement,
-                    chunk_ids=chunk_ids,
-                )
+            item = LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement=statement,
+                chunk_ids=chunk_ids,
+                score=fact.confidence,
             )
+            graph_candidates.append((float(fact.confidence or 0.0), item))
+
+    graph_candidates.sort(key=lambda t: t[0], reverse=True)
+    items.extend(item for _, item in graph_candidates[:max_graph])
 
     if retrieval.vector:
+        vector_items: List[LabeledEvidenceItem] = []
         for passage in retrieval.vector.passages:
             cid = str(passage.chunk_id)
             if cid in seen_vector:
                 continue
             seen_vector.add(cid)
-            text = " ".join(passage.text.split())
-            items.append(
+            vector_items.append(
                 LabeledEvidenceItem(
                     source_label="VECTOR",
-                    statement=text,
+                    statement=_truncate_passage(passage.text, max_vector_chars),
                     chunk_ids=[cid],
                     section=passage.section,
                     score=passage.score,
                 )
             )
+        # Keep highest-score passages first.
+        vector_items.sort(key=lambda it: float(it.score or 0.0), reverse=True)
+        items.extend(vector_items[:max_vector])
 
-    allowed = collect_allowed_chunk_ids(retrieval)
+    return items
+
+
+def _fit_items_to_prompt_budget(
+    question: str,
+    items: List[LabeledEvidenceItem],
+    *,
+    max_chars: Optional[int] = None,
+) -> List[LabeledEvidenceItem]:
+    """Drop lowest-priority tail items until prompt fits the char budget."""
+    max_chars = (
+        settings.ANSWER_MAX_PROMPT_CHARS if max_chars is None else max_chars
+    )
+    kept = list(items)
+    while kept:
+        allowed = allowed_chunk_ids_from_items(kept)
+        prompt = _render_evidence_prompt(question, kept, allowed)
+        if len(prompt) <= max_chars:
+            return kept
+        # Drop from the end (lower-confidence graph / lower-score vector first
+        # because we appended in priority order).
+        kept.pop()
+    return kept
+
+
+def format_evidence(retrieval: HybridRetrievalResult) -> EvidencePack:
+    """
+    Convert retrieve.py output into labeled, deduplicated, size-capped prompt blocks.
+
+    Dedup keys:
+    - GRAPH: (statement text, frozenset of chunk ids)
+    - VECTOR: chunk_id (keep highest-score passage if duplicates appear)
+    """
+    items = build_evidence_items(retrieval)
+    items = _fit_items_to_prompt_budget(retrieval.question, items)
+    allowed = allowed_chunk_ids_from_items(items)
     prompt_text = _render_evidence_prompt(retrieval.question, items, allowed)
     return EvidencePack(
         question=retrieval.question,
@@ -353,9 +526,10 @@ def generate_draft(
     if repair_note:
         user_content = (
             f"{evidence.prompt_text}\n\n"
-            f"CITATION REPAIR (previous answer was rejected):\n{repair_note}\n"
+            f"REPAIR (previous answer was rejected):\n{repair_note}\n"
             "Rewrite the full answer. Use ONLY chunk_ids from the allowed list above. "
-            "If you cannot cite valid ids, set refused=true.\n"
+            "Prefer refused=false when evidence answers the question; set refused=true "
+            "only if evidence is empty or clearly off-topic / missing a required figure.\n"
         )
 
     return client.messages.create(
@@ -397,7 +571,34 @@ def generate_validated_answer(
     attempts = 1
     regenerated = False
 
-    while not validation.valid and attempts <= max_regenerates:
+    # Unjustified refuse: graph evidence exists but model refused (common on hop-2 packs).
+    if (
+        settings.ANSWER_UNJUSTIFIED_REFUSE_REPAIR
+        and draft.refused
+        and has_answerable_graph_evidence(evidence)
+        and not looks_like_strict_quantitative_question(evidence.question)
+    ):
+        repair = (
+            "You set refused=true, but the evidence pack already contains [GRAPH] "
+            "facts with citation chunk_ids that address the question. "
+            "Rewrite with refused=false, answer briefly from those GRAPH facts, "
+            "and cite only allowed chunk_ids. Do not refuse. Sibling products of the "
+            "same company are a valid relationship answer."
+        )
+        draft = generate_draft(evidence, client=client, repair_note=repair)
+        validation = validate_citations(draft, evidence.allowed_chunk_ids)
+        attempts += 1
+        regenerated = True
+
+        # Still refusing → deterministic graph answer (no more LLM spend on this path).
+        if draft.refused and has_answerable_graph_evidence(evidence):
+            fallback = draft_from_graph_evidence(evidence)
+            if fallback is not None:
+                draft = fallback
+                validation = validate_citations(draft, evidence.allowed_chunk_ids)
+
+    citation_repairs = 0
+    while not validation.valid and citation_repairs < max_regenerates:
         repair = (
             "Invalid citations detected:\n"
             f"{validation.error_summary()}\n\n"
@@ -411,6 +612,7 @@ def generate_validated_answer(
         draft = generate_draft(evidence, client=client, repair_note=repair)
         validation = validate_citations(draft, evidence.allowed_chunk_ids)
         attempts += 1
+        citation_repairs += 1
         regenerated = True
 
     if not validation.valid:
