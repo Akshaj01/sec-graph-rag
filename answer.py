@@ -14,6 +14,7 @@ Out of scope: portfolio-scale benchmark (Phase 5).
 from __future__ import annotations
 
 import json
+import re
 from typing import List, Optional, Set
 
 import anthropic
@@ -279,11 +280,153 @@ def looks_like_strict_quantitative_question(question: str) -> bool:
     return any(n in q for n in needles)
 
 
+_STOPWORDS = {
+    "what",
+    "whats",
+    "which",
+    "when",
+    "where",
+    "who",
+    "whom",
+    "how",
+    "does",
+    "did",
+    "is",
+    "are",
+    "was",
+    "were",
+    "the",
+    "a",
+    "an",
+    "of",
+    "to",
+    "in",
+    "on",
+    "for",
+    "and",
+    "or",
+    "as",
+    "per",
+    "its",
+    "it",
+    "from",
+    "with",
+    "about",
+    "according",
+    "filing",
+    "filings",
+    "company",
+    "describe",
+    "said",
+    "say",
+    "their",
+    "they",
+}
+
+
+def query_needles(
+    question: str,
+    *,
+    entity_ids: Optional[List[str]] = None,
+) -> List[str]:
+    """
+    Extract search needles for passage windowing / lexical boost.
+
+    Prefers quoted phrases and Capitalized tokens (AppleCare, Azure), then
+    significant lowercase tokens, then entity_id suffixes.
+    """
+    needles: List[str] = []
+    seen: Set[str] = set()
+
+    def _add(raw: str) -> None:
+        s = (raw or "").strip()
+        if len(s) < 3:
+            return
+        key = s.lower()
+        if key in seen or key in _STOPWORDS:
+            return
+        seen.add(key)
+        needles.append(s)
+
+    for m in re.findall(r'"([^"]{2,80})"|\'([^\']{2,80})\'', question or ""):
+        _add(m[0] or m[1])
+
+    for m in re.findall(r"\b([A-Z][A-Za-z0-9]+(?:[A-Z][A-Za-z0-9]+)*)\b", question or ""):
+        if m.upper() not in {"WHAT", "WHEN", "WHERE", "WHICH", "WHO", "HOW", "THE", "AND"}:
+            _add(m)
+
+    for tok in re.findall(r"[A-Za-z][A-Za-z0-9\-]{3,}", question or ""):
+        if tok.lower() not in _STOPWORDS:
+            _add(tok)
+
+    for eid in entity_ids or []:
+        if "_" in eid:
+            _add(eid.split("_", 1)[1].replace("_", " "))
+        _add(eid)
+
+    return needles
+
+
 def _truncate_passage(text: str, max_chars: int) -> str:
     cleaned = " ".join(text.split())
     if len(cleaned) <= max_chars:
         return cleaned
     return cleaned[: max(0, max_chars - 3)] + "..."
+
+
+def truncate_passage_for_query(
+    text: str,
+    question: str,
+    max_chars: int,
+    *,
+    entity_ids: Optional[List[str]] = None,
+) -> str:
+    """
+    Keep a max_chars window centered on the best query needle in the passage.
+
+    WHY: Item 1 chunks are long; AppleCare/Azure definitions often sit past a
+    1200-char head truncate, causing honest false refuses on hop-0 asks.
+
+    Prefer needles from the *question* over passage entity_ids — linked ids on a
+    long Item 1 chunk include many products (iPhone, Mac, …) that appear earlier
+    and would otherwise steal the window away from the asked term.
+    """
+    cleaned = " ".join((text or "").split())
+    if len(cleaned) <= max_chars:
+        return cleaned
+
+    lowered = cleaned.lower()
+
+    def _best_hit(needles: List[str]) -> Optional[tuple]:
+        best: Optional[tuple] = None  # (pos, -len, needle)
+        for needle in needles:
+            pos = lowered.find(needle.lower())
+            if pos < 0:
+                continue
+            cand = (pos, -len(needle), needle)
+            if best is None or cand < best:
+                best = cand
+        return best
+
+    hit = _best_hit(query_needles(question, entity_ids=None))
+    if hit is None and entity_ids:
+        hit = _best_hit(query_needles(question, entity_ids=entity_ids))
+    if hit is None:
+        return _truncate_passage(cleaned, max_chars)
+
+    best_pos = hit[0]
+    body = max(0, max_chars - 6)
+    half = body // 2
+    start = max(0, best_pos - half)
+    end = min(len(cleaned), start + body)
+    start = max(0, end - body)
+    chunk = cleaned[start:end]
+    prefix = "..." if start > 0 else ""
+    suffix = "..." if end < len(cleaned) else ""
+    out = f"{prefix}{chunk}{suffix}"
+    if len(out) > max_chars:
+        out = out[: max_chars - 3] + "..."
+    return out
 
 
 def build_evidence_items(
@@ -338,6 +481,7 @@ def build_evidence_items(
 
     if retrieval.vector:
         vector_items: List[LabeledEvidenceItem] = []
+        question = retrieval.question or retrieval.vector.question or ""
         for passage in retrieval.vector.passages:
             cid = str(passage.chunk_id)
             if cid in seen_vector:
@@ -346,7 +490,12 @@ def build_evidence_items(
             vector_items.append(
                 LabeledEvidenceItem(
                     source_label="VECTOR",
-                    statement=_truncate_passage(passage.text, max_vector_chars),
+                    statement=truncate_passage_for_query(
+                        passage.text,
+                        question,
+                        max_vector_chars,
+                        entity_ids=list(passage.entity_ids or []),
+                    ),
                     chunk_ids=[cid],
                     section=passage.section,
                     score=passage.score,

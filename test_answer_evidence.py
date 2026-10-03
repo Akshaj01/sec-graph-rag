@@ -13,11 +13,18 @@ from answer import (
     format_evidence,
     has_answerable_graph_evidence,
     looks_like_strict_quantitative_question,
+    query_needles,
+    truncate_passage_for_query,
 )
 from graph_retriever import GraphFact, GraphRetrievalResult, GraphTemplateId
 from retrieve import HybridRetrievalResult
 from router import RetrievalRoute, RouteDecision
-from vector_retriever import VectorPassage, VectorRetrievalResult
+from vector_retriever import (
+    VectorPassage,
+    VectorRetrievalResult,
+    lexical_boost_score,
+    rerank_passages_lexical,
+)
 
 
 def _route() -> RouteDecision:
@@ -67,6 +74,98 @@ def test_truncate_passage():
     assert _truncate_passage("a b c", 100) == "a b c"
     assert _truncate_passage("abcdefghij", 8).endswith("...")
     assert len(_truncate_passage("abcdefghij", 8)) == 8
+
+
+def test_query_needles_picks_product_names():
+    needles = [n.lower() for n in query_needles("What is AppleCare?")]
+    assert "applecare" in needles
+    needles_az = [n.lower() for n in query_needles("What is Microsoft Azure according to the filing?")]
+    assert "azure" in needles_az
+
+
+def test_truncate_passage_for_query_centers_mid_chunk_needle():
+    prefix = "x" * 1500
+    text = prefix + " AppleCare is a service and support program. " + ("y" * 500)
+    out = truncate_passage_for_query(text, "What is AppleCare?", 200)
+    assert "AppleCare" in out
+    assert len(out) <= 200
+
+
+def test_truncate_prefers_question_needle_over_entity_ids():
+    """Passage entity_ids include earlier products; window must still target the ask."""
+    text = (
+        ("iPhone is mentioned early. " * 40)
+        + "AppleCare is a service and support program. "
+        + ("trailer " * 40)
+    )
+    out = truncate_passage_for_query(
+        text,
+        "What is AppleCare?",
+        160,
+        entity_ids=["AAPL_IPHONE", "AAPL_APPLECARE", "AAPL_MAC"],
+    )
+    assert "AppleCare" in out
+    # Must not fall back to a pure head window of only the iPhone boilerplate.
+    assert not out.startswith("iPhone is mentioned early. iPhone is mentioned early.")
+
+
+def test_build_evidence_items_keeps_mid_chunk_definition():
+    prefix = "boilerplate " * 200
+    text = prefix + "AppleCare provides extended service and support coverage for Apple products."
+    retrieval = HybridRetrievalResult(
+        question="What is AppleCare?",
+        routing=_route(),
+        graph=None,
+        vector=VectorRetrievalResult(
+            question="What is AppleCare?",
+            ticker="AAPL",
+            k=3,
+            model="test",
+            passages=[
+                VectorPassage(
+                    chunk_id="v0",
+                    text=text,
+                    section="Item1",
+                    score=0.9,
+                    entity_ids=["AAPL_APPLECARE"],
+                )
+            ],
+        ),
+    )
+    items = build_evidence_items(
+        retrieval, max_graph=12, max_vector=3, max_vector_chars=200
+    )
+    assert len(items) == 1
+    assert "AppleCare" in items[0].statement
+
+
+def test_lexical_rerank_promotes_entity_match():
+    passages = [
+        VectorPassage(
+            chunk_id="boilerplate",
+            text="Microsoft describes cloud computing in broad terms without naming the product.",
+            section="Item1",
+            score=0.95,
+            entity_ids=["MSFT"],
+        ),
+        VectorPassage(
+            chunk_id="azure_def",
+            text="Azure is Microsoft's cloud computing platform.",
+            section="Item1A",
+            score=0.70,
+            entity_ids=["MSFT_AZURE"],
+        ),
+    ]
+    ranked = rerank_passages_lexical(
+        passages, "What is Microsoft Azure according to the filing?", k=2
+    )
+    assert ranked[0].chunk_id == "azure_def"
+    assert lexical_boost_score(
+        text=passages[1].text,
+        entity_ids=passages[1].entity_ids,
+        needles=["Azure"],
+        base_score=0.7,
+    ) > 0.7
 
 
 def test_build_evidence_items_caps_graph_by_confidence():

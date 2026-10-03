@@ -1,0 +1,177 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "2",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "2",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop0_aapl_applecare",
+        "mode": "hybrid",
+        "question": "What is AppleCare?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "AppleCare is Apple's portfolio of fee-based service and support products that provide priority access to Apple technical support, access to the global Apple authorized service network for repair and replacement services, and in many cases additional coverage for instances of accidental damage, theft, and loss, depending on the country and type of product.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AppleCare",
+          "support",
+          "service"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Names AppleCare as an Apple offering",
+          "Describes it as a service, support, or warranty-related program"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It clearly identifies AppleCare as an Apple offering and provides extensive detail about its service and support nature, including technical support, repair services, and damage/theft/loss coverage. No material hallucinations are present.",
+        "correct_refuse": null,
+        "latency_ms": 8204.7,
+        "estimated_cost_usd": 0.008958,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_msft_azure",
+        "mode": "hybrid",
+        "question": "What is Microsoft Azure according to the filing?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to the filing, Microsoft Azure is a cloud computing platform that is part of Microsoft's Intelligent Cloud segment and a key component of Microsoft Cloud. Azure drove revenue growth in the Intelligent Cloud segment during fiscal year 2026.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Azure",
+          "cloud"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Identifies Azure as a Microsoft cloud offering",
+          "Ties Azure to cloud computing / cloud services"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer clearly identifies Azure as a cloud computing platform and directly ties it to cloud services/cloud computing. Both required facts are adequately covered through paraphrase and clear statements matching the gold answer's core definition.",
+        "correct_refuse": null,
+        "latency_ms": 7074.7,
+        "estimated_cost_usd": 0.008946,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 1.0
+    },
+    "mean_latency_ms": 7639.7,
+    "mean_cost_usd": 0.008952,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "2",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop0_aapl_applecare",
+        "mode": "vector_only",
+        "question": "What is AppleCare?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "AppleCare is Apple's portfolio of fee-based service and support products that provide priority access to Apple technical support, access to the global Apple authorized service network for repair and replacement services, and in many cases additional coverage for instances of accidental damage, theft, and loss, depending on the country and type of product.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AppleCare",
+          "support",
+          "service"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Names AppleCare as an Apple offering",
+          "Describes it as a service, support, or warranty-related program"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it clearly names AppleCare as an Apple offering and describes it in detail as a service and support program. The answer goes beyond the minimum requirements with specific details about technical support, repair services, and coverage options, all of which are accurate and well-supported.",
+        "correct_refuse": null,
+        "latency_ms": 6493.2,
+        "estimated_cost_usd": 0.008478,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_msft_azure",
+        "mode": "vector_only",
+        "question": "What is Microsoft Azure according to the filing?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to the filing, Microsoft Azure is a cloud computing platform that is part of Microsoft's Intelligent Cloud segment and a key component of Microsoft Cloud. Azure drove revenue growth in the Intelligent Cloud segment during fiscal year 2026.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Azure",
+          "cloud"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Identifies Azure as a Microsoft cloud offering",
+          "Ties Azure to cloud computing / cloud services"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer clearly identifies Azure as a cloud computing platform and ties it to cloud services/computing, which covers both required facts. While the answer includes additional contextual details about Azure's role in the Intelligent Cloud segment and its revenue contribution, these are accurate elaborations that do not contradict the gold answer and directly address the question.",
+        "correct_refuse": null,
+        "latency_ms": 5629.1,
+        "estimated_cost_usd": 0.008466,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 1.0
+    },
+    "mean_latency_ms": 6061.1,
+    "mean_cost_usd": 0.008472,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=both; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

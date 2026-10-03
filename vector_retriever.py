@@ -61,6 +61,120 @@ def _preview(text: str, *, max_chars: int = 240) -> str:
     return cleaned[: max_chars - 3] + "..."
 
 
+_LEXICAL_STOP = {
+    "what",
+    "whats",
+    "which",
+    "when",
+    "where",
+    "who",
+    "how",
+    "does",
+    "did",
+    "is",
+    "are",
+    "the",
+    "a",
+    "an",
+    "of",
+    "to",
+    "in",
+    "on",
+    "for",
+    "and",
+    "or",
+    "as",
+    "according",
+    "filing",
+    "filings",
+    "company",
+    "about",
+    "from",
+    "with",
+    "describe",
+    "said",
+}
+
+
+def lexical_needles(question: str) -> List[str]:
+    """Needles for post-HNSW lexical / entity boost (shared with answer windowing idea)."""
+    needles: List[str] = []
+    seen = set()
+
+    def _add(raw: str) -> None:
+        s = (raw or "").strip()
+        if len(s) < 3:
+            return
+        key = s.lower()
+        if key in seen or key in _LEXICAL_STOP:
+            return
+        seen.add(key)
+        needles.append(s)
+
+    for m in re.findall(r"\b([A-Z][A-Za-z0-9]+(?:[A-Z][A-Za-z0-9]+)*)\b", question or ""):
+        if m.upper() not in {"WHAT", "WHEN", "WHERE", "WHICH", "WHO", "HOW", "THE", "AND"}:
+            _add(m)
+    for tok in re.findall(r"[A-Za-z][A-Za-z0-9\-]{3,}", question or ""):
+        if tok.lower() not in _LEXICAL_STOP:
+            _add(tok)
+    return needles
+
+
+def lexical_boost_score(
+    *,
+    text: str,
+    entity_ids: List[str],
+    needles: List[str],
+    base_score: float,
+) -> float:
+    """
+    Add a small additive boost when passage text or entity_ids match query needles.
+
+    Kept small so dense similarity still dominates; enough to surface a
+    definitional chunk that HNSW ranked just outside / below boilerplate.
+    """
+    if not needles:
+        return base_score
+    blob = (text or "").lower()
+    ids_blob = " ".join(entity_ids or []).lower()
+    boost = 0.0
+    for needle in needles:
+        n = needle.lower()
+        if n in blob:
+            boost += 0.08
+        # entity id tokens: MSFT_AZURE contains azure
+        if n in ids_blob or n.replace(" ", "") in ids_blob.replace("_", "").replace(" ", ""):
+            boost += 0.12
+        # id suffix exact-ish
+        for eid in entity_ids or []:
+            suffix = eid.split("_", 1)[-1].lower()
+            if suffix and (suffix == n or n in suffix or suffix in n.replace(" ", "")):
+                boost += 0.1
+                break
+    return base_score + min(boost, 0.35)
+
+
+def rerank_passages_lexical(
+    passages: List[VectorPassage],
+    question: str,
+    *,
+    k: int,
+) -> List[VectorPassage]:
+    """Re-score and keep top-k after HNSW fetch."""
+    needles = lexical_needles(question)
+    scored: List[VectorPassage] = []
+    for p in passages:
+        new_score = lexical_boost_score(
+            text=p.text,
+            entity_ids=list(p.entity_ids or []),
+            needles=needles,
+            base_score=float(p.score),
+        )
+        scored.append(p.model_copy(update={"score": new_score}))
+    scored.sort(key=lambda x: float(x.score), reverse=True)
+    return scored[:k]
+
+
 def guess_ticker(question: str) -> Optional[str]:
     """
     Lightweight ticker hint for filtering the vector index.
@@ -113,7 +227,10 @@ def retrieve_vector(
         scope = None
 
     emb = _embed_query(question)
-    rows = search_similar_chunks(emb, k=k, ticker=scope)
+    # Over-fetch so lexical/entity boost can promote definitional chunks that
+    # dense similarity ranked below Item 1 boilerplate.
+    fetch_k = max(k, min(k * 3, 15))
+    rows = search_similar_chunks(emb, k=fetch_k, ticker=scope)
 
     passages = [
         VectorPassage(
@@ -126,6 +243,7 @@ def retrieve_vector(
         )
         for r in rows
     ]
+    passages = rerank_passages_lexical(passages, question, k=k)
 
     return VectorRetrievalResult(
         question=question,

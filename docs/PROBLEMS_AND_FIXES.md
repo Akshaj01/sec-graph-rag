@@ -109,18 +109,20 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 
 ---
 
-## Open / known weaknesses (not fully fixed)
-
-### A. Hop-0 false refuses (AppleCare, Azure)
+### 8. Hop-0 false refuses (AppleCare / Azure) — wrong evidence *window*
 
 | | |
 |--|--|
-| **Symptom** | System refuses “What is AppleCare?” / “What is Azure?” while other answers pull those concepts from the same filings. Judge score 0 on those items. |
-| **Likely causes** | Vector retrieve misses the right chunk; prompt is over-conservative about refusing; routing may under-use graph for definitions. |
-| **Status** | **Open** — next high-value systems fix after cross-issuer leak. |
-| **Interview angle** | “I’d debug with the evidence pack: which chunks landed, what the draft refused on, then tighten refuse rules or retrieval for definition asks.” |
+| **Symptom** | “What is AppleCare?” / “What is Azure?” refused (`refused=true`, score 0) even though those terms exist in the same 10-K chunks other answers cite. |
+| **Root cause** | Right chunks were retrieved, but `ANSWER_MAX_VECTOR_CHARS=1200` **prefix**-truncated passages. AppleCare sat ~char 1744; Azure often later. The model honestly refused the head-only pack. Unjustified-refuse repair is GRAPH-only, so it never helped. A first window fix also had to prefer **question** needles over passage `entity_ids` (iPhone/Mac appear earlier and stole the window). |
+| **Fix** | `truncate_passage_for_query` (query-centered window); post-HNSW lexical/entity boost + over-fetch in `vector_retriever.py`. |
+| **Where** | `answer.py`, `vector_retriever.py`, `test_answer_evidence.py`; smoke report `benchmarks/results/multi_company_smoke_hop0_fix.json` |
+| **Verify** | Rebench both items × hybrid/vector_only → all **score=1.0**, `refuse=False`. |
+| **Interview angle** | “The refuse wasn’t over-caution — we truncated away the definition. Eval said refuse; I fixed packing, not the prompt.” |
 
 ---
+
+## Open / known weaknesses (not fully fixed)
 
 ### B. Small labeled set (n=24)
 
@@ -170,6 +172,7 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 4. Recruiter packaging (README, screenshots, public repo)  
 5. **LLM judge** replaces keyword as primary metric  
 6. **Cross-issuer leak** found in judged/keyword results → write gate + retrieve filter + cleanup  
+7. **Hop-0 false refuses** → query-centered vector windows + lexical re-rank (AppleCare/Azure smoke = 1.0)  
 
 ---
 
@@ -187,6 +190,9 @@ Last-write `ticker` clobber and unscoped product/risk ids → `home_ticker` / `t
 **Card 4 — Hop-2**  
 One template + refuse heuristics ≠ multi-hop failure of retrieval → multi-template plans + evidence packing + refuse repair.
 
+**Card 5 — Hop-0 windowing**  
+AppleCare/Azure “not in evidence” while sitting mid-chunk past a 1200-char head truncate → query-centered windows (+ don’t let entity_ids steal the needle).
+
 ---
 
 ## Changelog for this doc
@@ -194,5 +200,6 @@ One template + refuse heuristics ≠ multi-hop failure of retrieval → multi-te
 | Date | Note |
 |------|------|
 | 2026-10-03 | Initial log from build + packaging + judge + cross-issuer leak work. |
+| 2026-10-03 | Closed hop-0 AppleCare/Azure false refuses (passage window + lexical re-rank). |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.
