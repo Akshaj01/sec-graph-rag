@@ -670,11 +670,28 @@ def answer_question(
 
 
 if __name__ == "__main__":
-    import sys
+    import argparse
 
-    args = [a for a in sys.argv[1:] if not a.startswith("-")]
-    question = " ".join(args) if args else "What product lines does Apple produce?"
-    result = answer_question(question)
+    parser = argparse.ArgumentParser(description="Grounded SEC 10-K Q&A (hybrid graph + vector).")
+    parser.add_argument(
+        "question",
+        nargs="*",
+        help='Question text (default: Apple product lines).',
+    )
+    parser.add_argument(
+        "--ticker",
+        default=None,
+        help="Optional ticker scope for vector retrieval (e.g. AAPL).",
+    )
+    parser.add_argument(
+        "--vector-only",
+        action="store_true",
+        help="Force vector-only retrieval (benchmark baseline).",
+    )
+    ns = parser.parse_args()
+    question = " ".join(ns.question) if ns.question else "What product lines does Apple produce?"
+    force = RetrievalRoute.VECTOR if ns.vector_only else None
+    result = answer_question(question, ticker=ns.ticker, force_route=force)
 
     out = {
         "question": result.question,

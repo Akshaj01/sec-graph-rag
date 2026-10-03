@@ -13,3 +13,9 @@ neo4j_plugins/
 *.sqlite3
 *.db
 data/
+# Personal materials — do not publish on GitHub
+resume/
+RESUME_BRIEF.md
+*.pdf
+.DS_Store
+**/.DS_Store
