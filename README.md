@@ -53,7 +53,8 @@ Suite: `multi_company_smoke` v2 — **24** hand-labeled questions on a local **1
 
 **Primary metric:** LLM-as-judge (Haiku + Instructor) correctness vs hand-authored `required_facts` / `gold_answer`.  
 OOS items score as correct refuse. Keyword recall is kept as a **secondary** field in the JSON report.  
-Not a 50–100 Q human panel — still an automated grade, but much closer to answer quality than substring hits.
+Not a 50–100 Q human panel — still an automated grade, but much closer to answer quality than substring hits.  
+**Judge calibration:** human agreed with judge on **24/24** hybrid answers (`benchmarks/judge_calibration_hybrid.md`).
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|

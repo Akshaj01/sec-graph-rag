@@ -147,12 +147,13 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 
 ---
 
-### C. Judge not calibrated to human labels
+### C. Judge calibration (closed on n=24 hybrid)
 
 | | |
 |--|--|
-| **Symptom** | No published “judge agrees with me X% of the time” number yet. |
-| **Status** | Open — ~1–2 hours of hand-labeling the 24 would close this for interviews. |
+| **Symptom** | Needed a published “human agrees with judge X% of the time” number. |
+| **Status** | **Closed for this suite:** human agreed with judge on **24/24** hybrid answers (incl. partials on `hop0_jpm_credit_risk` 0.5 and `hop2_jpm_credit_vs_market` 0.375). Worksheet: `benchmarks/judge_calibration_hybrid.md`. |
+| **Caveat** | Same author as the gold facts; not an independent rater. Still better than unpublished. Revisit if suite grows. |
 
 ---
 
@@ -220,5 +221,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-03 | Closed hop-0 AppleCare/Azure false refuses (passage window + lexical re-rank). |
 | 2026-10-03 | Full rebench after hop-0 fix; assembled judged table (vector hop-2/OOS filled after API credits ran out). |
 | 2026-10-03 | Closed hop-1 Meta compete + J&J MedTech; hybrid hop-1 **1.00**, overall **0.95**. |
+| 2026-10-04 | Human vs judge calibration on hybrid n=24 → **24/24 agree**. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.
