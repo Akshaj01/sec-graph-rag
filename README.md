@@ -57,16 +57,16 @@ Not a 50–100 Q human panel — still an automated grade, but much closer to an
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
-| Hop 0 (definitions) | 0.50 | **0.58** | 6 |
-| Hop 1 (single edge) | **0.81** | **0.81** | 8 |
-| Hop 2 (compare / multi-rel) | **0.90** | 0.69 | 6 |
+| Hop 0 (definitions) | 0.92 | **1.00** | 6 |
+| Hop 1 (single edge) | 0.81 | **0.88** | 8 |
+| Hop 2 (compare / multi-rel) | **0.90** | 0.83 | 6 |
 | OOS (must refuse) | **1.00** | **1.00** | 4 |
-| **Overall mean** | **0.79** | 0.76 | 24 |
+| **Overall mean** | 0.89 | **0.92** | 24 |
 
 Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json)  
-(answers from the prior full rebench; scores refreshed with the v2 judge — no answer re-run)
+(full rebench after hop-0 packing fix; both modes complete)
 
-**How to read it:** Under fact-checklist judging, **hybrid still leads overall**, with the clearest gap on **hop 2** (0.90 vs 0.69) where multi-relation structure should matter. Hop 0 is weak for both (false refuses on some definitions). Keyword-only scores previously overstated hop 1–2; the judge catches partial / contradictory answers those needles missed.
+**How to read it:** Under fact-checklist judging, **hybrid’s clearest win is hop 2** (0.90 vs 0.83) — multi-relation / compare questions. Vector-only leads hop 0–1 and overall after the packing fix (definitions no longer truncated out of the pack). Keyword-only scores previously overstated hop 1–2; the judge still catches partial / contradictory answers those needles missed.
 
 **Systems fix from eval:** Graph retrieve once cited Meta accession chunks on an Apple products question (global `APPLE` node + Meta-written `PRODUCES_PRODUCT` edges). Fixed with an issuer-owned write gate, retrieve-time chunk ticker filter, and `python graph_writer.py --cleanup-cross-issuer`.
 

@@ -1,0 +1,373 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "2",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "2",
+    "mode": "hybrid",
+    "results": [],
+    "accuracy_by_hop": {},
+    "mean_latency_ms": null,
+    "mean_cost_usd": null,
+    "mean_score": null,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "2",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop2_aapl_hardware_services",
+        "mode": "vector_only",
+        "question": "What hardware devices and services does Apple produce?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces several hardware device lines including iPhone smartphones, Mac personal computers, iPad tablets, Apple Watch smartwatches, AirPods wireless headphones, and spatial computers. The company also sells a variety of related services and accessories.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone",
+          "Mac"
+        ],
+        "keyword_misses": [
+          "AppleCare"
+        ],
+        "keyword_recall": 0.6666666666666666,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions at least two hardware devices (e.g. iPhone, Mac, iPad)",
+          "Mentions a service offering (e.g. AppleCare or Services)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all required facts: it mentions multiple hardware devices (iPhone, Mac, iPad, Apple Watch, AirPods, spatial computers—far exceeding the minimum of two), and explicitly mentions services. The answer is well-structured and accurate without material hallucinations.",
+        "correct_refuse": null,
+        "latency_ms": 9935.5,
+        "estimated_cost_usd": 0.009672,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_msft_cloud_vs_personal",
+        "mode": "vector_only",
+        "question": "Compare Microsoft's Intelligent Cloud offerings such as Azure with its More Personal Computing products like Xbox.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft's Intelligent Cloud offerings, such as Azure, and More Personal Computing products like Xbox serve different customer needs. Azure is part of Microsoft's cloud computing and AI platform strategy, providing infrastructure and services for businesses and developers. Xbox, on the other hand, is a gaming platform that enables people to connect and share online gaming experiences across consoles, Windows devices, and other devices. Xbox revenue is driven by subscriptions, first- and third-party content sales, and advertising, while the platform focuses on growing its active user base and expanding to new ecosystems to engage gamers.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Azure",
+          "Xbox"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Azure / Intelligent Cloud offerings",
+          "Mentions Xbox / More Personal Computing",
+          "Draws a contrast or comparison between the two"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers all three required facts: it explicitly mentions Azure/Intelligent Cloud, mentions Xbox/More Personal Computing, and clearly contrasts the two as serving different customer needs (Azure for businesses/developers and cloud services; Xbox for gaming and personal computing). The answer accurately represents the distinct nature of these product areas.",
+        "correct_refuse": null,
+        "latency_ms": 7064.7,
+        "estimated_cost_usd": 0.010822,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_meta_apps_vs_reality",
+        "mode": "vector_only",
+        "question": "How do Meta's Family of Apps products like Facebook and Instagram relate to Reality Labs?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta's Family of Apps products (including Facebook and Instagram) and Reality Labs are both part of Meta's broader ecosystem. The Family of Apps enable people to connect and share through various devices, while Reality Labs represents Meta's investment in immersive experiences like augmented and virtual reality as part of building the next computing platform beyond 2D screens.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram",
+          "Reality Labs"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Facebook and/or Instagram as Family of Apps products",
+          "Mentions Reality Labs as a separate Meta segment/area",
+          "States they are distinct segments or differently focused businesses"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all required facts: it explicitly mentions Facebook and Instagram as Family of Apps products, identifies Reality Labs as a separate segment with distinct focus on AR/VR, and clearly characterizes them as distinct areas within Meta's ecosystem. The answer accurately describes their different purposes and how they fit into Meta's broader vision.",
+        "correct_refuse": null,
+        "latency_ms": 5947.0,
+        "estimated_cost_usd": 0.009156,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_amzn_aws_and_prime",
+        "mode": "vector_only",
+        "question": "What does Amazon say about AWS and Amazon Prime as product lines?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Amazon organizes its operations into three segments: North America, International, and Amazon Web Services (AWS). AWS is one of these three primary business segments. Amazon Prime membership benefits and other shipping offers are viewed by Amazon as effective worldwide marketing tools that the company intends to continue offering indefinitely, though the costs associated with these benefits are not included in sales and marketing expense.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001018724-26-000004:Item1:0",
+          "0001018724-26-000004:Item7:2",
+          "0001018724-26-000004:Item7:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AWS",
+          "Prime"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Describes AWS as cloud / technology services",
+          "Describes Amazon Prime as a membership/subscription or store-related offering"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer clearly covers both required facts. It describes AWS as a primary business segment (implicitly cloud/technology services through the organizational context), and explicitly describes Amazon Prime as a membership offering with benefits tied to retail/fulfillment activities. The additional detail about these being marketing tools and cost treatment does not contradict or hallucinate beyond the gold standard.",
+        "correct_refuse": null,
+        "latency_ms": 5751.8,
+        "estimated_cost_usd": 0.009156,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_jpm_credit_vs_market",
+        "mode": "vector_only",
+        "question": "Briefly compare JPMorgan's credit risk and market risk as named risk factors.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain JPMorgan's named risk factors for credit risk and market risk from the Risk Factors section (Item 1A). While the evidence includes references to credit risk and market risk in operational contexts, it does not provide the specific risk factor descriptions needed to compare how these risks are characterized as named risk factors in the 10-K filing.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001628280-26-008131:Item1A:4",
+          "0001628280-26-008131:Item7:25"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Credit",
+          "Market"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 0.0,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "Non-OOS item refused; scored 0.",
+        "correct_refuse": null,
+        "latency_ms": 8181.7,
+        "estimated_cost_usd": 0.009813,
+        "error": null,
+        "score": 0.0
+      },
+      {
+        "item_id": "hop2_nvda_products_and_geo_risk",
+        "mode": "vector_only",
+        "question": "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA produces GPUs, CPUs, NVLink switches, DPUs, and NICs as part of its Data Center computing platform, along with software including CUDA, CUDA-X libraries, NVIDIA AI Enterprise, and NVIDIA vGPU software. The company faces significant geopolitical risks from U.S. export controls restricting sales of high-performance products (including A100, H100, H20, and GB200 NVL72) to China and other countries, regulatory scrutiny from competition authorities in multiple jurisdictions including the EU, U.S., UK, South Korea, Japan, and China, and broader risks from international trade restrictions, political conditions, and economic policies across its global operations.",
+        "claim_count": 7,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1A:3",
+          "0001045810-26-000021:Item1A:6",
+          "0001045810-26-000021:Item1A:7"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "A100",
+          "Geopolitical"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Names compute products (e.g. data-center GPUs such as A100/H100 or GeForce)",
+          "Mentions geopolitical / export-control / China-related risk exposure"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it names specific compute products (GPUs, CPUs, NVLink switches, DPUs, NICs, and detailed GPU models like A100, H100, H20, GB200 NVL72) and explicitly addresses geopolitical risks through U.S. export controls, regulatory scrutiny, and China-related restrictions. The answer goes beyond the gold answer by providing substantial additional detail (e.g., CUDA software, specific product models, April 2025 licensing requirements, regulatory scrutiny from multiple jurisdictions) without contradicting the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 14278.9,
+        "estimated_cost_usd": 0.014337,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_tesla_battery",
+        "mode": "vector_only",
+        "question": "What battery supply risks does Tesla face in its latest 10-K?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The provided evidence does not contain information about battery supply risks for Tesla. The evidence appears to be from Apple's 10-K filing (accession number 0000320193-25-000079), not Tesla's, and discusses general business risks such as competition, intellectual property, IT systems, and regulatory compliance, but does not mention battery supply chains or related risks.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:3",
+          "0000320193-25-000079:Item1A:4"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 6160.0,
+        "estimated_cost_usd": 0.008277,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_aapl_bitcoin",
+        "mode": "vector_only",
+        "question": "How many Bitcoin does Apple hold on its balance sheet?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence does not contain any information about Apple holding Bitcoin on its balance sheet.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item7:0",
+          "0000320193-25-000079:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 4478.1,
+        "estimated_cost_usd": 0.006885,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_cook_comp",
+        "mode": "vector_only",
+        "question": "What was Tim Cook's exact total compensation last year?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain information about Tim Cook's exact total compensation for last year. The available evidence consists of product announcements, business descriptions, risk factors, and accounting policy discussions from Apple's 10-K filing, but does not include executive compensation data.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1A:2",
+          "0000320193-25-000079:Item7:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 4853.0,
+        "estimated_cost_usd": 0.007545,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_wmt_revenue",
+        "mode": "vector_only",
+        "question": "What percentage of Walmart's revenue comes from Sam's Club?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain information about Walmart or Sam's Club. All evidence relates to Microsoft's business operations, products, and financial results.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item7:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 4234.0,
+        "estimated_cost_usd": 0.006873,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_2": 0.8333,
+      "oos": 1.0
+    },
+    "mean_latency_ms": 7088.5,
+    "mean_cost_usd": 0.009254,
+    "mean_score": 0.9,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=both; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

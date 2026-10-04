@@ -179,7 +179,7 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 ## Quick “story cards” (memorize these)
 
 **Card 1 — Metric lied**  
-Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge → 0.79 vs 0.76 overall, hop-2 still clearly hybrid.
+Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge → hybrid’s real edge is hop-2 (**0.90 vs 0.83**); overall can favor vector after hop-0 packing is fixed.
 
 **Card 2 — Eval → systems fix**  
 Apple products cited Meta accession → global Company + Meta-written `PRODUCES_PRODUCT` → issuer write gate + chunk ticker filter + Neo4j cleanup.
@@ -201,5 +201,6 @@ AppleCare/Azure “not in evidence” while sitting mid-chunk past a 1200-char h
 |------|------|
 | 2026-10-03 | Initial log from build + packaging + judge + cross-issuer leak work. |
 | 2026-10-03 | Closed hop-0 AppleCare/Azure false refuses (passage window + lexical re-rank). |
+| 2026-10-03 | Full rebench after hop-0 fix; assembled judged table (vector hop-2/OOS filled after API credits ran out). |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.
