@@ -429,6 +429,98 @@ def truncate_passage_for_query(
     return out
 
 
+def _graph_fact_matches_needles(fact, needles: List[str]) -> bool:
+    """True if any needle appears in product/risk target name or id."""
+    if not needles:
+        return True
+    blob = f"{fact.target_name} {fact.target_id} {fact.source_name}".lower()
+    return any(n.lower() in blob for n in needles)
+
+
+def filter_unmatched_produces_facts(facts: List, question: str) -> List:
+    """
+    For PRODUCES_PRODUCT facts: if the question names a product/segment and
+    some facts match, keep only matches. If it is a yes/no produce ask and
+    *nothing* matches, drop all PRODUCES_PRODUCT facts so the model cannot
+    invent “yes MedTech” from a DARZALEX laundry list. Open-ended product
+    lists (“what products?”) keep the full set when nothing specific matches.
+
+    Competition asks drop PRODUCES_PRODUCT entirely so competitor edges are
+    not crowded out of the evidence cap by product laundry lists.
+    """
+    from retrieve import wants_produce_yes_no
+
+    q = question or ""
+    if re.search(r"\bcompet", q, re.IGNORECASE):
+        return [f for f in facts if f.rel_type != "PRODUCES_PRODUCT"]
+
+    # Generic ask words must not count as product needles — otherwise
+    # "which apps …" keeps only "Family of Apps" and drops Facebook/Instagram.
+    _generic = {
+        "johnson",
+        "apple",
+        "microsoft",
+        "amazon",
+        "nvidia",
+        "alphabet",
+        "google",
+        "meta",
+        "exxon",
+        "jpmorgan",
+        "product",
+        "products",
+        "produce",
+        "produces",
+        "manufacture",
+        "manufactures",
+        "manufacturing",
+        "lines",
+        "line",
+        "apps",
+        "app",
+        "segment",
+        "segments",
+        "device",
+        "devices",
+        "medical",
+        "services",
+        "service",
+        "business",
+        "businesses",
+        "include",
+        "includes",
+        "according",
+        "knowledge",
+        "graph",
+    }
+    needles = [n for n in query_needles(q) if n.lower() not in _generic]
+    produces = [f for f in facts if f.rel_type == "PRODUCES_PRODUCT"]
+    others = [f for f in facts if f.rel_type != "PRODUCES_PRODUCT"]
+    if not produces:
+        return list(facts)
+
+    if needles:
+        matched = [f for f in produces if _graph_fact_matches_needles(f, needles)]
+        if matched:
+            return others + matched
+        if wants_produce_yes_no(q):
+            return others
+    return list(facts)
+
+
+def _rank_graph_facts_for_question(facts: List, question: str) -> List:
+    """Prefer facts whose endpoints match question needles (e.g. Meta)."""
+    needles = query_needles(question)
+    if not needles:
+        return list(facts)
+
+    def _key(f) -> tuple:
+        matched = 1 if _graph_fact_matches_needles(f, needles) else 0
+        return (matched, float(f.confidence or 0.0))
+
+    return sorted(facts, key=_key, reverse=True)
+
+
 def build_evidence_items(
     retrieval: HybridRetrievalResult,
     *,
@@ -460,8 +552,14 @@ def build_evidence_items(
     seen_vector: Set[str] = set()
     graph_candidates: List[tuple] = []  # (confidence, item)
 
+    question = retrieval.question or ""
+    if retrieval.vector and retrieval.vector.question:
+        question = question or retrieval.vector.question
+
     if retrieval.graph:
-        for fact in retrieval.graph.facts:
+        facts = filter_unmatched_produces_facts(retrieval.graph.facts, question)
+        facts = _rank_graph_facts_for_question(facts, question)
+        for fact in facts:
             statement = fact_to_statement(fact)
             chunk_ids = [str(c) for c in fact.source_chunk_ids if c]
             key = (statement, tuple(sorted(chunk_ids)))
@@ -481,7 +579,6 @@ def build_evidence_items(
 
     if retrieval.vector:
         vector_items: List[LabeledEvidenceItem] = []
-        question = retrieval.question or retrieval.vector.question or ""
         for passage in retrieval.vector.passages:
             cid = str(passage.chunk_id)
             if cid in seen_vector:

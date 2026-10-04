@@ -139,17 +139,40 @@ def test_filter_facts_for_ticker_drops_meta_only_fact():
                 rel_type="COMPETES_WITH",
                 target_id="META",
                 target_name="Meta",
-                source_chunk_ids=["0000320193-25-000079:Item1A:1"],
+                source_chunk_ids=["0001628280-26-003942:Item1A:2"],
             ),
         ]
-        # Unknown AAPL Item1A chunk kept (cannot prove foreign).
-        mapping["0000320193-25-000079:Item1A:1"] = "AAPL"
         filtered = filter_facts_for_ticker(facts, "AAPL")
         assert [f.target_id for f in filtered] == ["AAPL_IPHONE", "META"]
         iphone = next(f for f in filtered if f.target_id == "AAPL_IPHONE")
         assert iphone.source_chunk_ids == ["0000320193-25-000079:Item1:0"]
-        # Competitor node META retained with AAPL-scoped citation.
+        # Cross-company COMPETES_WITH keeps Meta-filing provenance.
         meta = next(f for f in filtered if f.target_id == "META")
-        assert meta.rel_type == "COMPETES_WITH"
+        assert meta.source_chunk_ids == ["0001628280-26-003942:Item1A:2"]
+    finally:
+        ct.ticker_for_chunk_id = original  # type: ignore[assignment]
+
+
+def test_filter_keeps_competes_with_foreign_chunks_only():
+    import chunk_ticker as ct
+
+    original = ct.ticker_for_chunk_id
+    ct.ticker_for_chunk_id = lambda cid: {  # type: ignore[assignment]
+        "0001628280-26-003942:Item1A:2": "META",
+    }.get(cid)
+    try:
+        facts = [
+            GraphFact(
+                source_id="APPLE",
+                source_name="Apple",
+                rel_type="COMPETES_WITH",
+                target_id="META",
+                target_name="Meta",
+                source_chunk_ids=["0001628280-26-003942:Item1A:2"],
+            )
+        ]
+        filtered = filter_facts_for_ticker(facts, "AAPL")
+        assert len(filtered) == 1
+        assert filtered[0].target_id == "META"
     finally:
         ct.ticker_for_chunk_id = original  # type: ignore[assignment]

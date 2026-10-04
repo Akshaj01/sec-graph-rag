@@ -1,0 +1,172 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "2",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "2",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop1_jnj_medtech",
+        "mode": "hybrid",
+        "question": "Does Johnson & Johnson produce MedTech products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Yes, Johnson & Johnson produces MedTech products. The company is organized into two business segments: Innovative Medicine and MedTech.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000200406-26-000016:Item1:0",
+          "0000200406-26-000016:Item7:2"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "MedTech"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Answers yes / affirms that J&J produces MedTech",
+          "Names MedTech as a product line or segment"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it affirms that J&J produces MedTech products and explicitly names MedTech as a business segment. The additional details about R&D expenses are accurate and provide useful context without inventing material facts.",
+        "correct_refuse": null,
+        "latency_ms": 6741.3,
+        "estimated_cost_usd": 0.008061,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_competes_meta",
+        "mode": "hybrid",
+        "question": "Does Apple compete with Meta according to the knowledge graph?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Yes, according to the knowledge graph, Apple Inc. competes with Meta.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:2"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Meta"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
+          "Frames it as competition / competitive relationship"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer directly affirms that Apple competes with Meta according to the knowledge graph and frames it as a competitive relationship. It covers both required facts: the affirmation of competition and the framing as a competitive relationship. The additional context about iOS changes and advertising business, while not strictly required, provides relevant supporting detail without contradicting the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 5613.0,
+        "estimated_cost_usd": 0.003954,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 6177.1,
+    "mean_cost_usd": 0.006008,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "2",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop1_jnj_medtech",
+        "mode": "vector_only",
+        "question": "Does Johnson & Johnson produce MedTech products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Yes, Johnson & Johnson produces MedTech products. The company is organized into two business segments: Innovative Medicine and MedTech.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000200406-26-000016:Item1:0",
+          "0000200406-26-000016:Item7:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "MedTech"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Answers yes / affirms that J&J produces MedTech",
+          "Names MedTech as a product line or segment"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer directly affirms that J&J produces MedTech products and clearly identifies MedTech as a business segment. Both required facts are comprehensively covered with explicit statement and segment identification.",
+        "correct_refuse": null,
+        "latency_ms": 3812.7,
+        "estimated_cost_usd": 0.006891,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_competes_meta",
+        "mode": "vector_only",
+        "question": "Does Apple compete with Meta according to the knowledge graph?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence pack does not contain any knowledge graph facts or passages stating that Apple competes with Meta. The provided evidence discusses Apple's products, risks, and business operations, but does not mention Meta or any competitive relationship between the two companies.",
+        "claim_count": 1,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Meta"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 0.0,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "Non-OOS item refused; scored 0.",
+        "correct_refuse": null,
+        "latency_ms": 4595.4,
+        "estimated_cost_usd": 0.007089,
+        "error": null,
+        "score": 0.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 0.5
+    },
+    "mean_latency_ms": 4204.0,
+    "mean_cost_usd": 0.00699,
+    "mean_score": 0.5,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=both; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

@@ -122,6 +122,19 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 
 ---
 
+### 9. Hop-1 hybrid losses (Meta competition + J&J MedTech)
+
+| | |
+|--|--|
+| **Symptom** | Hop-1 hybrid **0.81** vs vector **0.88**. Two failures: (a) “Does Apple compete with Meta?” → model said **No**; (b) “Does J&J produce MedTech?” → hybrid **0.5** (yes + drug cites) vs vector **1.0**. |
+| **Root causes** | (a) Issuer chunk filter treated `COMPETES_WITH` like `PRODUCES_PRODUCT` and dropped Meta-stamped `APPLE→META` for `ticker=AAPL`; remaining competitors crowded the pack with product edges. (b) Graph has no `MedTech` ProductLine — only drug/device names — so graph-only route invented “yes MedTech” from DARZALEX/etc. |
+| **Fix** | Strict chunk-ticker filter only for `ISSUER_OWNED_REL_TYPES` (shared with write gate); keep foreign provenance on `COMPETES_WITH` / `SUPPLIED_BY` / `DEPENDS_ON`. Competition asks drop `PRODUCES_PRODUCT` from the pack + needle-rank competitors. Produce yes/no asks force route `both`; omit unmatched `PRODUCES_PRODUCT` when a specific product/segment needle doesn’t hit (generic “apps/products” lists keep the full set). |
+| **Where** | `graph_retriever.py`, `graph_writer.py`, `retrieve.py`, `answer.py`, `test_cross_issuer_leak.py`, `test_answer_evidence.py` |
+| **Verify** | Hop-1 rebench n=8 → hybrid **1.00**, vector **0.81** (`multi_company_smoke_hop1_fix.json`); overall hybrid **0.95** vs vector **0.90**. |
+| **Interview angle** | “Write-time issuer gates and retrieve-time filters aren’t the same. Competition evidence often lives in the *other* company’s 10-K — over-filtering erased a true edge. And when the graph lacks a node, stuffing unrelated products is worse than falling back to vector segment prose.” |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
 
 ### B. Small labeled set (n=24)
@@ -173,16 +186,17 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 5. **LLM judge** replaces keyword as primary metric  
 6. **Cross-issuer leak** found in judged/keyword results → write gate + retrieve filter + cleanup  
 7. **Hop-0 false refuses** → query-centered vector windows + lexical re-rank (AppleCare/Azure smoke = 1.0)  
+8. **Hop-1** → exempt cross-company rels from issuer chunk filter; produce yes/no → `both` + drop unmatched products (hybrid hop-1 **1.00**)  
 
 ---
 
 ## Quick “story cards” (memorize these)
 
 **Card 1 — Metric lied**  
-Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge → hybrid’s real edge is hop-2 (**0.90 vs 0.83**); overall can favor vector after hop-0 packing is fixed.
+Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge → hybrid leads hop-1–2 (**1.00 / 0.90**) and overall **0.95 vs 0.90**.
 
 **Card 2 — Eval → systems fix**  
-Apple products cited Meta accession → global Company + Meta-written `PRODUCES_PRODUCT` → issuer write gate + chunk ticker filter + Neo4j cleanup.
+Apple products cited Meta accession → global Company + Meta-written `PRODUCES_PRODUCT` → issuer write gate + chunk ticker filter + Neo4j cleanup. Same filter then erased Meta-stamped `COMPETES_WITH` → exempt cross-company rels.
 
 **Card 3 — Multi-company identity**  
 Last-write `ticker` clobber and unscoped product/risk ids → `home_ticker` / `tickers[]` + ticker-prefixed local types.
@@ -193,6 +207,9 @@ One template + refuse heuristics ≠ multi-hop failure of retrieval → multi-te
 **Card 5 — Hop-0 windowing**  
 AppleCare/Azure “not in evidence” while sitting mid-chunk past a 1200-char head truncate → query-centered windows (+ don’t let entity_ids steal the needle).
 
+**Card 6 — Hop-1 MedTech / compete**  
+No MedTech node + drug laundry list → force `both` + drop unmatched products; compete-with-Meta edge lived in Meta’s filing → don’t strip foreign provenance on `COMPETES_WITH`.
+
 ---
 
 ## Changelog for this doc
@@ -202,5 +219,6 @@ AppleCare/Azure “not in evidence” while sitting mid-chunk past a 1200-char h
 | 2026-10-03 | Initial log from build + packaging + judge + cross-issuer leak work. |
 | 2026-10-03 | Closed hop-0 AppleCare/Azure false refuses (passage window + lexical re-rank). |
 | 2026-10-03 | Full rebench after hop-0 fix; assembled judged table (vector hop-2/OOS filled after API credits ran out). |
+| 2026-10-03 | Closed hop-1 Meta compete + J&J MedTech; hybrid hop-1 **1.00**, overall **0.95**. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.

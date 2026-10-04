@@ -58,17 +58,17 @@ Not a 50–100 Q human panel — still an automated grade, but much closer to an
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
 | Hop 0 (definitions) | 0.92 | **1.00** | 6 |
-| Hop 1 (single edge) | 0.81 | **0.88** | 8 |
+| Hop 1 (single edge) | **1.00** | 0.81 | 8 |
 | Hop 2 (compare / multi-rel) | **0.90** | 0.83 | 6 |
 | OOS (must refuse) | **1.00** | **1.00** | 4 |
-| **Overall mean** | 0.89 | **0.92** | 24 |
+| **Overall mean** | **0.95** | 0.90 | 24 |
 
 Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json)  
-(full rebench after hop-0 packing fix; both modes complete)
+(hop-1 rebench after cross-company filter exempt + produce yes/no pack fix; hop-0/2/OOS from prior full rebench)
 
-**How to read it:** Under fact-checklist judging, **hybrid’s clearest win is hop 2** (0.90 vs 0.83) — multi-relation / compare questions. Vector-only leads hop 0–1 and overall after the packing fix (definitions no longer truncated out of the pack). Keyword-only scores previously overstated hop 1–2; the judge still catches partial / contradictory answers those needles missed.
+**How to read it:** Under fact-checklist judging, **hybrid leads hop 1–2 and overall** (1.00 / 0.90 / 0.95). Vector-only still leads hop 0 (definitions). Keyword-only scores previously overstated hop 1–2; the judge still catches partial / contradictory answers those needles missed.
 
-**Systems fix from eval:** Graph retrieve once cited Meta accession chunks on an Apple products question (global `APPLE` node + Meta-written `PRODUCES_PRODUCT` edges). Fixed with an issuer-owned write gate, retrieve-time chunk ticker filter, and `python graph_writer.py --cleanup-cross-issuer`.
+**Systems fixes from eval:** (1) Graph retrieve once cited Meta accession chunks on Apple **products** — issuer-owned write gate + chunk ticker filter + Neo4j cleanup. (2) That same filter then dropped Meta-stamped `COMPETES_WITH` for Apple asks — exempt cross-company rels at retrieve. (3) J&J “MedTech?” graph-only laundry list → force `both` + drop unmatched `PRODUCES_PRODUCT` on yes/no product asks.
 
 ---
 

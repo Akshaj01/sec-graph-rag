@@ -219,7 +219,7 @@
           "Defines or describes credit risk (borrower/obligor default or credit loss)"
         ],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer covers the second required fact thoroughly\u2014it clearly attributes credit risk management and policies to JPMorgan/the Firm. However, it does not explicitly define what credit risk is as the risk of loss from borrower/counterparty default or credit exposure. While it mentions \"likelihood of obligor or counterparty default\" in the context of measurement methodologies, this is embedded in operational details rather than presented as a clear definition of credit risk itself. The answer provides extensive operational and governance details but falls short of a crisp definition of the concept.",
+        "judge_rationale": "The model answer covers the second required fact thoroughly—it clearly attributes credit risk management and policies to JPMorgan/the Firm. However, it does not explicitly define what credit risk is as the risk of loss from borrower/counterparty default or credit exposure. While it mentions \"likelihood of obligor or counterparty default\" in the context of measurement methodologies, this is embedded in operational details rather than presented as a clear definition of credit risk itself. The answer provides extensive operational and governance details but falls short of a crisp definition of the concept.",
         "correct_refuse": null,
         "latency_ms": 9008.3,
         "estimated_cost_usd": 0.012228,
@@ -235,10 +235,11 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "Apple Inc. produces a diverse range of product lines including hardware devices (iPhone, iPad, Mac, and Wearables, Home and Accessories), services (Cloud Services, Digital Content, Advertising, Payment Services, and AppleCare), and internal programs (Apple University).",
-        "claim_count": 9,
+        "summary": "Apple Inc. produces a diverse range of product lines including hardware devices (iPhone, iPad, Mac, and Wearables, Home and Accessories), services (Cloud Services, Digital Content, Advertising, Payment Services, and AppleCare), and educational programs (Apple University).",
+        "claim_count": 10,
         "cited_chunk_ids": [
           "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
           "0000320193-25-000079:Item7:0"
         ],
         "route_effective": "graph",
@@ -257,10 +258,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers all three required facts: iPhone, Mac, and iPad are explicitly mentioned and described. The answer goes beyond requirements by detailing additional product lines and services, which adds value without contradicting the gold answer.",
+        "judge_rationale": "The model answer comprehensively covers all required facts: iPhone, Mac, and iPad are all explicitly mentioned and described. The answer provides additional details about product lines and services that are accurate and contextually relevant, without inventing unsupported claims.",
         "correct_refuse": null,
-        "latency_ms": 13593.9,
-        "estimated_cost_usd": 0.009147,
+        "latency_ms": 11237.7,
+        "estimated_cost_usd": 0.009642,
         "error": null,
         "score": 1.0
       },
@@ -279,6 +280,8 @@
           "0001193125-26-323660:Item1:0",
           "0001193125-26-323660:Item1:1",
           "0001193125-26-323660:Item1:2",
+          "0001193125-26-323660:Item1A:0",
+          "0001193125-26-323660:Item1A:1",
           "0001193125-26-323660:Item7:0",
           "0001193125-26-323660:Item7:1"
         ],
@@ -296,9 +299,9 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure (Intelligent Cloud cloud offerings) and Xbox/gaming (Cloud Gaming Services, which includes Xbox). The answer provides extensive additional detail about other product lines without inventing unsupported claims.",
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure as a cloud services offering and Cloud Gaming Services with Xbox. The answer provides extensive additional details about Microsoft's product lines without inventing unsupported claims.",
         "correct_refuse": null,
-        "latency_ms": 11149.0,
+        "latency_ms": 11657.8,
         "estimated_cost_usd": 0.00972,
         "error": null,
         "score": 1.0
@@ -312,8 +315,8 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "Meta produces several apps and product lines organized into two main segments: Family of Apps (FoA) and Reality Labs (RL). The Family of Apps includes Facebook, Instagram, WhatsApp, Messenger, Reels, Feed, Stories, and Meta Verified subscriptions. Meta also produces Reality Labs products and has invested in AI Initiatives and Payments functionality across its products.",
-        "claim_count": 10,
+        "summary": "Meta produces multiple apps and product lines organized into two main segments: Family of Apps (FoA) and Reality Labs (RL). The Family of Apps segment includes Facebook, Instagram, WhatsApp, Messenger, Reels, Feed, Stories, Meta Verified subscriptions, and Payments functionality. Meta also invests in AI initiatives across its products and operates the Reality Labs segment.",
+        "claim_count": 9,
         "cited_chunk_ids": [
           "0001628280-26-003942:Item1:0",
           "0001628280-26-003942:Item1A:0",
@@ -330,8 +333,7 @@
           "0001628280-26-003942:Item1A:9",
           "0001628280-26-003942:Item7:0",
           "0001628280-26-003942:Item7:1",
-          "0001628280-26-003942:Item7:2",
-          "0001628280-26-003942:Item7:5"
+          "0001628280-26-003942:Item7:2"
         ],
         "route_effective": "graph",
         "keyword_hits": [
@@ -349,10 +351,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers all three required facts (Facebook, Instagram, WhatsApp) and provides extensive additional context about Meta's product portfolio, financial structure, and strategic initiatives. No material hallucinations are present.",
+        "judge_rationale": "The model answer comprehensively covers all three required facts (Facebook, Instagram, WhatsApp) and provides extensive additional accurate context about Meta's product portfolio, organizational structure, and business segments without inventing material facts not supported by the gold answer.",
         "correct_refuse": null,
-        "latency_ms": 14586.3,
-        "estimated_cost_usd": 0.008262,
+        "latency_ms": 13518.6,
+        "estimated_cost_usd": 0.008487,
         "error": null,
         "score": 1.0
       },
@@ -393,10 +395,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions data-center GPU products (A100, H100, H200, H20) and automotive offerings (DRIVE Hyperion). The answer goes beyond the minimum requirements with additional accurate details about other product lines (GeForce, CUDA, AI Enterprise, etc.), all of which are well-supported details about NVIDIA's actual products.",
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions data-center compute GPUs (A100, H100, H200, H20) and clearly describes automotive offerings (DRIVE Hyperion for autonomous vehicles). The answer goes well beyond the required facts with additional accurate detail about gaming GPUs, software platforms, and cloud services, all of which appear consistent with NVIDIA's actual product portfolio.",
         "correct_refuse": null,
-        "latency_ms": 12297.6,
-        "estimated_cost_usd": 0.008913,
+        "latency_ms": 12558.6,
+        "estimated_cost_usd": 0.008958,
         "error": null,
         "score": 1.0
       },
@@ -409,8 +411,8 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "Alphabet/Google produces a diverse range of product lines including Google Services (which encompasses Google Search, YouTube, and Google Play), Google Cloud (including Google Cloud Platform and Google Workspace), online advertising, AI products and technologies, devices, consumer subscription products, custom TPUs, and Other Bets (investments in areas such as life sciences and transportation).",
-        "claim_count": 10,
+        "summary": "Alphabet/Google produces a diverse range of product lines including Google Services (which encompasses Google Search, YouTube, and Google Play), Google Cloud (Google Cloud Platform and Google Workspace), AI Products and Technologies (including custom TPUs), Devices, Consumer Subscription Products, Online Advertising, and Other Bets (investments in areas such as life sciences and transportation).",
+        "claim_count": 11,
         "cited_chunk_ids": [
           "0001652044-26-000018:Item1:1",
           "0001652044-26-000018:Item1A:0",
@@ -432,10 +434,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers both required facts. It explicitly mentions Google Services (with concrete examples like Google Search, YouTube, and Google Play) and Google Cloud (including Google Cloud Platform and Google Workspace). All required elements are clearly present and accurately represented.",
+        "judge_rationale": "The model answer comprehensively covers both required facts. It explicitly mentions Google Services and Google Cloud, along with additional details about their components. All claims are consistent with standard Alphabet/Google business structure and revenue models.",
         "correct_refuse": null,
-        "latency_ms": 11869.3,
-        "estimated_cost_usd": 0.007986,
+        "latency_ms": 12962.8,
+        "estimated_cost_usd": 0.009066,
         "error": null,
         "score": 1.0
       },
@@ -448,15 +450,16 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "ExxonMobil is exposed to commodity price risk, primarily driven by crude oil price volatility. Lower crude prices significantly impacted earnings, with lower realizations decreasing earnings by $6.1 billion as record demand was more than offset by increased industry supply. The company also faces refining margin volatility due to changes in global factors.",
-        "claim_count": 3,
+        "summary": "ExxonMobil is exposed to commodity price risk, primarily related to crude oil, natural gas, petrochemical, and refined product prices. The company's operations and earnings are significantly affected by changes in these commodity prices and margins, with lower crude prices having decreased earnings by $6.1 billion in one period. Additionally, ExxonMobil faces refining margin volatility driven by the difference between crude oil costs and refined product prices.",
+        "claim_count": 5,
         "cited_chunk_ids": [
+          "0000034088-26-000045:Item1A:0",
           "0000034088-26-000045:Item7:3",
           "0000034088-26-000045:Item7:4",
           "0000034088-26-000045:Item7:8",
           "0000034088-26-000045:Item7:9"
         ],
-        "route_effective": "graph",
+        "route_effective": "both",
         "keyword_hits": [
           "commodity",
           "price"
@@ -470,10 +473,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer clearly covers both required facts: it explicitly states ExxonMobil is exposed to commodity price risk, and it directly links this risk to oil/crude prices and energy commodity price volatility. The additional details about earnings impact and refining margin volatility are accurate and relevant but not required.",
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly states ExxonMobil is exposed to commodity price risk and clearly links this risk to oil, gas, petrochemical, and related energy commodity prices and volatility. The answer goes beyond the minimum requirements with detailed examples and mechanisms, all grounded in appropriate information.",
         "correct_refuse": null,
-        "latency_ms": 8214.0,
-        "estimated_cost_usd": 0.007458,
+        "latency_ms": 10658.1,
+        "estimated_cost_usd": 0.013944,
         "error": null,
         "score": 1.0
       },
@@ -485,34 +488,32 @@
         "must_refuse": false,
         "refused": false,
         "citations_valid": true,
-        "regenerated": true,
-        "summary": "Yes, Johnson & Johnson produces MedTech products. The evidence shows Johnson & Johnson manufactures various pharmaceutical and medical products including ERLEADA, AKEEGA, DARZALEX, IMBRUVICA, INLEXZO, and other therapeutic products across multiple medical categories.",
-        "claim_count": 4,
+        "regenerated": false,
+        "summary": "Yes, Johnson & Johnson produces MedTech products. The company is organized into two business segments: Innovative Medicine and MedTech.",
+        "claim_count": 2,
         "cited_chunk_ids": [
-          "0000200406-26-000016:Item1:1",
-          "0000200406-26-000016:Item1:2",
-          "0000200406-26-000016:Item7:1"
+          "0000200406-26-000016:Item1:0",
+          "0000200406-26-000016:Item7:2"
         ],
-        "route_effective": "graph",
+        "route_effective": "both",
         "keyword_hits": [
           "MedTech"
         ],
         "keyword_misses": [],
         "keyword_recall": 1.0,
-        "judge_correctness": 0.5,
+        "judge_correctness": 1.0,
         "judge_fact_hits": [
-          "Answers yes / affirms that J&J produces MedTech"
-        ],
-        "judge_fact_misses": [
+          "Answers yes / affirms that J&J produces MedTech",
           "Names MedTech as a product line or segment"
         ],
+        "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model clearly affirms that Johnson & Johnson produces MedTech products, covering the first required fact. However, it fails to explicitly name MedTech as a product line or segment\u2014it only asserts J&J produces \"MedTech products\" without identifying MedTech as a distinct business segment or product category. The response instead focuses on listing specific pharmaceutical products, which doesn't satisfy the second requirement.",
+        "judge_rationale": "The model answer fully covers both required facts: it affirms that J&J produces MedTech products and clearly identifies MedTech as a distinct business segment. The additional details about R&D expenses add relevant context without introducing inaccuracies.",
         "correct_refuse": null,
-        "latency_ms": 13194.4,
-        "estimated_cost_usd": 0.009987,
+        "latency_ms": 6413.6,
+        "estimated_cost_usd": 0.008061,
         "error": null,
-        "score": 0.5
+        "score": 1.0
       },
       {
         "item_id": "hop1_aapl_competes_meta",
@@ -523,10 +524,10 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "No, according to the knowledge graph evidence provided, Apple does not compete with Meta. The graph shows Apple competes with Android and Windows, but Meta is not mentioned as a competitor.",
-        "claim_count": 2,
+        "summary": "Yes, according to the knowledge graph, Apple Inc. competes with Meta.",
+        "claim_count": 1,
         "cited_chunk_ids": [
-          "0000320193-25-000079:Item1A:2"
+          "0001628280-26-003942:Item1A:2"
         ],
         "route_effective": "graph",
         "keyword_hits": [
@@ -534,19 +535,19 @@
         ],
         "keyword_misses": [],
         "keyword_recall": 1.0,
-        "judge_correctness": 0.0,
-        "judge_fact_hits": [],
-        "judge_fact_misses": [
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
           "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
           "Frames it as competition / competitive relationship"
         ],
-        "judge_hallucination": true,
-        "judge_rationale": "The model answer directly contradicts the gold answer. The gold answer confirms Apple competes with Meta, while the model answer explicitly states \"Apple does not compete with Meta\" and claims Meta is not mentioned as a competitor. This is a material hallucination (inventing the negative claim) rather than a mere omission.",
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer directly affirms that Apple competes with Meta, matching the required facts and gold answer. It frames the relationship as competition and provides supporting context about iOS changes and advertising business expansion, which is appropriate additional detail without contradicting the source.",
         "correct_refuse": null,
-        "latency_ms": 5270.8,
-        "estimated_cost_usd": 0.005175,
+        "latency_ms": 4948.2,
+        "estimated_cost_usd": 0.003954,
         "error": null,
-        "score": 0.0
+        "score": 1.0
       },
       {
         "item_id": "hop2_aapl_hardware_services",
@@ -594,7 +595,7 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "Microsoft's Intelligent Cloud offerings include Azure, a comprehensive set of cloud services, along with other cloud products like Dynamics, GitHub, Enterprise Mobility + Security, and Health and Life Sciences cloud services. Its More Personal Computing products include Xbox and cloud gaming services, as well as consumer-focused offerings like Bing, Microsoft Edge, and Microsoft Copilot. Both product lines are produced by Microsoft Corporation but serve different market segments\u2014Intelligent Cloud focuses on enterprise cloud infrastructure and business solutions, while More Personal Computing targets gaming, search, and consumer experiences.",
+        "summary": "Microsoft's Intelligent Cloud offerings include Azure, a comprehensive set of cloud services, along with other cloud products like Dynamics, GitHub, Enterprise Mobility + Security, and Health and Life Sciences cloud services. Its More Personal Computing products include Xbox and cloud gaming services, as well as consumer-focused offerings like Bing, Microsoft Edge, and Microsoft Copilot. Both product lines are produced by Microsoft Corporation but serve different market segments—Intelligent Cloud focuses on enterprise cloud infrastructure and business solutions, while More Personal Computing targets gaming, search, and consumer experiences.",
         "claim_count": 8,
         "cited_chunk_ids": [
           "0001193125-26-323660:Item1:1",
@@ -915,14 +916,14 @@
     ],
     "accuracy_by_hop": {
       "hop_0": 0.9167,
-      "hop_1": 0.8125,
+      "hop_1": 1.0,
       "hop_2": 0.8958,
       "oos": 1.0
     },
-    "mean_latency_ms": 10121.9,
-    "mean_cost_usd": 0.009453,
-    "mean_score": 0.8906,
-    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall secondary"
+    "mean_latency_ms": 9862.7,
+    "mean_cost_usd": 0.009669,
+    "mean_score": 0.9531,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
   },
   "vector_only": {
     "suite_name": "multi_company_smoke",
@@ -1179,9 +1180,9 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers all three required facts: it clearly mentions iPhone (smartphones), Mac (personal computers), and iPad (tablets). The answer goes beyond the minimum requirements by providing detailed product subcategories and device examples, but all of this additional information is consistent with Apple's actual product portfolio and does not contradict the gold answer.",
+        "judge_rationale": "The model answer covers all three required facts (iPhone, Mac, iPad) comprehensively and with accurate detail. The additional information about Wearables, Home and Accessories, and specific product models is correct and enhances the answer without inventing facts.",
         "correct_refuse": null,
-        "latency_ms": 9424.3,
+        "latency_ms": 6713.2,
         "estimated_cost_usd": 0.009483,
         "error": null,
         "score": 1.0
@@ -1195,10 +1196,9 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "Microsoft produces several product lines and segments, including cloud-based and on-premises business solutions (Dynamics), productivity and collaboration tools (Office), gaming (Xbox), and search advertising services (Bing, Microsoft Edge, Microsoft Copilot). The company focuses on AI, cloud computing, productivity and collaboration, and personal computing platforms and applications.",
+        "summary": "Microsoft produces several product lines and segments including: cloud-based and on-premises business solutions through Dynamics (covering financial management, ERP, CRM, supply chain management, and low-code development platforms); Office productivity and collaboration tools; Windows operating system; XBOX gaming (including subscriptions, first- and third-party content); and Search advertising through Microsoft Copilot, Microsoft Edge browser, and Bing search engine.",
         "claim_count": 5,
         "cited_chunk_ids": [
-          "0001193125-26-323660:Item1:0",
           "0001193125-26-323660:Item1:1",
           "0001193125-26-323660:Item1:2"
         ],
@@ -1217,10 +1217,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers both required facts. It explicitly mentions Azure (cloud services), which satisfies the Intelligent Cloud requirement, and explicitly mentions Xbox, which satisfies the gaming/More Personal Computing requirement. The answer is well-detailed and accurate.",
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure (implicitly through \"cloud-based and on-premises business solutions\" and \"Office...cloud\"), and explicitly mentions XBOX gaming. The answer provides extensive detail on Microsoft's product lines and segments beyond what was required, with no contradictions to the gold answer.",
         "correct_refuse": null,
-        "latency_ms": 9296.3,
-        "estimated_cost_usd": 0.011541,
+        "latency_ms": 8088.7,
+        "estimated_cost_usd": 0.010776,
         "error": null,
         "score": 1.0
       },
@@ -1256,10 +1256,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers all three required facts: Facebook, Instagram, and WhatsApp are all explicitly mentioned. The answer also includes additional correct products (Messenger, Reels, Meta Quest, Meta Horizon) that exceed the minimum requirements but do not constitute hallucinations as they are legitimate Meta products.",
+        "judge_rationale": "The model answer clearly covers all three required facts: it explicitly mentions Facebook, Instagram, and WhatsApp as part of Meta's product offerings. The answer goes beyond the minimum requirements by including additional accurate details (Messenger, Reels, Meta Quest, Reality Labs, etc.) which are factually correct additions that provide helpful context without contradicting the gold answer.",
         "correct_refuse": null,
-        "latency_ms": 6337.1,
-        "estimated_cost_usd": 0.008301,
+        "latency_ms": 6483.0,
+        "estimated_cost_usd": 0.008871,
         "error": null,
         "score": 1.0
       },
@@ -1272,10 +1272,9 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "NVIDIA produces GPUs (graphics processing units), data center systems that include CPUs, NVLink switches, DPUs, and NICs with scale-out networking, as well as software products including the CUDA development platform, CUDA-X acceleration libraries, NVIDIA AI Enterprise software, and NVIDIA vGPU software for virtual desktops and workstations.",
-        "claim_count": 5,
+        "summary": "NVIDIA produces GPUs (graphics processing units), data center systems that include CPUs, NVLink switches, DPUs, and NICs, as well as software products including the CUDA development platform, CUDA-X acceleration libraries, NVIDIA AI Enterprise software, and NVIDIA vGPU software for virtual desktops and workstations.",
+        "claim_count": 4,
         "cited_chunk_ids": [
-          "0001045810-26-000021:Item1:0",
           "0001045810-26-000021:Item1:1"
         ],
         "route_effective": "vector",
@@ -1285,19 +1284,20 @@
           "Automotive"
         ],
         "keyword_recall": 0.0,
-        "judge_correctness": 1.0,
+        "judge_correctness": 0.5,
         "judge_fact_hits": [
-          "Mentions a data-center / compute GPU product (e.g. A100 or similar)",
+          "Mentions a data-center / compute GPU product (e.g. A100 or similar)"
+        ],
+        "judge_fact_misses": [
           "Mentions automotive offerings or another distinct NVIDIA product line"
         ],
-        "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers both required facts. It explicitly mentions data-center GPU products (GPUs for data center systems, parallel workloads) and discusses multiple distinct product lines including automotive-adjacent offerings, software platforms (CUDA), enterprise solutions (NVIDIA AI Enterprise, vGPU), and networking components (NVLink, DPUs, NICs). While the model answer is more detailed than the gold answer, it directly addresses both required elements.",
+        "judge_rationale": "The model answer covers the data-center/compute GPU requirement comprehensively (mentioning GPUs, data center systems with CPUs, NVLink switches, DPUs, NICs, and software like CUDA). However, it completely omits any mention of automotive offerings or other distinct product lines beyond data center and software, failing to cover the second required fact.",
         "correct_refuse": null,
-        "latency_ms": 10267.5,
-        "estimated_cost_usd": 0.010191,
+        "latency_ms": 8615.7,
+        "estimated_cost_usd": 0.009141,
         "error": null,
-        "score": 1.0
+        "score": 0.5
       },
       {
         "item_id": "hop1_googl_products",
@@ -1308,7 +1308,7 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "Alphabet is a collection of businesses, the largest of which is Google. Google is reported in two segments: Google Services and Google Cloud. Google Services includes advertising (Google Search, YouTube ads, Google Network), consumer subscriptions (YouTube TV, YouTube Music and Premium, NFL Sunday Ticket, Google One with Gemini models), platforms (Google Play), and devices (Pixel family). Google Cloud offers infrastructure, platform, applications, and other cloud services through Google Cloud Platform and Google Workspace. All non-Google businesses are collectively reported as Other Bets.",
+        "summary": "Alphabet is a collection of businesses, the largest of which is Google. Google is reported in two segments: Google Services and Google Cloud. Google Services includes advertising products (Google Search, YouTube ads, Google Network), consumer subscriptions (YouTube TV, YouTube Music and Premium, NFL Sunday Ticket, Google One with Gemini models), platforms (Google Play), and devices (Pixel family). Google Cloud offers infrastructure, platform, applications, and other cloud services through Google Cloud Platform and Google Workspace. All non-Google businesses are collectively reported as Other Bets.",
         "claim_count": 5,
         "cited_chunk_ids": [
           "0001652044-26-000018:Item1:0",
@@ -1330,10 +1330,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Google Cloud and Google Services as the two main segments. The answer goes well beyond the minimal requirements by providing detailed breakdowns of what each segment includes (advertising, consumer subscriptions, platforms, devices for Google Services; infrastructure, platform, applications, and other cloud services for Google Cloud).",
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Google Services (with detailed subcategories including advertising, subscriptions, platforms, and devices) and Google Cloud (with specifics on infrastructure, platform, applications, and services). The answer directly addresses the question and aligns perfectly with the gold answer requirements.",
         "correct_refuse": null,
-        "latency_ms": 8286.0,
-        "estimated_cost_usd": 0.011133,
+        "latency_ms": 8027.3,
+        "estimated_cost_usd": 0.010983,
         "error": null,
         "score": 1.0
       },
@@ -1367,9 +1367,9 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly states that ExxonMobil is exposed to commodity price risks and clearly links those risks to oil, natural gas, petrochemical prices, and energy commodity price volatility. The answer provides substantial additional detail about margins, supply/demand dynamics, and policy impacts, all of which are consistent with and supportive of the core requirements.",
+        "judge_rationale": "The model answer comprehensively covers both required facts: it clearly states ExxonMobil is exposed to commodity price risks and explicitly links these risks to oil, natural gas, and petrochemical prices. The answer provides substantial additional detail about how commodity prices affect operations, margins, and potential adverse impacts, all of which is consistent with and supportive of the gold answer.",
         "correct_refuse": null,
-        "latency_ms": 7679.6,
+        "latency_ms": 7863.8,
         "estimated_cost_usd": 0.01242,
         "error": null,
         "score": 1.0
@@ -1402,10 +1402,10 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer clearly affirms that J&J produces MedTech products and explicitly names MedTech as both a business segment and product line. Both required facts are adequately covered.",
+        "judge_rationale": "The model answer clearly affirms that J&J produces MedTech products and explicitly names MedTech as a business segment, covering both required facts. Additional specific financial details about R&D expenses do not constitute hallucination as they are consistent with the gold answer and provide legitimate supporting context.",
         "correct_refuse": null,
-        "latency_ms": 3699.2,
-        "estimated_cost_usd": 0.006891,
+        "latency_ms": 4090.3,
+        "estimated_cost_usd": 0.006981,
         "error": null,
         "score": 1.0
       },
@@ -1418,7 +1418,7 @@
         "refused": true,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "The evidence pack does not contain any knowledge graph facts or passages stating that Apple competes with Meta. The provided evidence discusses Apple's products, risks, and business operations, but does not mention Meta or a competitive relationship between the two companies.",
+        "summary": "The evidence pack does not contain any knowledge graph facts or passages stating that Apple competes with Meta. The provided evidence discusses Apple's products, risks, and business operations, but does not mention Meta or any competitive relationship between the two companies.",
         "claim_count": 1,
         "cited_chunk_ids": [
           "0000320193-25-000079:Item1:0",
@@ -1439,8 +1439,8 @@
         "judge_hallucination": null,
         "judge_rationale": "Non-OOS item refused; scored 0.",
         "correct_refuse": null,
-        "latency_ms": 5204.4,
-        "estimated_cost_usd": 0.007119,
+        "latency_ms": 4665.6,
+        "estimated_cost_usd": 0.007089,
         "error": null,
         "score": 0.0
       },
@@ -1474,7 +1474,7 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers all required facts: it mentions multiple hardware devices (iPhone, Mac, iPad, Apple Watch, AirPods, spatial computers\u2014far exceeding the minimum of two), and explicitly mentions services. The answer is well-structured and accurate without material hallucinations.",
+        "judge_rationale": "The model answer comprehensively covers all required facts: it mentions multiple hardware devices (iPhone, Mac, iPad, Apple Watch, AirPods, spatial computers—far exceeding the minimum of two), and explicitly mentions services. The answer is well-structured and accurate without material hallucinations.",
         "correct_refuse": null,
         "latency_ms": 9935.5,
         "estimated_cost_usd": 0.009672,
@@ -1789,14 +1789,14 @@
     ],
     "accuracy_by_hop": {
       "hop_0": 1.0,
-      "hop_1": 0.875,
+      "hop_1": 0.8125,
       "hop_2": 0.8333,
       "oos": 1.0
     },
-    "mean_latency_ms": 7273.9,
-    "mean_cost_usd": 0.009421,
-    "mean_score": 0.9167,
-    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall secondary"
+    "mean_latency_ms": 7038.6,
+    "mean_cost_usd": 0.009365,
+    "mean_score": 0.8958,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
   },
-  "notes": "Full post hop-0-fix rebench (2026-10-03). Fresh hybrid answers + fresh vector-only throughout (vector hop-2/OOS completed after credits topped up)."
+  "notes": "Full post hop-0-fix rebench (2026-10-03). Fresh hybrid answers + fresh vector-only throughout (vector hop-2/OOS completed after credits topped up). | hop-1 rebench after COMPETES_WITH filter exempt + produce yes/no both/pack filter"
 }

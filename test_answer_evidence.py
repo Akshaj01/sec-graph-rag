@@ -10,6 +10,7 @@ from answer import (
     allowed_chunk_ids_from_items,
     build_evidence_items,
     fact_to_statement,
+    filter_unmatched_produces_facts,
     format_evidence,
     has_answerable_graph_evidence,
     looks_like_strict_quantitative_question,
@@ -17,7 +18,7 @@ from answer import (
     truncate_passage_for_query,
 )
 from graph_retriever import GraphFact, GraphRetrievalResult, GraphTemplateId
-from retrieve import HybridRetrievalResult
+from retrieve import HybridRetrievalResult, wants_produce_yes_no
 from router import RetrievalRoute, RouteDecision
 from vector_retriever import (
     VectorPassage,
@@ -276,3 +277,116 @@ def test_fact_context_truncated():
     stmt = fact_to_statement(fact, context_chars=40)
     assert "..." in stmt
     assert len(stmt) < 120
+
+
+def test_wants_produce_yes_no():
+    assert wants_produce_yes_no("Does Johnson & Johnson produce MedTech products?")
+    assert wants_produce_yes_no("Do they manufacture medical devices?")
+    assert not wants_produce_yes_no("What product lines does Apple produce?")
+
+
+def test_filter_unmatched_produces_drops_drug_laundry_list():
+    facts = [
+        GraphFact(
+            source_id="JOHNSONJOHNSON",
+            source_name="Johnson & Johnson",
+            rel_type="PRODUCES_PRODUCT",
+            target_id="JNJ_DARZALEX",
+            target_name="DARZALEX",
+            source_chunk_ids=["c1"],
+            confidence=0.9,
+        ),
+        GraphFact(
+            source_id="JOHNSONJOHNSON",
+            source_name="Johnson & Johnson",
+            rel_type="PRODUCES_PRODUCT",
+            target_id="JNJ_IMBRUVICA",
+            target_name="IMBRUVICA",
+            source_chunk_ids=["c2"],
+            confidence=0.9,
+        ),
+    ]
+    kept = filter_unmatched_produces_facts(
+        facts, "Does Johnson & Johnson produce MedTech products?"
+    )
+    assert kept == []
+
+
+def test_filter_unmatched_produces_keeps_matching_product():
+    facts = [
+        GraphFact(
+            source_id="APPLE",
+            source_name="Apple",
+            rel_type="PRODUCES_PRODUCT",
+            target_id="AAPL_IPHONE",
+            target_name="iPhone",
+            source_chunk_ids=["c1"],
+            confidence=0.9,
+        ),
+        GraphFact(
+            source_id="APPLE",
+            source_name="Apple",
+            rel_type="PRODUCES_PRODUCT",
+            target_id="AAPL_MAC",
+            target_name="Mac",
+            source_chunk_ids=["c2"],
+            confidence=0.9,
+        ),
+    ]
+    kept = filter_unmatched_produces_facts(facts, "What product lines include iPhone?")
+    assert [f.target_id for f in kept] == ["AAPL_IPHONE"]
+
+
+def test_filter_unmatched_produces_keeps_open_ended_apps_list():
+    """Generic 'apps' must not collapse the pack to only 'Family of Apps'."""
+    facts = [
+        GraphFact(
+            source_id="META",
+            source_name="Meta",
+            rel_type="PRODUCES_PRODUCT",
+            target_id="META_FACEBOOK",
+            target_name="Facebook",
+            source_chunk_ids=["c1"],
+            confidence=0.9,
+        ),
+        GraphFact(
+            source_id="META",
+            source_name="Meta",
+            rel_type="PRODUCES_PRODUCT",
+            target_id="META_FAMILY",
+            target_name="Family of Apps",
+            source_chunk_ids=["c2"],
+            confidence=0.9,
+        ),
+    ]
+    kept = filter_unmatched_produces_facts(
+        facts, "Which apps or product lines does Meta produce?"
+    )
+    assert {f.target_id for f in kept} == {"META_FACEBOOK", "META_FAMILY"}
+
+
+def test_filter_unmatched_produces_drops_all_on_competition_ask():
+    facts = [
+        GraphFact(
+            source_id="APPLE",
+            source_name="Apple",
+            rel_type="PRODUCES_PRODUCT",
+            target_id="AAPL_IPHONE",
+            target_name="iPhone",
+            source_chunk_ids=["c1"],
+            confidence=0.9,
+        ),
+        GraphFact(
+            source_id="APPLE",
+            source_name="Apple",
+            rel_type="COMPETES_WITH",
+            target_id="META",
+            target_name="Meta",
+            source_chunk_ids=["c2"],
+            confidence=0.9,
+        ),
+    ]
+    kept = filter_unmatched_produces_facts(
+        facts, "Does Apple compete with Meta according to the knowledge graph?"
+    )
+    assert [f.rel_type for f in kept] == ["COMPETES_WITH"]

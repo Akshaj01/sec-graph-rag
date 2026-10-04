@@ -7,6 +7,7 @@ Does not generate a final answer (Phase 4). Returns structured evidence packs.
 from __future__ import annotations
 
 import json
+import re
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -21,6 +22,17 @@ class HybridRetrievalResult(BaseModel):
     routing: RouteDecision
     graph: Optional[GraphRetrievalResult] = None
     vector: Optional[VectorRetrievalResult] = None
+
+
+_PRODUCE_YES_NO = re.compile(
+    r"^\s*(?:does|do|did)\b.+\b(?:produce|produces|manufactur\w*)\b",
+    re.IGNORECASE,
+)
+
+
+def wants_produce_yes_no(question: str) -> bool:
+    """Yes/no product asks need vector segment prose when the graph lacks that ProductLine."""
+    return bool(_PRODUCE_YES_NO.search(question or ""))
 
 
 def retrieve(
@@ -47,6 +59,21 @@ def retrieve(
         )
     else:
         decision = route_question(question, log=log_route)
+        # Graph-only "does X produce Y?" fails when Y is a segment name not a
+        # ProductLine node (e.g. J&J MedTech). Pull vector too.
+        if (
+            decision.effective_route == RetrievalRoute.GRAPH
+            and wants_produce_yes_no(question)
+        ):
+            decision = decision.model_copy(
+                update={
+                    "effective_route": RetrievalRoute.BOTH,
+                    "rationale": (
+                        decision.rationale
+                        + " [produce-yes/no heuristic → both for segment prose]"
+                    ),
+                }
+            )
 
     route = decision.effective_route
 

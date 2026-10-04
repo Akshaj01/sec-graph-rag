@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field
 
 from config import settings
 from chunk_ticker import filter_chunk_ids_for_ticker
-from graph_writer import get_driver
+from graph_writer import ISSUER_OWNED_REL_TYPES, get_driver
 from resolver import normalize_name
 
 
@@ -203,15 +203,21 @@ def filter_facts_for_ticker(
     ticker: Optional[str],
 ) -> List[GraphFact]:
     """
-    Strip foreign-issuer chunk ids from graph facts; drop facts with none left.
+    Strip foreign-issuer chunk ids from *issuer-owned* graph facts.
 
-    Keeps competitor *nodes* (e.g. COMPETES_WITH → META); only citation
-    provenance is ticker-scoped.
+    PRODUCES_PRODUCT / risks / etc. must not cite another company's 10-K.
+    Cross-company edges (COMPETES_WITH, SUPPLIED_BY, DEPENDS_ON) keep their
+    provenance even when it lives in the other issuer's filing — otherwise
+    APPLE→META competition (stamped by Meta's 10-K) disappears for ticker=AAPL.
     """
     if not ticker:
         return facts
+    issuer_owned = {t.value for t in ISSUER_OWNED_REL_TYPES}
     out: List[GraphFact] = []
     for fact in facts:
+        if fact.rel_type not in issuer_owned:
+            out.append(fact)
+            continue
         kept = filter_chunk_ids_for_ticker(fact.source_chunk_ids, ticker)
         if not kept:
             continue
@@ -256,6 +262,8 @@ def augment_template_ids(
             out.append(tid)
             have.add(tid)
 
+    if wants_competitors:
+        _add(GraphTemplateId.COMPANY_COMPETITORS)
     if wants_products and wants_risks:
         _add(GraphTemplateId.COMPANY_PRODUCTS)
         _add(GraphTemplateId.COMPANY_RISKS)
