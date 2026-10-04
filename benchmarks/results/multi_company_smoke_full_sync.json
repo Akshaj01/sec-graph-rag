@@ -964,7 +964,7 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer clearly identifies AppleCare as an Apple offering and comprehensively describes it as a service and support program. All required facts are covered: AppleCare is explicitly named as an Apple offering, and it is described as a fee-based service and support product portfolio that provides technical support, repair services, and additional coverage options\u2014all of which align with the gold answer's characterization as an \"extended service and support program.\"",
+        "judge_rationale": "The model answer clearly identifies AppleCare as an Apple offering and comprehensively describes it as a service and support program. All required facts are covered: AppleCare is explicitly named as an Apple offering, and it is described as a fee-based service and support product portfolio that provides technical support, repair services, and additional coverage options—all of which align with the gold answer's characterization as an \"extended service and support program.\"",
         "correct_refuse": null,
         "latency_ms": 6699.7,
         "estimated_cost_usd": 0.008478,
@@ -1807,5 +1807,5 @@
     "mean_score": 0.9219,
     "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
   },
-  "notes": "Full sync rebench 2026-10-04 against current code (hop-0 windowing, cross-issuer filter, COMPETES_WITH exempt, produce yes/no both/pack filter). 24 items \u00d7 hybrid+vector_only, score_mode=both. Prior human calibration 24/24 was on the previous hybrid answers; material hybrid score change this run: hop2_jpm_credit_vs_market 0.375\u21921.0."
+  "notes": "score_mode=both; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
 }

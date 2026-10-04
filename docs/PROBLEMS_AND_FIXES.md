@@ -135,6 +135,17 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 
 ---
 
+### 10. Full-sync rebench (book closed on current code)
+
+| | |
+|--|--|
+| **Symptom** | Published table mixed a fresh hop-1 slice with older hop-0/2/OOS answers. |
+| **Fix** | Full 24×2 rebench (`multi_company_smoke_full_sync.json` → `multi_company_smoke_judged.json`). |
+| **Result** | Hybrid **0.98** overall (hop-0 **0.92**, hop-1/2/OOS **1.00**); vector **0.92** (hop-0 **1.00**, hop-1 **0.81**, hop-2 **0.94**, OOS **1.00**). Material hybrid move: `hop2_jpm_credit_vs_market` **0.375 → 1.0** (route `both`). |
+| **Calibration note** | Human **24/24** agree was on the *prior* hybrid answers; only that JPM hop-2 item changed score materially. |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
 
 ### B. Small labeled set (n=24)
@@ -194,7 +205,7 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 ## Quick “story cards” (memorize these)
 
 **Card 1 — Metric lied**  
-Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge → hybrid leads hop-1–2 (**1.00 / 0.90**) and overall **0.95 vs 0.90**.
+Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge → hybrid leads hop-1–2 (**1.00 / 1.00**) and overall **0.98 vs 0.92** (full sync).
 
 **Card 2 — Eval → systems fix**  
 Apple products cited Meta accession → global Company + Meta-written `PRODUCES_PRODUCT` → issuer write gate + chunk ticker filter + Neo4j cleanup. Same filter then erased Meta-stamped `COMPETES_WITH` → exempt cross-company rels.
@@ -222,5 +233,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-03 | Full rebench after hop-0 fix; assembled judged table (vector hop-2/OOS filled after API credits ran out). |
 | 2026-10-03 | Closed hop-1 Meta compete + J&J MedTech; hybrid hop-1 **1.00**, overall **0.95**. |
 | 2026-10-04 | Human vs judge calibration on hybrid n=24 → **24/24 agree**. |
+| 2026-10-04 | Full sync rebench → hybrid overall **0.98**, hop-2 **1.00**; book closed for current code. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.

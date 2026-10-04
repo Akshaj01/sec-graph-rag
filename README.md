@@ -54,20 +54,20 @@ Suite: `multi_company_smoke` v2 — **24** hand-labeled questions on a local **1
 **Primary metric:** LLM-as-judge (Haiku + Instructor) correctness vs hand-authored `required_facts` / `gold_answer`.  
 OOS items score as correct refuse. Keyword recall is kept as a **secondary** field in the JSON report.  
 Not a 50–100 Q human panel — still an automated grade, but much closer to answer quality than substring hits.  
-**Judge calibration:** human agreed with judge on **24/24** hybrid answers (`benchmarks/judge_calibration_hybrid.md`).
+**Judge calibration:** human agreed with judge on **24/24** on the prior hybrid answer set (`benchmarks/judge_calibration_hybrid.md`). Full sync rebench below; only material hybrid score move was `hop2_jpm_credit_vs_market` **0.375 → 1.0**.
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
 | Hop 0 (definitions) | 0.92 | **1.00** | 6 |
 | Hop 1 (single edge) | **1.00** | 0.81 | 8 |
-| Hop 2 (compare / multi-rel) | **0.90** | 0.83 | 6 |
+| Hop 2 (compare / multi-rel) | **1.00** | 0.94 | 6 |
 | OOS (must refuse) | **1.00** | **1.00** | 4 |
-| **Overall mean** | **0.95** | 0.90 | 24 |
+| **Overall mean** | **0.98** | 0.92 | 24 |
 
 Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json)  
-(hop-1 rebench after cross-company filter exempt + produce yes/no pack fix; hop-0/2/OOS from prior full rebench)
+(full sync rebench 2026-10-04 against current code — also saved as `multi_company_smoke_full_sync.json`)
 
-**How to read it:** Under fact-checklist judging, **hybrid leads hop 1–2 and overall** (1.00 / 0.90 / 0.95). Vector-only still leads hop 0 (definitions). Keyword-only scores previously overstated hop 1–2; the judge still catches partial / contradictory answers those needles missed.
+**How to read it:** Under fact-checklist judging, **hybrid leads hop 1–2 and overall** (1.00 / 1.00 / 0.98). Vector-only still leads hop 0 (definitions). Keyword-only scores previously overstated hop 1–2; the judge still catches partial / contradictory answers those needles missed.
 
 **Systems fixes from eval:** (1) Graph retrieve once cited Meta accession chunks on Apple **products** — issuer-owned write gate + chunk ticker filter + Neo4j cleanup. (2) That same filter then dropped Meta-stamped `COMPETES_WITH` for Apple asks — exempt cross-company rels at retrieve. (3) J&J “MedTech?” graph-only laundry list → force `both` + drop unmatched `PRODUCES_PRODUCT` on yes/no product asks.
 
