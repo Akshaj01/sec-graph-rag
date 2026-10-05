@@ -4,7 +4,7 @@
 **Repo:** https://github.com/Akshaj01/sec-graph-rag (private)  
 **Latest relevant commit:** pending — Phases 4–5 + README + API
 
-Use this file + `.agents/AGENTS.md` to continue in a **new Cursor chat**. Chat history will not transfer.
+Use this file + `docs/dev-notes/AGENTS.md` to continue in a **new Cursor chat**. Chat history will not transfer.
 
 ---
 
@@ -13,8 +13,8 @@ Use this file + `.agents/AGENTS.md` to continue in a **new Cursor chat**. Chat h
 A new agent only knows:
 
 1. This GitHub repo (code + docs)
-2. **`.agents/AGENTS.md`** — Learning Protocol, ontology, Phases 1–5 roadmap
-3. **`HANDOFF.md`** (this file) — current status, verified results, next step
+2. **`docs/dev-notes/AGENTS.md`** — Learning Protocol, ontology, Phases 1–5 roadmap
+3. **`docs/dev-notes/HANDOFF.md`** (this file) — current status, verified results, next step
 4. Whatever you paste into the first message
 
 Do **not** invent architecture. Follow BASWE Project 1 phases in order.
@@ -266,7 +266,7 @@ FastAPI `/ask` live at `api.py` (see README).
 
 ```text
 You are continuing the SEC GraphRAG project on PC.
-Read `.agents/AGENTS.md` and `HANDOFF.md` completely. Obey the Learning Protocol:
+Read `docs/dev-notes/AGENTS.md` and `docs/dev-notes/HANDOFF.md` completely. Obey the Learning Protocol:
 one step at a time, explain WHY, wait for my confirmation before coding.
 
 Phases 1–5 COMPLETE (grounded answers, benchmark harness, README table, FastAPI /ask).
@@ -325,6 +325,6 @@ $env:EXTRACTION_MAX_TOKENS = "16384"
 | Answer (Phase 4) | `answer.py` (N+O: draft + citation validation) |
 | Benchmark (Phase 5) | `benchmark_schema.py`, `benchmarks/`, `benchmark_runner.py` |
 | API | `api.py` |
-| Docs | `README.md`, `HANDOFF.md`, `.agents/AGENTS.md` |
+| Docs | `README.md`, `docs/dev-notes/HANDOFF.md`, `docs/dev-notes/AGENTS.md` |
 
 **Do not commit:** `.env`, `./data/*.db`, `My Resume/`

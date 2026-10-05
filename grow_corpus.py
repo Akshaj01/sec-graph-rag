@@ -1,7 +1,7 @@
 """
 Batch corpus growth: ingest + extract + resolve + Neo4j write + pgvector embed
 for multiple tickers in one run, instead of the one-ticker-at-a-time dance in
-HANDOFF.md's "Windows quick commands".
+docs/dev-notes/HANDOFF.md's "Windows quick commands".
 
 Reuses every existing Step (C-J) unchanged — this only adds an outer loop,
 an aggregate budget gate before any spend, and a per-ticker error boundary so

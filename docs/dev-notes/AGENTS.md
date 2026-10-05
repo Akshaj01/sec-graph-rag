@@ -29,7 +29,7 @@ To prevent unqueryable node explosion, enforce this strict schema in all extract
 - Step E: Entity Resolution & Canonical Mapping (`resolver.py`) [COMPLETED]
 - Step F: Idempotent Neo4j Cypher Writes (`graph_writer.py`) [COMPLETED + live smoke test on PC]
 
-PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in Neo4j; Company `APPLE` with `mention_count=5`. See `HANDOFF.md` for setup notes (Docker Desktop, `EXTRACTION_MAX_TOKENS=16384` for dense Item 1 chunks).
+PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in Neo4j; Company `APPLE` with `mention_count=5`. See `docs/dev-notes/HANDOFF.md` for setup notes (Docker Desktop, `EXTRACTION_MAX_TOKENS=16384` for dense Item 1 chunks).
 
 ## Immediate next → Phase 2
 - Step G: Postgres + pgvector in Docker [COMPLETED — `docker-compose.yml`, `vector_db.py`, `config.py`]
@@ -62,7 +62,7 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 **Phase 5 COMPLETE.** Project 1 curriculum done on AAPL smoke scale.
 
 Do not skip Learning Protocol.
-See `HANDOFF.md` for full PC verification notes, credentials, CLI commands, and the copy-paste prompt for a new chat.
+See `docs/dev-notes/HANDOFF.md` for full PC verification notes, credentials, CLI commands, and the copy-paste prompt for a new chat.
 
 ## BASWE Project 1 — remaining phases (follow in order)
 Do **not** invent a different architecture. These are the curriculum phases after graph extraction:

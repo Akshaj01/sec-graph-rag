@@ -140,7 +140,7 @@ Neo4j Browser: http://localhost:7474 (`neo4j` / `password` by default) · API do
 | Batch growth / budget | `grow_corpus.py`, `budget.py` |
 | Eval | `benchmarks/`, `benchmark_runner.py`, `benchmark_judge.py`, `chunk_ticker.py` |
 | Learning / interview log | [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md) — bugs we hit and how we fixed them |
-| Dev notes | `HANDOFF.md` |
+| Internal build notes | [`docs/dev-notes/`](docs/dev-notes/) (curriculum handoff; not required to use the system) |
 
 ---
 
