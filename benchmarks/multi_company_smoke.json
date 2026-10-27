@@ -1,7 +1,7 @@
 {
   "name": "multi_company_smoke",
-  "version": "2",
-  "corpus_notes": "Hand-labeled against the local 10-ticker full Item 1/1A/7 corpus (AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM). Primary score = LLM-as-judge vs required_facts; keyword recall kept as secondary. Not a 50-100 portfolio eval.",
+  "version": "3",
+  "corpus_notes": "Hand-labeled against the local 10-ticker full Item 1/1A/7 corpus (AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM). Primary score = LLM-as-judge vs required_facts; keyword recall secondary. v3 adds author-written golden questions (some lightly rephrased for single-ticker retrieve / chunk grounding; false-premise and OOS items marked must_refuse). Not a 50-100 portfolio eval.",
   "items": [
     {
       "id": "hop0_aapl_applecare",
@@ -9,7 +9,11 @@
       "hop": 0,
       "ticker": "AAPL",
       "expected_route": "vector",
-      "gold_keywords": ["AppleCare", "support", "service"],
+      "gold_keywords": [
+        "AppleCare",
+        "support",
+        "service"
+      ],
       "required_facts": [
         "Names AppleCare as an Apple offering",
         "Describes it as a service, support, or warranty-related program"
@@ -23,8 +27,13 @@
       "hop": 0,
       "ticker": "MSFT",
       "expected_route": "vector",
-      "gold_keywords": ["Azure", "cloud"],
-      "gold_entity_ids": ["MSFT_AZURE"],
+      "gold_keywords": [
+        "Azure",
+        "cloud"
+      ],
+      "gold_entity_ids": [
+        "MSFT_AZURE"
+      ],
       "required_facts": [
         "Identifies Azure as a Microsoft cloud offering",
         "Ties Azure to cloud computing / cloud services"
@@ -38,8 +47,14 @@
       "hop": 0,
       "ticker": "META",
       "expected_route": "vector",
-      "gold_keywords": ["Instagram", "photo", "video"],
-      "gold_entity_ids": ["META_INSTAGRAM"],
+      "gold_keywords": [
+        "Instagram",
+        "photo",
+        "video"
+      ],
+      "gold_entity_ids": [
+        "META_INSTAGRAM"
+      ],
       "required_facts": [
         "Identifies Instagram as a Meta app/product/brand",
         "Mentions social / sharing / photo or video use, or Family of Apps context"
@@ -53,7 +68,10 @@
       "hop": 0,
       "ticker": "NVDA",
       "expected_route": "vector",
-      "gold_keywords": ["Data Center", "GPU"],
+      "gold_keywords": [
+        "Data Center",
+        "GPU"
+      ],
       "required_facts": [
         "Mentions Data Center products or platforms",
         "Mentions GPUs or accelerated compute / AI infrastructure"
@@ -67,8 +85,13 @@
       "hop": 0,
       "ticker": "AMZN",
       "expected_route": "vector",
-      "gold_keywords": ["AWS", "cloud"],
-      "gold_entity_ids": ["AMZN_AWS"],
+      "gold_keywords": [
+        "AWS",
+        "cloud"
+      ],
+      "gold_entity_ids": [
+        "AMZN_AWS"
+      ],
       "required_facts": [
         "Expands or identifies AWS as Amazon Web Services",
         "Describes AWS as cloud / technology services or an Amazon segment"
@@ -82,14 +105,19 @@
       "hop": 0,
       "ticker": "JPM",
       "expected_route": "vector",
-      "gold_keywords": ["credit", "risk"],
-      "gold_entity_ids": ["JPM_CREDITRISK"],
+      "gold_keywords": [
+        "credit",
+        "risk"
+      ],
+      "gold_entity_ids": [
+        "JPM_CREDITRISK"
+      ],
       "required_facts": [
         "Defines or describes credit risk (borrower/obligor default or credit loss)",
         "Attributes the description to JPMorgan / the Firm"
       ],
       "gold_answer": "JPMorgan describes credit risk as the risk of loss from borrower or counterparty default / credit exposure, managed under firm credit risk policies.",
-      "notes": "Focused risk definition — avoid asking for all risks (token blowup)."
+      "notes": "Focused risk definition \u2014 avoid asking for all risks (token blowup)."
     },
     {
       "id": "hop1_aapl_products",
@@ -97,8 +125,16 @@
       "hop": 1,
       "ticker": "AAPL",
       "expected_route": "graph",
-      "gold_keywords": ["iPhone", "Mac", "iPad"],
-      "gold_entity_ids": ["AAPL_IPHONE", "AAPL_MAC", "AAPL_IPAD"],
+      "gold_keywords": [
+        "iPhone",
+        "Mac",
+        "iPad"
+      ],
+      "gold_entity_ids": [
+        "AAPL_IPHONE",
+        "AAPL_MAC",
+        "AAPL_IPAD"
+      ],
       "required_facts": [
         "Mentions iPhone",
         "Mentions Mac",
@@ -113,8 +149,14 @@
       "hop": 1,
       "ticker": "MSFT",
       "expected_route": "graph",
-      "gold_keywords": ["Azure", "Xbox"],
-      "gold_entity_ids": ["MSFT_AZURE", "MSFT_XBOX"],
+      "gold_keywords": [
+        "Azure",
+        "Xbox"
+      ],
+      "gold_entity_ids": [
+        "MSFT_AZURE",
+        "MSFT_XBOX"
+      ],
       "required_facts": [
         "Mentions Azure (or Intelligent Cloud cloud offerings)",
         "Mentions Xbox (or More Personal Computing / gaming)"
@@ -128,8 +170,16 @@
       "hop": 1,
       "ticker": "META",
       "expected_route": "graph",
-      "gold_keywords": ["Facebook", "Instagram", "WhatsApp"],
-      "gold_entity_ids": ["META_FACEBOOK", "META_INSTAGRAM", "META_WHATSAPP"],
+      "gold_keywords": [
+        "Facebook",
+        "Instagram",
+        "WhatsApp"
+      ],
+      "gold_entity_ids": [
+        "META_FACEBOOK",
+        "META_INSTAGRAM",
+        "META_WHATSAPP"
+      ],
       "required_facts": [
         "Mentions Facebook",
         "Mentions Instagram",
@@ -144,8 +194,14 @@
       "hop": 1,
       "ticker": "NVDA",
       "expected_route": "graph",
-      "gold_keywords": ["A100", "Automotive"],
-      "gold_entity_ids": ["NVDA_A100", "NVDA_AUTOMOTIVE"],
+      "gold_keywords": [
+        "A100",
+        "Automotive"
+      ],
+      "gold_entity_ids": [
+        "NVDA_A100",
+        "NVDA_AUTOMOTIVE"
+      ],
       "required_facts": [
         "Mentions a data-center / compute GPU product (e.g. A100 or similar)",
         "Mentions automotive offerings or another distinct NVIDIA product line"
@@ -159,8 +215,14 @@
       "hop": 1,
       "ticker": "GOOGL",
       "expected_route": "graph",
-      "gold_keywords": ["Google Cloud", "Google Services"],
-      "gold_entity_ids": ["GOOGL_GOOGLECLOUD", "GOOGL_GOOGLESERVICES"],
+      "gold_keywords": [
+        "Google Cloud",
+        "Google Services"
+      ],
+      "gold_entity_ids": [
+        "GOOGL_GOOGLECLOUD",
+        "GOOGL_GOOGLESERVICES"
+      ],
       "required_facts": [
         "Mentions Google Cloud (or cloud offerings)",
         "Mentions Google Services (or consumer/ads/services segment)"
@@ -174,8 +236,13 @@
       "hop": 1,
       "ticker": "XOM",
       "expected_route": "graph",
-      "gold_keywords": ["commodity", "price"],
-      "gold_entity_ids": ["XOM_COMMODITYPRICERISK"],
+      "gold_keywords": [
+        "commodity",
+        "price"
+      ],
+      "gold_entity_ids": [
+        "XOM_COMMODITYPRICERISK"
+      ],
       "required_facts": [
         "States ExxonMobil is exposed to commodity price risk",
         "Links the risk to oil/gas/energy commodity prices or price volatility"
@@ -189,13 +256,17 @@
       "hop": 1,
       "ticker": "JNJ",
       "expected_route": "graph",
-      "gold_keywords": ["MedTech"],
-      "gold_entity_ids": ["JNJ_MEDTECH"],
+      "gold_keywords": [
+        "MedTech"
+      ],
+      "gold_entity_ids": [
+        "JNJ_MEDTECH"
+      ],
       "required_facts": [
         "Answers yes / affirms that J&J produces MedTech",
         "Names MedTech as a product line or segment"
       ],
-      "gold_answer": "Yes — Johnson & Johnson produces MedTech products/segment offerings.",
+      "gold_answer": "Yes \u2014 Johnson & Johnson produces MedTech products/segment offerings.",
       "notes": "Narrow single-edge check."
     },
     {
@@ -204,13 +275,17 @@
       "hop": 1,
       "ticker": "AAPL",
       "expected_route": "graph",
-      "gold_keywords": ["Meta"],
-      "gold_entity_ids": ["META"],
+      "gold_keywords": [
+        "Meta"
+      ],
+      "gold_entity_ids": [
+        "META"
+      ],
       "required_facts": [
         "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
         "Frames it as competition / competitive relationship"
       ],
-      "gold_answer": "Yes — the graph encodes that Apple competes with Meta.",
+      "gold_answer": "Yes \u2014 the graph encodes that Apple competes with Meta.",
       "notes": "COMPETES_WITH onto global Company node META."
     },
     {
@@ -219,7 +294,11 @@
       "hop": 2,
       "ticker": "AAPL",
       "expected_route": "graph",
-      "gold_keywords": ["iPhone", "Mac", "AppleCare"],
+      "gold_keywords": [
+        "iPhone",
+        "Mac",
+        "AppleCare"
+      ],
       "required_facts": [
         "Mentions at least two hardware devices (e.g. iPhone, Mac, iPad)",
         "Mentions a service offering (e.g. AppleCare or Services)"
@@ -233,8 +312,14 @@
       "hop": 2,
       "ticker": "MSFT",
       "expected_route": "both",
-      "gold_keywords": ["Azure", "Xbox"],
-      "gold_entity_ids": ["MSFT_AZURE", "MSFT_XBOX"],
+      "gold_keywords": [
+        "Azure",
+        "Xbox"
+      ],
+      "gold_entity_ids": [
+        "MSFT_AZURE",
+        "MSFT_XBOX"
+      ],
       "required_facts": [
         "Mentions Azure / Intelligent Cloud offerings",
         "Mentions Xbox / More Personal Computing",
@@ -249,7 +334,11 @@
       "hop": 2,
       "ticker": "META",
       "expected_route": "both",
-      "gold_keywords": ["Facebook", "Instagram", "Reality Labs"],
+      "gold_keywords": [
+        "Facebook",
+        "Instagram",
+        "Reality Labs"
+      ],
       "required_facts": [
         "Mentions Facebook and/or Instagram as Family of Apps products",
         "Mentions Reality Labs as a separate Meta segment/area",
@@ -264,8 +353,14 @@
       "hop": 2,
       "ticker": "AMZN",
       "expected_route": "both",
-      "gold_keywords": ["AWS", "Prime"],
-      "gold_entity_ids": ["AMZN_AWS", "AMZN_AMAZONPRIME"],
+      "gold_keywords": [
+        "AWS",
+        "Prime"
+      ],
+      "gold_entity_ids": [
+        "AMZN_AWS",
+        "AMZN_AMAZONPRIME"
+      ],
       "required_facts": [
         "Describes AWS as cloud / technology services",
         "Describes Amazon Prime as a membership/subscription or store-related offering"
@@ -279,15 +374,21 @@
       "hop": 2,
       "ticker": "JPM",
       "expected_route": "graph",
-      "gold_keywords": ["Credit", "Market"],
-      "gold_entity_ids": ["JPM_CREDITRISK", "JPM_MARKETRISK"],
+      "gold_keywords": [
+        "Credit",
+        "Market"
+      ],
+      "gold_entity_ids": [
+        "JPM_CREDITRISK",
+        "JPM_MARKETRISK"
+      ],
       "required_facts": [
         "Mentions credit risk as a named risk",
         "Mentions market risk as a named risk",
         "Distinguishes them (credit = default/credit loss vs market = market-price/market movements) or treats them as separate factors"
       ],
       "gold_answer": "JPMorgan names both credit risk and market risk as distinct risk factors: credit risk centers on borrower/counterparty default; market risk on adverse market movements.",
-      "notes": "Narrow compare — not 'list all risks'."
+      "notes": "Narrow compare \u2014 not 'list all risks'."
     },
     {
       "id": "hop2_nvda_products_and_geo_risk",
@@ -295,7 +396,10 @@
       "hop": 2,
       "ticker": "NVDA",
       "expected_route": "both",
-      "gold_keywords": ["A100", "Geopolitical"],
+      "gold_keywords": [
+        "A100",
+        "Geopolitical"
+      ],
       "required_facts": [
         "Names compute products (e.g. data-center GPUs such as A100/H100 or GeForce)",
         "Mentions geopolitical / export-control / China-related risk exposure"
@@ -312,7 +416,7 @@
       "expected_route": "refuse",
       "gold_keywords": [],
       "required_facts": [],
-      "gold_answer": "Should refuse — Tesla is not an issuer in this corpus.",
+      "gold_answer": "Should refuse \u2014 Tesla is not an issuer in this corpus.",
       "notes": "Tesla is not an issuer in this corpus (may appear only as a mentioned name)."
     },
     {
@@ -324,7 +428,7 @@
       "expected_route": "refuse",
       "gold_keywords": [],
       "required_facts": [],
-      "gold_answer": "Should refuse — Bitcoin holdings not in Item 1/1A/7 extract.",
+      "gold_answer": "Should refuse \u2014 Bitcoin holdings not in Item 1/1A/7 extract.",
       "notes": "Not in Item 1/1A/7 extract."
     },
     {
@@ -336,7 +440,7 @@
       "expected_route": "refuse",
       "gold_keywords": [],
       "required_facts": [],
-      "gold_answer": "Should refuse — executive compensation detail not ingested.",
+      "gold_answer": "Should refuse \u2014 executive compensation detail not ingested.",
       "notes": "Proxy/comp detail not ingested."
     },
     {
@@ -348,8 +452,368 @@
       "expected_route": "refuse",
       "gold_keywords": [],
       "required_facts": [],
-      "gold_answer": "Should refuse — Walmart not in the 10-ticker corpus.",
+      "gold_answer": "Should refuse \u2014 Walmart not in the 10-ticker corpus.",
       "notes": "WMT not in the 10-ticker corpus; scoped away from Walmart filings."
+    },
+    {
+      "id": "hop1_meta_ai_competition",
+      "question": "What major competitors or competitive pressures does Meta describe around AI and its core products?",
+      "hop": 1,
+      "ticker": "META",
+      "expected_route": "both",
+      "gold_keywords": [
+        "competition",
+        "AI",
+        "TikTok"
+      ],
+      "gold_entity_ids": [
+        "TIKTOK"
+      ],
+      "gold_chunk_ids": [
+        "0001628280-26-003942:Item1:0",
+        "0001628280-26-003942:Item1A:0",
+        "0001628280-26-003942:Item1A:3"
+      ],
+      "required_facts": [
+        "Describes competition Meta faces for users, advertisers, and/or AI features",
+        "Names at least one competitor or competitor category (e.g. TikTok, other AI companies, or connection/sharing platforms)"
+      ],
+      "gold_answer": "Meta says it faces broad competition for users and advertisers, including competing social/content platforms (e.g. TikTok) and significant competition from other companies developing AI features and technologies.",
+      "notes": "Author draft: 'What major competitors exist for Meta AI?' Softened \u2014 filings discuss AI competition and Meta AI glasses, but do not publish a clean 'Meta AI product rivals' list. Chunks: META Item1:0 Competition; Item1A AI competition / TikTok."
+    },
+    {
+      "id": "hop1_meta_china_international_risk",
+      "question": "What major international or China-related risk factors does Meta describe?",
+      "hop": 1,
+      "ticker": "META",
+      "expected_route": "both",
+      "gold_keywords": [
+        "China",
+        "international"
+      ],
+      "gold_chunk_ids": [
+        "0001628280-26-003942:Item1A:8",
+        "0001628280-26-003942:Item1A:10",
+        "0001628280-26-003942:Item1A:11"
+      ],
+      "required_facts": [
+        "Mentions international / foreign operations or access restrictions as a risk",
+        "Mentions China (or other restricted countries) in that risk context"
+      ],
+      "gold_answer": "Meta describes international regulatory/operational complexity and notes that Facebook and certain other products are restricted in whole or in part in China (and similarly in some other countries).",
+      "notes": "Author draft asked Meta+Apple shared international risk. Split to single-ticker META (retrieve is ticker-scoped). Pair with hop1_aapl_china_supply_risk for the Apple side."
+    },
+    {
+      "id": "hop1_aapl_china_supply_risk",
+      "question": "What China-related or international supply-chain risks does Apple describe?",
+      "hop": 1,
+      "ticker": "AAPL",
+      "expected_route": "both",
+      "gold_keywords": [
+        "China",
+        "supply"
+      ],
+      "gold_chunk_ids": [
+        "0000320193-25-000079:Item1A:0",
+        "0000320193-25-000079:Item1A:1"
+      ],
+      "required_facts": [
+        "States Apple relies on manufacturing/suppliers outside the U.S., including China",
+        "Links that concentration / international footprint to operational or supply risk"
+      ],
+      "gold_answer": "Apple says a majority of supplier manufacturing/assembly is outside the U.S., primarily including China mainland and other Asia locations, so operations depend on global/regional conditions and international supply-chain exposure.",
+      "notes": "Apple half of author shared Meta+Apple international risk ask. Chunks: AAPL Item1A supply chain / China manufacturing."
+    },
+    {
+      "id": "hop0_meta_ai_glasses",
+      "question": "What AI glasses or Reality Labs hardware products does Meta describe?",
+      "hop": 0,
+      "ticker": "META",
+      "expected_route": "vector",
+      "gold_keywords": [
+        "Ray-Ban",
+        "glasses",
+        "Quest"
+      ],
+      "gold_chunk_ids": [
+        "0001628280-26-003942:Item1:0"
+      ],
+      "required_facts": [
+        "Names Meta AI glasses or Ray-Ban Meta / Oakley Meta glasses (or equivalent)",
+        "Mentions Reality Labs / Quest / AR-VR hardware context"
+      ],
+      "gold_answer": "Meta describes AI glasses such as Ray-Ban Meta and Oakley Meta (featuring Meta AI), alongside Reality Labs / Quest and longer-term AR glasses efforts.",
+      "notes": "Author draft asked for a 'possible competitor to Meta Glasses among major tech.' Filings name Meta's glasses products but do not clearly name a peer glasses competitor in-corpus \u2014 product ask is the grounded form. Speculative competitor ask is oos_meta_glasses_competitor."
+    },
+    {
+      "id": "oos_meta_glasses_competitor",
+      "question": "What is a possible competitor to Meta Glasses that exists among the major tech companies?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "META",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse inventing a peer glasses competitor \u2014 Meta's filing describes its own AI glasses but does not clearly identify another major tech company's glasses product as a named competitor in the ingested chunks.",
+      "notes": "Author draft kept as refuse. Speculative / not chunk-grounded."
+    },
+    {
+      "id": "hop1_nvda_automotive",
+      "question": "How is NVIDIA involved in the automotive space?",
+      "hop": 1,
+      "ticker": "NVDA",
+      "expected_route": "both",
+      "gold_keywords": [
+        "automotive",
+        "DRIVE"
+      ],
+      "gold_chunk_ids": [
+        "0001045810-26-000021:Item1:0",
+        "0001045810-26-000021:Item1:1",
+        "0001045810-26-000021:Item1A:0"
+      ],
+      "required_facts": [
+        "States NVIDIA has automotive products, platforms, or partnerships",
+        "Mentions automotive / autonomous / DRIVE (or similar) offerings"
+      ],
+      "gold_answer": "NVIDIA serves automotive use cases with platforms/software such as NVIDIA DRIVE and partnerships with automotive manufacturers and tier-1 suppliers for AI/autonomous workloads.",
+      "notes": "Part of author multi-company automotive ask; NVDA side is strongly evidenced. See also hop1_googl_waymo."
+    },
+    {
+      "id": "hop1_googl_waymo",
+      "question": "How is Alphabet / Google involved in the automotive or autonomous driving space?",
+      "hop": 1,
+      "ticker": "GOOGL",
+      "expected_route": "vector",
+      "gold_keywords": [
+        "Waymo",
+        "autonomous"
+      ],
+      "gold_chunk_ids": [
+        "0001652044-26-000018:Item1:0",
+        "0001652044-26-000018:Item1:1"
+      ],
+      "required_facts": [
+        "Names Waymo (or Alphabet Other Bets autonomous driving)",
+        "Describes autonomous ride-hailing / autonomous driving technology"
+      ],
+      "gold_answer": "Alphabet's Other Bets include Waymo, a fully autonomous driving company providing paid autonomous ride-hailing in multiple cities.",
+      "notes": "Author 'which companies have a foot in automotive' \u2014 GOOGL/Waymo half. Multi-issuer 'which of these' ask split because retrieve is ticker-scoped."
+    },
+    {
+      "id": "oos_msft_xbox_named_rival",
+      "question": "What is Microsoft\u2019s major competition to Xbox?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "MSFT",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse naming Sony/PlayStation/Nintendo as Xbox rivals from this extract \u2014 Microsoft's ingested Item 1/1A/7 chunks discuss Xbox but do not name those console rivals in the local corpus text search.",
+      "notes": "Author draft kept as refuse after chunk search (no Sony/PlayStation/Nintendo hits in MSFT chunks)."
+    },
+    {
+      "id": "oos_cross_company_executives",
+      "question": "What executives are known to have connections to multiple big tech companies?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse \u2014 the corpus/ontology does not encode cross-company executive career graphs; LED_BY is issuer-scoped and filings here don't answer 'connections across multiple big tech companies.'",
+      "notes": "Author draft. Wrong ontology / not evidenced as a multi-hop career graph."
+    },
+    {
+      "id": "oos_aapl_battery_supply",
+      "question": "What battery supply risks does Apple face in its latest 10-K?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse \u2014 Apple Item 1/1A/7 chunks in this corpus do not discuss battery supply risks (no battery/batteries hits).",
+      "notes": "Author draft. Parallel to oos_tesla_battery but in-corpus ticker with missing topic."
+    },
+    {
+      "id": "hop2_msft_cloud_and_geo_risk",
+      "question": "What compute infrastructure does Microsoft produce, and what geopolitical risks are they exposed to?",
+      "hop": 2,
+      "ticker": "MSFT",
+      "expected_route": "both",
+      "gold_keywords": [
+        "Azure",
+        "geopolitical"
+      ],
+      "gold_chunk_ids": [
+        "0001193125-26-323660:Item1:1",
+        "0001193125-26-323660:Item1A:5",
+        "0001193125-26-323660:Item1A:6"
+      ],
+      "required_facts": [
+        "Mentions Azure / cloud or datacenter compute infrastructure",
+        "Mentions geopolitical, trade, tariff, export-control, or international political risk affecting Microsoft"
+      ],
+      "gold_answer": "Microsoft offers Azure and other cloud/AI datacenter infrastructure and describes geopolitical/trade uncertainties (e.g. tariffs, shifting AI export-control policies) that can raise costs and create operational continuity risk.",
+      "notes": "Author draft nearly verbatim. Analogous to hop2_nvda_products_and_geo_risk."
+    },
+    {
+      "id": "hop1_nflx_aws_relationship",
+      "question": "What is Netflix\u2019s relationship to Amazon and AWS?",
+      "hop": 1,
+      "ticker": "NFLX",
+      "expected_route": "graph",
+      "gold_keywords": [
+        "AWS",
+        "Amazon"
+      ],
+      "gold_chunk_ids": [
+        "0001065280-26-000034:Item1A:3"
+      ],
+      "required_facts": [
+        "States Netflix relies on / uses Amazon Web Services (AWS)",
+        "Notes Amazon's retail side competes with Netflix and/or that AWS is part of Amazon"
+      ],
+      "gold_answer": "Netflix relies on AWS to run most of its computing infrastructure, while noting Amazon's retail business competes with Netflix even though AWS is the cloud supplier.",
+      "notes": "Author draft verbatim. Strong DEPENDS_ON/SUPPLIED_BY + COMPETES_WITH evidence in NFLX Item1A:3."
+    },
+    {
+      "id": "hop0_nflx_advertising",
+      "question": "What does Netflix say about advertising?",
+      "hop": 0,
+      "ticker": "NFLX",
+      "expected_route": "vector",
+      "gold_keywords": [
+        "advertis",
+        "ad-supported"
+      ],
+      "gold_chunk_ids": [
+        "0001065280-26-000034:Item1:0",
+        "0001065280-26-000034:Item1A:2"
+      ],
+      "required_facts": [
+        "Mentions an ad-supported plan or advertising offering/revenue",
+        "Mentions advertising-related opportunity and/or risk/uncertainty"
+      ],
+      "gold_answer": "Netflix offers an ad-supported subscription plan and discusses advertising as a revenue stream that also carries risks and uncertainties.",
+      "notes": "Author draft verbatim. NFLX Item1 ad-supported plan; Item1A advertising offering risks."
+    },
+    {
+      "id": "hop2_nvda_auto_competitors_risks",
+      "question": "How is Nvidia involved in the automotive space and what competitors and risks are they exposed to in that space?",
+      "hop": 2,
+      "ticker": "NVDA",
+      "expected_route": "both",
+      "gold_keywords": [
+        "automotive",
+        "DRIVE",
+        "Qualcomm"
+      ],
+      "gold_chunk_ids": [
+        "0001045810-26-000021:Item1:0",
+        "0001045810-26-000021:Item1:2",
+        "0001045810-26-000021:Item1A:1"
+      ],
+      "required_facts": [
+        "Describes NVIDIA automotive / DRIVE / autonomous vehicle involvement",
+        "Names at least one competitor relevant to automotive/SoC/accelerated computing (e.g. Qualcomm, Ambarella, Intel, Tesla designing SoCs)",
+        "Mentions a business or geopolitical/supply risk NVIDIA faces (general or auto-related)"
+      ],
+      "gold_answer": "NVIDIA provides automotive AI platforms (e.g. DRIVE) and partners across auto OEMs/suppliers; it competes with SoC/accelerated-computing suppliers such as Qualcomm/Ambarella/Intel (and companies designing their own SoCs, e.g. Tesla) and faces broader supply/geopolitical and execution risks described in Item 1A.",
+      "notes": "Author draft verbatim. Competitors listed in NVDA Item1 competition section including auto SoC peers."
+    },
+    {
+      "id": "oos_tesla_competitors_risks",
+      "question": "What are Tesla\u2019s major international competitors and what major risks come with their competitors?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "AAPL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse \u2014 Tesla is not an issuer in the 10-ticker corpus (may appear only as a mentioned name, e.g. in NVIDIA's competition discussion).",
+      "notes": "Author draft. Same OOS family as oos_tesla_battery."
+    },
+    {
+      "id": "hop1_nvda_geopolitical_risk",
+      "question": "What geopolitical risks is Nvidia exposed to?",
+      "hop": 1,
+      "ticker": "NVDA",
+      "expected_route": "both",
+      "gold_keywords": [
+        "geopolitical",
+        "export",
+        "China"
+      ],
+      "gold_chunk_ids": [
+        "0001045810-26-000021:Item1:2",
+        "0001045810-26-000021:Item1:3",
+        "0001045810-26-000021:Item1A:0"
+      ],
+      "required_facts": [
+        "Mentions geopolitical risk and/or export-control restrictions",
+        "Links the risk to China or ability to sell advanced products in restricted markets"
+      ],
+      "gold_answer": "NVIDIA describes shifting U.S. export-control restrictions and geopolitical limits that impair its ability to deliver competitive data-center products for China and related markets.",
+      "notes": "Author draft verbatim. Narrower than hop2_nvda_products_and_geo_risk (risk-only)."
+    },
+    {
+      "id": "hop1_aapl_supply_chain_risk",
+      "question": "What major supply-chain risks does Apple describe?",
+      "hop": 1,
+      "ticker": "AAPL",
+      "expected_route": "both",
+      "gold_keywords": [
+        "supply chain",
+        "supplier"
+      ],
+      "gold_chunk_ids": [
+        "0000320193-25-000079:Item1A:0",
+        "0000320193-25-000079:Item1A:1"
+      ],
+      "required_facts": [
+        "States Apple's supply chain is global/complex and/or largely outside the U.S.",
+        "Describes risk from suppliers, manufacturing concentration, or related disruptions"
+      ],
+      "gold_answer": "Apple describes a large, complex global supply chain with most supplier manufacturing/assembly outside the U.S., creating exposure to adverse global/regional conditions and supply-chain changes.",
+      "notes": "Author draft asked shared multi-company supply-chain risks. Rephrased to single-ticker AAPL (strongly evidenced). Multi-issuer aggregation still ticker-scoped."
+    },
+    {
+      "id": "oos_googl_blockchain_investments",
+      "question": "What material investments has Google made in Blockchain or Cryptocurrency focused entities?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "GOOGL",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse \u2014 no blockchain/cryptocurrency investment discussion found in GOOGL Item 1/1A/7 chunks in this corpus.",
+      "notes": "Author draft. Chunk search: no hits."
+    },
+    {
+      "id": "oos_jpm_robotics_spend",
+      "question": "How much money has JP Morgan invested into their robotics program?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "JPM",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse \u2014 no robotics program or dollar investment figure appears in JPM Item 1/1A/7 chunks here (also a strict quantitative ask).",
+      "notes": "Author draft. Chunk search: no robotics hits; quantitative OOS."
+    },
+    {
+      "id": "oos_nflx_ai_compute_for_others",
+      "question": "How is Netflix producing AI Compute for other companies in the corpus?",
+      "hop": 0,
+      "must_refuse": true,
+      "ticker": "NFLX",
+      "expected_route": "refuse",
+      "gold_keywords": [],
+      "required_facts": [],
+      "gold_answer": "Should refuse \u2014 false premise; Netflix is not described as producing AI compute for other corpus companies (it consumes AWS).",
+      "notes": "Author draft. False-premise refuse."
     }
   ]
 }

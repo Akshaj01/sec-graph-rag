@@ -48,8 +48,9 @@ Question → Haiku router (graph | vector | both)
 
 ## Benchmark (hybrid vs vector-only)
 
-Suite: `multi_company_smoke` v2 — **24** hand-labeled questions on a local **10-ticker** corpus  
-(`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7).
+Suite: `multi_company_smoke` v3 — **44** hand-labeled questions on a local **10-ticker** corpus  
+(`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7).  
+**Published table below is still the full-sync n=24 run** (v2 subset); rebench the v3 additions before claiming new means.
 
 **Primary metric:** LLM-as-judge (Haiku + Instructor) correctness vs hand-authored `required_facts` / `gold_answer`.  
 OOS items score as correct refuse. Keyword recall is kept as a **secondary** field in the JSON report.  
