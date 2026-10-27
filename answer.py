@@ -390,10 +390,21 @@ _TOPIC_STOP = {
 def topic_needles(question: str) -> List[str]:
     """Specific content needles from the question (not issuer/ask boilerplate)."""
     out: List[str] = []
+    seen: Set[str] = set()
     for n in query_needles(question):
         key = n.lower()
         if key in _TOPIC_GENERIC or key in _TOPIC_STOP or len(n) < 4:
             continue
+        # "China-related" never appears verbatim in filings — keep the stem.
+        if key.endswith("-related"):
+            stem = n[: -len("-related")]
+            if len(stem) >= 4 and stem.lower() not in seen:
+                seen.add(stem.lower())
+                out.append(stem)
+            continue
+        if key in seen:
+            continue
+        seen.add(key)
         out.append(n)
     return out
 
@@ -409,13 +420,22 @@ def evidence_addresses_question(evidence: EvidencePack) -> bool:
         return False
 
     blob = " ".join(item.statement for item in evidence.items).lower()
+    blob_norm = re.sub(r"[\s\-]+", " ", blob)
     topics = topic_needles(evidence.question)
     if not topics:
         # Open asks ("what products?") — any on-ticker pack is fair game.
         return True
 
+    def _topic_in_blob(t: str) -> bool:
+        tl = t.lower()
+        if tl in blob or tl in blob_norm:
+            return True
+        spaced = re.sub(r"[\s\-]+", " ", tl)
+        return spaced in blob_norm
+
     # All distinctive topic words must appear (battery+supply, not supply alone).
-    if not all(t.lower() in blob for t in topics):
+    # Hyphen/space normalized so supply-chain matches "supply chain".
+    if not all(_topic_in_blob(t) for t in topics):
         return False
 
     # Dollar/percent figures elsewhere in a 10-K must not count as answering
@@ -559,6 +579,50 @@ def _truncate_passage(text: str, max_chars: int) -> str:
     return cleaned[: max(0, max_chars - 3)] + "..."
 
 
+def _needle_pos(haystack_lower: str, needle: str) -> int:
+    """Find needle in text; treat hyphen/space as equivalent (supply-chain ≈ supply chain)."""
+    n = (needle or "").lower().strip()
+    if not n:
+        return -1
+    pos = haystack_lower.find(n)
+    if pos >= 0:
+        return pos
+    spaced = re.sub(r"[\s\-]+", " ", n)
+    if spaced != n:
+        # Search spaced form in a spaced haystack so 'supply-chain' hits 'supply chain'.
+        spaced_hay = re.sub(r"[\s\-]+", " ", haystack_lower)
+        sp = spaced_hay.find(spaced)
+        if sp < 0:
+            return -1
+        # Map approx back by scanning original for the first token.
+        first = spaced.split()[0]
+        return haystack_lower.find(first)
+    return -1
+
+
+_WINDOW_GENERIC_NEEDLES = {
+    "risk",
+    "risks",
+    "factor",
+    "factors",
+    "international",
+    "related",
+    "describe",
+    "major",
+    "apple",
+    "microsoft",
+    "amazon",
+    "nvidia",
+    "alphabet",
+    "google",
+    "meta",
+    "exxon",
+    "jpmorgan",
+    "netflix",
+    "company",
+}
+
+
 def truncate_passage_for_query(
     text: str,
     question: str,
@@ -575,6 +639,9 @@ def truncate_passage_for_query(
     Prefer needles from the *question* over passage entity_ids — linked ids on a
     long Item 1 chunk include many products (iPhone, Mac, …) that appear earlier
     and would otherwise steal the window away from the asked term.
+
+    Also prefer *specific* needles (China, supply-chain) over generics like
+    "risks" that match the Item 1A header and steal the window.
     """
     cleaned = " ".join((text or "").split())
     if len(cleaned) <= max_chars:
@@ -585,7 +652,7 @@ def truncate_passage_for_query(
     def _best_hit(needles: List[str]) -> Optional[tuple]:
         best: Optional[tuple] = None  # (pos, -len, needle)
         for needle in needles:
-            pos = lowered.find(needle.lower())
+            pos = _needle_pos(lowered, needle)
             if pos < 0:
                 continue
             cand = (pos, -len(needle), needle)
@@ -593,7 +660,11 @@ def truncate_passage_for_query(
                 best = cand
         return best
 
-    hit = _best_hit(query_needles(question, entity_ids=None))
+    all_needles = query_needles(question, entity_ids=None)
+    specific = [
+        n for n in all_needles if n.lower() not in _WINDOW_GENERIC_NEEDLES
+    ]
+    hit = _best_hit(specific) or _best_hit(all_needles)
     if hit is None and entity_ids:
         hit = _best_hit(query_needles(question, entity_ids=entity_ids))
     if hit is None:
@@ -615,11 +686,21 @@ def truncate_passage_for_query(
 
 
 def _graph_fact_matches_needles(fact, needles: List[str]) -> bool:
-    """True if any needle appears in product/risk target name or id."""
+    """True if any needle appears in product/risk target name, id, or context."""
     if not needles:
         return True
-    blob = f"{fact.target_name} {fact.target_id} {fact.source_name}".lower()
-    return any(n.lower() in blob for n in needles)
+    blob = (
+        f"{fact.target_name} {fact.target_id} {fact.source_name} {fact.context or ''}"
+    ).lower()
+    blob_norm = re.sub(r"[\s\-]+", " ", blob)
+    for n in needles:
+        nl = n.lower()
+        if nl in blob or nl in blob_norm:
+            return True
+        spaced = re.sub(r"[\s\-]+", " ", nl)
+        if spaced in blob_norm:
+            return True
+    return False
 
 
 def filter_unmatched_produces_facts(facts: List, question: str) -> List:
@@ -637,6 +718,13 @@ def filter_unmatched_produces_facts(facts: List, question: str) -> List:
 
     q = question or ""
     if re.search(r"\bcompet", q, re.IGNORECASE):
+        return [f for f in facts if f.rel_type != "PRODUCES_PRODUCT"]
+
+    # Risk / supply-chain asks: drop product laundry lists so EXPOSED_TO_RISK
+    # and vector Item 1A passages are not crowded out of the evidence cap.
+    if re.search(r"\brisk|\bsupply[\s\-]?chain|\bsupplier", q, re.IGNORECASE) and not re.search(
+        r"\bproducts?\b|\bproduces?\b|\bapps?\b", q, re.IGNORECASE
+    ):
         return [f for f in facts if f.rel_type != "PRODUCES_PRODUCT"]
 
     # Generic ask words must not count as product needles — otherwise

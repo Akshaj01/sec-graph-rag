@@ -464,3 +464,65 @@ def test_normalize_refused_draft_validates():
     draft = normalize_refused_draft("What battery risks?", allowed_chunk_ids=["c9"])
     assert draft.refused
     assert validate_citations(draft, ["c9"]).valid
+
+
+def test_truncate_passage_prefers_specific_needle_over_risks_header():
+    """'risks' matches Item 1A header; window must still center on China/supply."""
+    header = "Item 1A. Risk Factors The following summarizes factors that could have "
+    mid = "x" * 1400
+    supply = (
+        "The Company's global supply chain is large and complex and a majority of "
+        "supplier facilities are located outside the U.S."
+    )
+    tail = "y" * 500
+    text = header + mid + supply + tail
+    out = truncate_passage_for_query(
+        text,
+        "What China-related or international supply-chain risks does Apple describe?",
+        400,
+    )
+    assert "supply chain" in out.lower()
+    assert "Risk Factors The following" not in out
+
+
+def test_filter_drops_products_on_supply_chain_risk_ask():
+    facts = [
+        GraphFact(
+            source_id="APPLE",
+            source_name="Apple",
+            rel_type="PRODUCES_PRODUCT",
+            target_id="AAPL_IPHONE",
+            target_name="iPhone",
+            source_chunk_ids=["c1"],
+            confidence=0.9,
+        ),
+        GraphFact(
+            source_id="APPLE",
+            source_name="Apple",
+            rel_type="EXPOSED_TO_RISK",
+            target_id="AAPL_SUPPLY",
+            target_name="Supply Chain Risk",
+            source_chunk_ids=["c2"],
+            confidence=0.9,
+            context="global supply chain outside the U.S.",
+        ),
+    ]
+    kept = filter_unmatched_produces_facts(
+        facts, "What major supply-chain risks does Apple describe?"
+    )
+    assert [f.rel_type for f in kept] == ["EXPOSED_TO_RISK"]
+
+
+def test_evidence_addresses_hyphen_supply_chain():
+    pack = EvidencePack(
+        question="What major supply-chain risks does Apple describe?",
+        items=[
+            LabeledEvidenceItem(
+                source_label="VECTOR",
+                statement="The Company's global supply chain is large and complex.",
+                chunk_ids=["c1"],
+            )
+        ],
+        allowed_chunk_ids=["c1"],
+    )
+    assert evidence_addresses_question(pack)

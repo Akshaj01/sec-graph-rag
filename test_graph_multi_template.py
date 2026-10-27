@@ -107,6 +107,17 @@ def test_augment_template_ids_adds_risks_for_products_and_risks_question():
     assert len(out) <= 3
 
 
+def test_augment_template_ids_drops_products_for_risk_only_ask():
+    from graph_retriever import augment_template_ids
+
+    out = augment_template_ids(
+        "What China-related or international supply-chain risks does Apple describe?",
+        [GraphTemplateId.COMPANY_RISKS, GraphTemplateId.COMPANY_PRODUCTS],
+    )
+    assert GraphTemplateId.COMPANY_RISKS in out
+    assert GraphTemplateId.COMPANY_PRODUCTS not in out
+
+
 def test_draft_from_graph_evidence_none_without_graph():
     evidence = EvidencePack(
         question="q",

@@ -1,0 +1,185 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "3",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop1_aapl_china_supply_risk",
+        "mode": "hybrid",
+        "question": "What China-related or international supply-chain risks does Apple describe?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple describes several China-related and international supply-chain risks in its 10-K filing. The company relies heavily on outsourcing partners located primarily in China mainland, India, Japan, South Korea, Taiwan, and Vietnam for manufacturing and assembly, which reduces direct control over production. A majority of Apple's supplier facilities are located outside the U.S., and the company depends on single-source partners in Asia for many components. Apple faces risks from new U.S. tariffs announced in 2025 on imports from China and other Asian countries. Additionally, the company's global supply chain is exposed to IT system failures and network disruptions that could interfere with manufacturing and shipping.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:3",
+          "0000320193-25-000079:Item7:0"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "China",
+          "supply"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States Apple relies on manufacturing/suppliers outside the U.S., including China",
+          "Links that concentration / international footprint to operational or supply risk"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it clearly states that Apple relies on manufacturing and suppliers outside the U.S., specifically naming China mainland and other Asia locations, and it explicitly links this concentration and international footprint to operational risks (reduced control over production, single-source dependencies, tariff exposure, IT vulnerabilities). The answer is well-structured with specific supporting claims.",
+        "correct_refuse": null,
+        "latency_ms": 11748.0,
+        "estimated_cost_usd": 0.015804,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_supply_chain_risk",
+        "mode": "hybrid",
+        "question": "What major supply-chain risks does Apple describe?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple describes several major supply-chain risks in its 10-K filing. The company depends heavily on outsourcing partners located primarily in China, India, Japan, South Korea, Taiwan, and Vietnam for component manufacturing and assembly, with reliance on single-source suppliers reducing direct control over production. The global supply chain is vulnerable to information technology system failures and network disruptions caused by natural disasters, cyberattacks, or other events that can interfere with manufacturing and shipping. Additionally, new U.S. tariffs on imports from key manufacturing regions pose supply-chain risks, and adverse macroeconomic conditions including inflation and currency fluctuations can impact the complex global supply chain.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2",
+          "0000320193-25-000079:Item1A:3",
+          "0000320193-25-000079:Item7:0"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "supply chain",
+          "supplier"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States Apple's supply chain is global/complex and/or largely outside the U.S.",
+          "Describes risk from suppliers, manufacturing concentration, or related disruptions"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It clearly states that Apple's supply chain is global and complex with most manufacturing outside the U.S. (primarily in China, India, Japan, South Korea, Taiwan, Vietnam), and describes multiple supply-chain risks including manufacturing concentration/single-source suppliers, IT/network vulnerabilities, tariff impacts, and macroeconomic factors. The answer aligns well with the gold answer's core points.",
+        "correct_refuse": null,
+        "latency_ms": 13349.2,
+        "estimated_cost_usd": 0.017322,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 12548.6,
+    "mean_cost_usd": 0.016563,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop1_aapl_china_supply_risk",
+        "mode": "vector_only",
+        "question": "What China-related or international supply-chain risks does Apple describe?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple describes several China-related and international supply-chain risks in its 10-K filing. The company relies heavily on outsourcing partners located primarily in China mainland and other Asian countries for manufacturing and assembly, with a significant majority of manufacturing performed outside the U.S. Apple depends on single-source partners across Asia for many components and final assembly of substantially all hardware products. This global supply chain exposes Apple to risks from adverse macroeconomic conditions, reduced direct control over production and distribution, and potential IT system failures or network disruptions caused by various events including natural disasters, terrorism, or cybersecurity incidents.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "China",
+          "supply"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States Apple relies on manufacturing/suppliers outside the U.S., including China",
+          "Links that concentration / international footprint to operational or supply risk"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly states that Apple relies on outsourcing partners primarily in China mainland and other Asian countries for manufacturing/assembly outside the U.S., and it clearly links this international/concentrated supply-chain footprint to multiple operational risks (loss of direct control, macroeconomic exposure, IT/network vulnerabilities). The answer is well-substantiated with specific quotes from Apple's filing.",
+        "correct_refuse": null,
+        "latency_ms": 9122.0,
+        "estimated_cost_usd": 0.012861,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_supply_chain_risk",
+        "mode": "vector_only",
+        "question": "What major supply-chain risks does Apple describe?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple describes several major supply-chain risks in its 10-K filing. The company depends heavily on outsourcing partners located primarily outside the U.S. (especially in China mainland, India, Japan, South Korea, Taiwan, and Vietnam) for component manufacturing, product assembly, and logistics. Apple relies on single-source suppliers for many components and has outsourced much of its transportation and logistics management, which reduces direct control over production, distribution, cost, quality, and flexibility. The company's global supply chain is also vulnerable to information technology system failures and network disruptions caused by natural disasters, cyberattacks, power disruptions, and other events that can interfere with manufacturing and shipping. Additionally, adverse macroeconomic conditions can impact the global supply chain and operations.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2",
+          "0000320193-25-000079:Item1A:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "supply chain",
+          "supplier"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States Apple's supply chain is global/complex and/or largely outside the U.S.",
+          "Describes risk from suppliers, manufacturing concentration, or related disruptions"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it clearly states Apple's supply chain is global and complex with most manufacturing/assembly outside the U.S., and it describes multiple supply-chain risks including outsourcing dependence, single-source supplier reliance, reduced control over logistics, and IT/network vulnerabilities. The answer directly aligns with the gold answer and provides substantial supporting detail from Apple's filings.",
+        "correct_refuse": null,
+        "latency_ms": 10630.8,
+        "estimated_cost_usd": 0.013776,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 9876.4,
+    "mean_cost_usd": 0.013319,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=both; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

@@ -158,6 +158,18 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 
 ---
 
+### 12. Apple supply/China asks missed the evidence window
+
+| | |
+|--|--|
+| **Symptom** | `hop1_aapl_china_supply_risk` / `hop1_aapl_supply_chain_risk` scored **0** (hybrid often refused; vector refused). Gold chunks Item1A:0/1 contain the prose. |
+| **Root causes** | (1) Passage window centered on generic needle **“risks”** (Item 1A header) instead of **China** / **supply chain**. (2) Planner/`app`∈`Apple` falsely kept `COMPANY_PRODUCTS`, crowding the pack. (3) Topic gate treated `supply-chain` ≠ `supply chain`. |
+| **Fix** | Prefer specific needles for windowing; risk-only asks drop `PRODUCES_PRODUCT` + strip product templates; hyphen/space-normalize topic match; `\bapp\b` not substring of Apple. |
+| **Where** | `answer.py`, `graph_retriever.py`, tests |
+| **Verify** | `multi_company_smoke_v3_aapl_supply_resmoke.json` — both items × both modes **1.0**. |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
 
 ### B. Labeled set growth (v3 smoke, not yet headline)
@@ -165,7 +177,7 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | | |
 |--|--|
 | **Symptom** | Published README table is still full-sync **n=24**. Suite file is now **v3 n=44** (author golden questions). |
-| **Status** | Suite **v3 n=44**. First new-ids smoke: hybrid **~0.52** (OOS **0.25**). After unjustified-answer / off-topic gate: OOS resmoke **8/8 refuse** hybrid+vector (`multi_company_smoke_v3_oos_resmoke.json`). Published README mean still n=24 full-sync. Apple supply/China misses remain open. |
+| **Status** | Suite **v3 n=44**. OOS resmoke **8/8** after off-topic refuse gate. Apple supply/China asks fixed (window + drop product crowding) — resmoke **2/2 × hybrid/vector = 1.0** (`multi_company_smoke_v3_aapl_supply_resmoke.json`). Published README mean still n=24 full-sync. |
 | **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; v3 items are already single-ticker. |
 | **Interview angle** | “Growing the suite exposed hybrid over-answering OOS from unrelated GRAPH edges — we gated refuse-repair on topic match and forced refuse when the pack is off-topic.” |
 
@@ -249,5 +261,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-04 | Full sync rebench → hybrid overall **0.98**, hop-2 **1.00**; book closed for current code. |
 | 2026-10-27 | Suite v3 n=44 (author golden set); smoke new ids only — no full rebench; multi-ticker deferred. |
 | 2026-10-27 | Fix hybrid unjustified answers on OOS (topic gate + force refuse); OOS resmoke **8/8**. |
+| 2026-10-27 | Fix Apple supply/China window + product crowding; supply resmoke **1.0**. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.

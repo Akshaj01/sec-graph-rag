@@ -14,6 +14,7 @@ Out of scope: vector retrieval (Step M), answer merge (Phase 4).
 from __future__ import annotations
 
 import json
+import re
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -238,24 +239,15 @@ def augment_template_ids(
     out = list(template_ids)
     have = set(out)
 
-    wants_products = any(
-        w in q
-        for w in (
-            "product",
-            "products",
-            "produce",
-            "produces",
-            "service",
-            "services",
-            "app",
-            "apps",
-            "hardware",
-            "cloud",
-            "compute",
+    # Word-boundary checks — bare "app" must not match inside "Apple".
+    wants_products = bool(
+        re.search(
+            r"\b(products?|produces?|services?|apps?|hardware|cloud|compute)\b",
+            q,
         )
     )
-    wants_risks = any(w in q for w in ("risk", "risks", "exposed"))
-    wants_competitors = any(w in q for w in ("compet", "vs ", " versus "))
+    wants_risks = bool(re.search(r"\b(risks?|exposed)\b", q))
+    wants_competitors = bool(re.search(r"\bcompet| vs | versus ", q))
 
     def _add(tid: GraphTemplateId) -> None:
         if tid not in have and len(out) < 3:
@@ -270,6 +262,13 @@ def augment_template_ids(
     if wants_products and wants_competitors:
         _add(GraphTemplateId.COMPANY_PRODUCTS)
         _add(GraphTemplateId.COMPANY_COMPETITORS)
+
+    # Risk-only asks (supply-chain / China risks): keep COMPANY_RISKS, drop
+    # PRODUCT templates the planner sometimes adds — products crowd the pack.
+    if wants_risks and not wants_products:
+        _add(GraphTemplateId.COMPANY_RISKS)
+        out = [t for t in out if t != GraphTemplateId.COMPANY_PRODUCTS]
+        have = set(out)
 
     return out[:3]
 
