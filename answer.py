@@ -433,26 +433,47 @@ def evidence_addresses_question(evidence: EvidencePack) -> bool:
         spaced = re.sub(r"[\s\-]+", " ", tl)
         return spaced in blob_norm
 
-    # All distinctive topic words must appear (battery+supply, not supply alone).
-    # Hyphen/space normalized so supply-chain matches "supply chain".
-    if not all(_topic_in_blob(t) for t in topics):
+    hits = [t for t in topics if _topic_in_blob(t)]
+    # Rare / false-premise topics must hit themselves (battery ≠ generic "supply").
+    _must = {
+        "battery",
+        "batteries",
+        "blockchain",
+        "cryptocurrency",
+        "crypto",
+        "robotics",
+        "bitcoin",
+        "glasses",
+        "waymo",
+        "xbox",
+    }
+    must_topics = [
+        t
+        for t in topics
+        if t.lower() in _must or t.lower().rstrip("s") in _must
+    ]
+    if must_topics:
+        if not any(_topic_in_blob(t) for t in must_topics):
+            return False
+    elif not hits:
+        # Ordinary multi-aspect asks: any distinctive topic is enough.
         return False
 
-    # Dollar/percent figures elsewhere in a 10-K must not count as answering
-    # "how much … robotics" when the figure is unrelated.
     q = evidence.question or ""
     if looks_like_strict_quantitative_question(q):
+        # Money/count asks: need a figure in the pack, not just a topic word.
         if not re.search(r"\$\s?\d|\d+\s*%|\d{1,3}(?:,\d{3})+", blob):
             return False
-        # Still require topics (already checked); figure presence alone is not enough
-        # beyond topic match — good enough for bitcoin/comp when those words appear.
 
     # "Competitor to <product>" needs product + competition in the *same* item —
     # otherwise Meta COMPETES_WITH Apple gets treated as a glasses-rival answer.
     if re.search(r"\bcompetitor|\bcompetition to\b|\bcompete with\b", q, re.I):
         for item in evidence.items:
             s = item.statement.lower()
-            if any(t.lower() in s for t in topics) and "compet" in s:
+            s_norm = re.sub(r"[\s\-]+", " ", s)
+            if "compet" not in s:
+                continue
+            if any(re.sub(r"[\s\-]+", " ", t.lower()) in s_norm for t in topics):
                 return True
         return False
 

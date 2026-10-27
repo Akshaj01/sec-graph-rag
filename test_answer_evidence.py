@@ -404,15 +404,30 @@ def test_evidence_addresses_rejects_off_topic_graph_laundry_list():
         items=[
             LabeledEvidenceItem(
                 source_label="GRAPH",
-                statement="Apple Inc. produces product AppleCare. Context: supply chain partners.",
+                statement="Apple Inc. produces product AppleCare. Context: advertising partners.",
                 chunk_ids=["c1"],
             )
         ],
         allowed_chunk_ids=["c1"],
     )
     assert "battery" in [t.lower() for t in topic_needles(pack.question)]
-    # "supply" alone must not count — battery is missing.
+    # Neither battery nor supply appear — off-topic laundry list.
     assert not evidence_addresses_question(pack)
+
+
+def test_evidence_addresses_any_topic_hit_enough_for_multi_aspect():
+    pack = EvidencePack(
+        question="What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+        items=[
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="NVIDIA is exposed to risk Geopolitical export controls affecting China.",
+                chunk_ids=["c1"],
+            )
+        ],
+        allowed_chunk_ids=["c1"],
+    )
+    assert evidence_addresses_question(pack)
 
 
 def test_evidence_addresses_rejects_competitor_without_product_cooccurrence():

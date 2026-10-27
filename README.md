@@ -49,28 +49,27 @@ Question → Haiku router (graph | vector | both)
 ## Benchmark (hybrid vs vector-only)
 
 Suite: `multi_company_smoke` v3 — **44** hand-labeled questions on a local **10-ticker** corpus  
-(`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7).  
-**Published table below is still the full-sync n=24 run** (v2 subset). v3 additions: first smoke [`…_v3_new_ids.json`](benchmarks/results/multi_company_smoke_v3_new_ids.json); OOS refuse fix verified in [`…_v3_oos_resmoke.json`](benchmarks/results/multi_company_smoke_v3_oos_resmoke.json) (8/8). Do not treat partial smokes as a new overall mean.
+(`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7). Includes harder author-written items + more OOS refuses.
 
-**Primary metric:** LLM-as-judge (Haiku + Instructor) correctness vs hand-authored `required_facts` / `gold_answer`.  
-OOS items score as correct refuse. Keyword recall is kept as a **secondary** field in the JSON report.  
-Not a 50–100 Q human panel — still an automated grade, but much closer to answer quality than substring hits.  
-**Judge calibration:** human agreed with judge on **24/24** on the prior hybrid answer set (`benchmarks/judge_calibration_hybrid.md`). Full sync rebench below; only material hybrid score move was `hop2_jpm_credit_vs_market` **0.375 → 1.0**.
+**Primary metric:** LLM-as-judge (Haiku + Instructor) vs `required_facts` / `gold_answer`.  
+OOS = correct refuse. Keyword recall secondary. Not a human panel.
+
+**Judge calibration:** human agreed with judge on **24/24** on an earlier hybrid set (`benchmarks/judge_calibration_hybrid.md`).
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
-| Hop 0 (definitions) | 0.92 | **1.00** | 6 |
-| Hop 1 (single edge) | **1.00** | 0.81 | 8 |
-| Hop 2 (compare / multi-rel) | **1.00** | 0.94 | 6 |
-| OOS (must refuse) | **1.00** | **1.00** | 4 |
-| **Overall mean** | **0.98** | 0.92 | 24 |
+| Hop 0 (definitions) | 0.81 | **0.92** | 8 |
+| Hop 1 (single edge) | 0.72 | **0.78** | 16 |
+| Hop 2 (compare / multi-rel) | **0.96** | 0.81 | 8 |
+| OOS (must refuse) | 0.92 | **1.00** | 12 |
+| **Overall mean** | 0.83 | **0.87** | 44 |
 
 Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json)  
-(full sync rebench 2026-10-04 against current code — also saved as `multi_company_smoke_full_sync.json`)
+(full v3 rebench 2026-10-27 — also `multi_company_smoke_v3_full.json`)
 
-**How to read it:** Under fact-checklist judging, **hybrid leads hop 1–2 and overall** (1.00 / 1.00 / 0.98). Vector-only still leads hop 0 (definitions). Keyword-only scores previously overstated hop 1–2; the judge still catches partial / contradictory answers those needles missed.
+**How to read it:** On the **harder n=44** suite, **hybrid’s clearest win is still hop 2** (0.96 vs 0.81). Vector leads hop 0–1 and overall. The older curated **n=24** full-sync was hybrid **0.98** / vector **0.92** (`multi_company_smoke_full_sync.json`) — same system, easier question mix. Growing the suite exposed remaining false-refuse / OOS edge cases; we fixed the worst (off-topic GRAPH dumps, Apple supply window) before this table.
 
-**Systems fixes from eval:** (1) Graph retrieve once cited Meta accession chunks on Apple **products** — issuer-owned write gate + chunk ticker filter + Neo4j cleanup. (2) That same filter then dropped Meta-stamped `COMPETES_WITH` for Apple asks — exempt cross-company rels at retrieve. (3) J&J “MedTech?” graph-only laundry list → force `both` + drop unmatched `PRODUCES_PRODUCT` on yes/no product asks.
+**Systems fixes from eval:** issuer write gate + chunk ticker filter; `COMPETES_WITH` provenance exempt; MedTech `both` + drop unmatched products; OOS topic-gated refuse; Apple supply/China query-centered windows.
 
 ---
 
