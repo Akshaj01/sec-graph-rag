@@ -148,13 +148,14 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 
 ## Open / known weaknesses (not fully fixed)
 
-### B. Small labeled set (n=24)
+### B. Labeled set growth (v3 smoke, not yet headline)
 
 | | |
 |--|--|
-| **Symptom** | Hop buckets have 4–8 items; a 0.2 swing can be ~1–2 questions. |
-| **Status** | Acknowledged in README; growing to 80–120 is future work, not claimed. |
-| **Interview angle** | “Signal, not proof. I report n and don’t oversell.” |
+| **Symptom** | Published README table is still full-sync **n=24**. Suite file is now **v3 n=44** (author golden questions). |
+| **Status** | New-ids smoke (`multi_company_smoke_v3_new_ids.json`): hybrid mean **~0.52**, vector **0.65**. Hybrid hop-2 on new items **1.0**, but hybrid **OOS only 0.25** (answered instead of refuse / empty-citation errors). Vector OOS **1.0**. Apple supply/China items often **0** (pack/window miss). |
+| **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; v3 items are already single-ticker. |
+| **Interview angle** | “We grew the suite before claiming new means. Smoke showed refuse/pack gaps on harder OOS — measure first, then fix.” |
 
 ---
 
@@ -234,5 +235,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-03 | Closed hop-1 Meta compete + J&J MedTech; hybrid hop-1 **1.00**, overall **0.95**. |
 | 2026-10-04 | Human vs judge calibration on hybrid n=24 → **24/24 agree**. |
 | 2026-10-04 | Full sync rebench → hybrid overall **0.98**, hop-2 **1.00**; book closed for current code. |
+| 2026-10-27 | Suite v3 n=44 (author golden set); smoke new ids only — no full rebench; multi-ticker deferred. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.

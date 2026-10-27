@@ -50,7 +50,7 @@ Question → Haiku router (graph | vector | both)
 
 Suite: `multi_company_smoke` v3 — **44** hand-labeled questions on a local **10-ticker** corpus  
 (`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7).  
-**Published table below is still the full-sync n=24 run** (v2 subset); rebench the v3 additions before claiming new means.
+**Published table below is still the full-sync n=24 run** (v2 subset). New-ids smoke only: [`benchmarks/results/multi_company_smoke_v3_new_ids.json`](benchmarks/results/multi_company_smoke_v3_new_ids.json) (hybrid ~0.52 / vector 0.65 on the 20 additions — do not treat as a new overall mean).
 
 **Primary metric:** LLM-as-judge (Haiku + Instructor) correctness vs hand-authored `required_facts` / `gold_answer`.  
 OOS items score as correct refuse. Keyword recall is kept as a **secondary** field in the JSON report.  
