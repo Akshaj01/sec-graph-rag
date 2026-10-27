@@ -146,6 +146,18 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 
 ---
 
+### 11. Hybrid unjustified answers on OOS (GRAPH laundry list)
+
+| | |
+|--|--|
+| **Symptom** | v3 OOS items (battery, blockchain, Meta glasses rival, Netflix “AI compute for others”, …) scored **0** on hybrid: model answered from unrelated `PRODUCES_PRODUCT` / `COMPETES_WITH` edges, or Instructor crashed on `refused=true` with empty `citation_chunk_ids`. Vector OOS was already **1.0**. |
+| **Root cause** | Unjustified-**refuse** repair treated any GRAPH pack as on-topic and rewrote honest refuses into product dumps. Citation schema required ≥1 cite even when refusing. |
+| **Fix** | `evidence_addresses_question` topic gate; skip refuse→answer repair unless on-topic; **unjustified-answer** repair / deterministic `normalize_refused_draft` when off-topic; allow empty cites when `refused=true`. |
+| **Where** | `answer.py`, `test_answer_evidence.py` |
+| **Verify** | `multi_company_smoke_v3_oos_resmoke.json` — 8 OOS × hybrid/vector → all **score=1.0**, `refuse=True`. |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
 
 ### B. Labeled set growth (v3 smoke, not yet headline)
@@ -153,9 +165,9 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | | |
 |--|--|
 | **Symptom** | Published README table is still full-sync **n=24**. Suite file is now **v3 n=44** (author golden questions). |
-| **Status** | New-ids smoke (`multi_company_smoke_v3_new_ids.json`): hybrid mean **~0.52**, vector **0.65**. Hybrid hop-2 on new items **1.0**, but hybrid **OOS only 0.25** (answered instead of refuse / empty-citation errors). Vector OOS **1.0**. Apple supply/China items often **0** (pack/window miss). |
+| **Status** | Suite **v3 n=44**. First new-ids smoke: hybrid **~0.52** (OOS **0.25**). After unjustified-answer / off-topic gate: OOS resmoke **8/8 refuse** hybrid+vector (`multi_company_smoke_v3_oos_resmoke.json`). Published README mean still n=24 full-sync. Apple supply/China misses remain open. |
 | **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; v3 items are already single-ticker. |
-| **Interview angle** | “We grew the suite before claiming new means. Smoke showed refuse/pack gaps on harder OOS — measure first, then fix.” |
+| **Interview angle** | “Growing the suite exposed hybrid over-answering OOS from unrelated GRAPH edges — we gated refuse-repair on topic match and forced refuse when the pack is off-topic.” |
 
 ---
 
@@ -236,5 +248,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-04 | Human vs judge calibration on hybrid n=24 → **24/24 agree**. |
 | 2026-10-04 | Full sync rebench → hybrid overall **0.98**, hop-2 **1.00**; book closed for current code. |
 | 2026-10-27 | Suite v3 n=44 (author golden set); smoke new ids only — no full rebench; multi-ticker deferred. |
+| 2026-10-27 | Fix hybrid unjustified answers on OOS (topic gate + force refuse); OOS resmoke **8/8**. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.

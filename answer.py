@@ -45,10 +45,10 @@ class AnswerClaim(BaseModel):
 
     text: str = Field(..., description="A single factual claim answering part of the question.")
     citation_chunk_ids: List[str] = Field(
-        ...,
-        min_length=1,
+        default_factory=list,
         description="chunk_id values from the evidence pack that support this claim. "
-        "Must be copied exactly from GRAPH or VECTOR evidence — never invented.",
+        "Must be copied exactly from GRAPH or VECTOR evidence — never invented. "
+        "May be empty only when refused=true.",
     )
 
 
@@ -140,20 +140,25 @@ Rules:
    on the evidence items you used. Never invent or guess a chunk_id.
 2. Prefer one clear claim per distinct fact; do not merge unrelated facts into one claim.
    Keep the answer concise (short summary + a few claims). Do not dump every evidence row.
-3. Refuse (refused=true) ONLY when evidence is empty OR clearly does not address the question
-   (wrong company, missing metric, topic absent from the pack).
-4. If [GRAPH] evidence lists products, risks, or relationships that answer the question,
-   you MUST set refused=false and answer from those facts — do not refuse merely because
+3. Refuse (refused=true) when evidence is empty OR clearly does not address the question
+   (wrong company, missing metric, topic absent from the pack). Unrelated [GRAPH] product
+   or competitor lists do NOT license an answer to a different topic (e.g. battery risks,
+   blockchain investments, glasses rivals, AI-compute-for-others).
+4. If [GRAPH] evidence lists products, risks, or relationships that *directly* answer the
+   question, set refused=false and answer from those facts — do not refuse merely because
    the pack is large or incomplete. Sibling products under the same company (e.g. Facebook
    and Reality Labs both produced by Meta) ARE a valid grounded answer: say they are
    related product lines of that company.
 5. Do not use outside knowledge of the company beyond the evidence pack.
 6. When the allowed citation list is empty, set refused=true and explain the gap;
-   do not invent chunk_ids.
+   do not invent chunk_ids. When refused=true, claims may omit citation_chunk_ids.
 7. Quantitative / OOS discipline: if the question asks for an exact count, dollar amount,
    compensation figure, balance-sheet holding (e.g. Bitcoin), or a precise revenue
    percentage, and that figure does NOT appear in the evidence, set refused=true.
    Do not infer or invent numbers.
+8. False-premise questions: if the question assumes a fact not in evidence (e.g. that the
+   company produces X for others), set refused=true — do not answer in the negative with
+   refused=false from unrelated evidence.
 """.strip()
 
 
@@ -265,19 +270,199 @@ def looks_like_strict_quantitative_question(question: str) -> bool:
     """
     Cheap heuristic for questions that should refuse unless the figure is in evidence.
 
-    Used only in prompts / tests — the model still makes the refuse call.
+    Used to skip unjustified-refuse repair and to force refuse when the figure is absent.
     """
     q = question.lower()
     needles = (
         "how many bitcoin",
         "how much bitcoin",
+        "how much money",
+        "how much has",
+        "how much did",
         "exact total compensation",
         "exact compensation",
         "what percentage of",
         "what % of",
         "balance sheet",
+        "invested into",
+        "invested in their",
     )
     return any(n in q for n in needles)
+
+
+# Ask / issuer words that must not count as "topic present in evidence."
+_TOPIC_GENERIC = {
+    "johnson",
+    "apple",
+    "microsoft",
+    "amazon",
+    "nvidia",
+    "alphabet",
+    "google",
+    "meta",
+    "exxon",
+    "jpmorgan",
+    "netflix",
+    "tesla",
+    "walmart",
+    "company",
+    "companies",
+    "product",
+    "products",
+    "produce",
+    "produces",
+    "producing",
+    "manufacture",
+    "manufactures",
+    "lines",
+    "line",
+    "major",
+    "possible",
+    "exist",
+    "exists",
+    "among",
+    "latest",
+    "face",
+    "faces",
+    "faced",
+    "known",
+    "connections",
+    "multiple",
+    "big",
+    "tech",
+    "material",
+    "made",
+    "focused",
+    "entities",
+    "entity",
+    "program",
+    "invested",
+    "investment",
+    "investments",
+    "money",
+    "much",
+    "many",
+    "other",
+    "others",
+    "corpus",
+    "according",
+    "knowledge",
+    "graph",
+    "filing",
+    "filings",
+    "risk",
+    "risks",
+    "factor",
+    "factors",
+    "competitor",
+    "competitors",
+    "competition",
+    "competitive",
+    "international",
+    "relationship",
+    "relationships",
+}
+
+
+_TOPIC_STOP = {
+    "that",
+    "this",
+    "these",
+    "those",
+    "have",
+    "has",
+    "had",
+    "come",
+    "into",
+    "from",
+    "with",
+    "than",
+    "then",
+    "also",
+    "been",
+    "were",
+    "their",
+    "there",
+    "about",
+}
+
+
+def topic_needles(question: str) -> List[str]:
+    """Specific content needles from the question (not issuer/ask boilerplate)."""
+    out: List[str] = []
+    for n in query_needles(question):
+        key = n.lower()
+        if key in _TOPIC_GENERIC or key in _TOPIC_STOP or len(n) < 4:
+            continue
+        out.append(n)
+    return out
+
+
+def evidence_addresses_question(evidence: EvidencePack) -> bool:
+    """
+    True when the pack lexically covers the question's topic needles.
+
+    WHY: unjustified-refuse repair used to rewrite OOS refuses into laundry-list
+    answers whenever *any* GRAPH edges existed (battery → AppleCare dump).
+    """
+    if not evidence.items:
+        return False
+
+    blob = " ".join(item.statement for item in evidence.items).lower()
+    topics = topic_needles(evidence.question)
+    if not topics:
+        # Open asks ("what products?") — any on-ticker pack is fair game.
+        return True
+
+    # All distinctive topic words must appear (battery+supply, not supply alone).
+    if not all(t.lower() in blob for t in topics):
+        return False
+
+    # Dollar/percent figures elsewhere in a 10-K must not count as answering
+    # "how much … robotics" when the figure is unrelated.
+    q = evidence.question or ""
+    if looks_like_strict_quantitative_question(q):
+        if not re.search(r"\$\s?\d|\d+\s*%|\d{1,3}(?:,\d{3})+", blob):
+            return False
+        # Still require topics (already checked); figure presence alone is not enough
+        # beyond topic match — good enough for bitcoin/comp when those words appear.
+
+    # "Competitor to <product>" needs product + competition in the *same* item —
+    # otherwise Meta COMPETES_WITH Apple gets treated as a glasses-rival answer.
+    if re.search(r"\bcompetitor|\bcompetition to\b|\bcompete with\b", q, re.I):
+        for item in evidence.items:
+            s = item.statement.lower()
+            if any(t.lower() in s for t in topics) and "compet" in s:
+                return True
+        return False
+
+    return True
+
+
+def normalize_refused_draft(
+    question: str,
+    *,
+    allowed_chunk_ids: Optional[List[str]] = None,
+    summary: Optional[str] = None,
+) -> GroundedAnswerDraft:
+    """Deterministic refused=true draft that always passes citation validation."""
+    cite = ["UNAVAILABLE"]
+    if allowed_chunk_ids:
+        cite = [allowed_chunk_ids[0]]
+    return GroundedAnswerDraft(
+        summary=summary
+        or (
+            "The retrieved evidence does not address this question. "
+            "I cannot provide a grounded answer from the available filing chunks."
+        ),
+        claims=[
+            AnswerClaim(
+                text="Insufficient on-topic evidence in the retrieved pack to answer.",
+                citation_chunk_ids=cite,
+            )
+        ],
+        refused=True,
+    )
 
 
 _STOPWORDS = {
@@ -683,15 +868,33 @@ def validate_citations(
     """
     Every citation must resolve to a retrieved chunk id.
 
-    Special case: empty allowlist + refused=True → valid (nothing to cite).
-    Claims may still carry placeholder ids from the schema min_length=1 constraint;
-    those are ignored when refused with zero retrieved evidence.
+    When refused=true: empty cites are allowed; any provided cites must still be
+    in the allowlist (or the UNAVAILABLE placeholder when the allowlist is empty).
     """
     allowed = {str(c) for c in allowed_chunk_ids if c}
 
+    if draft.refused:
+        issues: List[CitationIssue] = []
+        for idx, claim in enumerate(draft.claims):
+            cites = [str(c).strip() for c in claim.citation_chunk_ids if str(c).strip()]
+            if not cites:
+                continue
+            if not allowed:
+                # Placeholder ids are fine when nothing was retrieved.
+                continue
+            bad = [c for c in cites if c not in allowed and c != "UNAVAILABLE"]
+            if bad:
+                issues.append(
+                    CitationIssue(
+                        claim_index=idx,
+                        claim_text=claim.text,
+                        bad_chunk_ids=bad,
+                        reason="Citation chunk_id not in retrieved allowlist.",
+                    )
+                )
+        return CitationValidationResult(valid=len(issues) == 0, issues=issues)
+
     if not allowed:
-        if draft.refused:
-            return CitationValidationResult(valid=True, issues=[])
         return CitationValidationResult(
             valid=False,
             issues=[
@@ -704,7 +907,7 @@ def validate_citations(
             ],
         )
 
-    issues: List[CitationIssue] = []
+    issues = []
     for idx, claim in enumerate(draft.claims):
         cites = [str(c).strip() for c in claim.citation_chunk_ids if str(c).strip()]
         if not cites:
@@ -731,22 +934,20 @@ def validate_citations(
     return CitationValidationResult(valid=len(issues) == 0, issues=issues)
 
 
-def _refusal_fallback(question: str) -> GroundedAnswerDraft:
+def _refusal_fallback(
+    question: str,
+    *,
+    allowed_chunk_ids: Optional[List[str]] = None,
+) -> GroundedAnswerDraft:
     """Deterministic refused answer when validation still fails after regenerate."""
-    return GroundedAnswerDraft(
+    return normalize_refused_draft(
+        question,
+        allowed_chunk_ids=allowed_chunk_ids,
         summary=(
             "I could not produce a grounded answer with citations that resolve to "
             "retrieved filing chunks. Please rephrase or check that graph/vector "
             "retrieval returned evidence."
         ),
-        claims=[
-            AnswerClaim(
-                text="Insufficient validated evidence to answer this question.",
-                # Placeholder required by schema; empty allowlist + refused is accepted.
-                citation_chunk_ids=["UNAVAILABLE"],
-            )
-        ],
-        refused=True,
     )
 
 
@@ -816,11 +1017,37 @@ def generate_validated_answer(
     validation = validate_citations(draft, evidence.allowed_chunk_ids)
     attempts = 1
     regenerated = False
+    on_topic = evidence_addresses_question(evidence)
 
-    # Unjustified refuse: graph evidence exists but model refused (common on hop-2 packs).
+    # Unjustified answer: model answered, but pack never covered the question topic
+    # (e.g. battery ask with only AppleCare GRAPH edges).
     if (
         settings.ANSWER_UNJUSTIFIED_REFUSE_REPAIR
+        and not draft.refused
+        and not on_topic
+    ):
+        repair = (
+            "You set refused=false, but the evidence pack does not address the "
+            "question's topic (wrong subject / missing metric / absent product). "
+            "Unrelated GRAPH product or competitor lists are not enough. "
+            "Rewrite with refused=true and explain the gap. Do not invent an answer."
+        )
+        draft = generate_draft(evidence, client=client, repair_note=repair)
+        validation = validate_citations(draft, evidence.allowed_chunk_ids)
+        attempts += 1
+        regenerated = True
+        if not draft.refused:
+            draft = normalize_refused_draft(
+                evidence.question,
+                allowed_chunk_ids=evidence.allowed_chunk_ids,
+            )
+            validation = validate_citations(draft, evidence.allowed_chunk_ids)
+
+    # Unjustified refuse: on-topic GRAPH evidence exists but model refused (hop-2 packs).
+    elif (
+        settings.ANSWER_UNJUSTIFIED_REFUSE_REPAIR
         and draft.refused
+        and on_topic
         and has_answerable_graph_evidence(evidence)
         and not looks_like_strict_quantitative_question(evidence.question)
     ):
@@ -863,20 +1090,18 @@ def generate_validated_answer(
 
     if not validation.valid:
         # Hard stop: never return an answer with invented cites.
-        draft = _refusal_fallback(evidence.question)
-        if evidence.allowed_chunk_ids:
-            # Attach a real id so the fallback itself validates when evidence existed
-            # but the model kept inventing cites — still refuse rather than lie.
-            draft = GroundedAnswerDraft(
-                summary=draft.summary,
-                claims=[
-                    AnswerClaim(
-                        text=draft.claims[0].text,
-                        citation_chunk_ids=[evidence.allowed_chunk_ids[0]],
-                    )
-                ],
-                refused=True,
-            )
+        draft = _refusal_fallback(
+            evidence.question,
+            allowed_chunk_ids=evidence.allowed_chunk_ids,
+        )
+        validation = validate_citations(draft, evidence.allowed_chunk_ids)
+
+    # Final safety: off-topic packs must not leave as a grounded answer.
+    if not draft.refused and not evidence_addresses_question(evidence):
+        draft = normalize_refused_draft(
+            evidence.question,
+            allowed_chunk_ids=evidence.allowed_chunk_ids,
+        )
         validation = validate_citations(draft, evidence.allowed_chunk_ids)
 
     return draft, validation, attempts, regenerated

@@ -3,19 +3,25 @@
 from __future__ import annotations
 
 from answer import (
+    AnswerClaim,
     EvidencePack,
+    GroundedAnswerDraft,
     LabeledEvidenceItem,
     _fit_items_to_prompt_budget,
     _truncate_passage,
     allowed_chunk_ids_from_items,
     build_evidence_items,
+    evidence_addresses_question,
     fact_to_statement,
     filter_unmatched_produces_facts,
     format_evidence,
     has_answerable_graph_evidence,
     looks_like_strict_quantitative_question,
+    normalize_refused_draft,
     query_needles,
+    topic_needles,
     truncate_passage_for_query,
+    validate_citations,
 )
 from graph_retriever import GraphFact, GraphRetrievalResult, GraphTemplateId
 from retrieve import HybridRetrievalResult, wants_produce_yes_no
@@ -390,3 +396,71 @@ def test_filter_unmatched_produces_drops_all_on_competition_ask():
         facts, "Does Apple compete with Meta according to the knowledge graph?"
     )
     assert [f.rel_type for f in kept] == ["COMPETES_WITH"]
+
+
+def test_evidence_addresses_rejects_off_topic_graph_laundry_list():
+    pack = EvidencePack(
+        question="What battery supply risks does Apple face in its latest 10-K?",
+        items=[
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="Apple Inc. produces product AppleCare. Context: supply chain partners.",
+                chunk_ids=["c1"],
+            )
+        ],
+        allowed_chunk_ids=["c1"],
+    )
+    assert "battery" in [t.lower() for t in topic_needles(pack.question)]
+    # "supply" alone must not count — battery is missing.
+    assert not evidence_addresses_question(pack)
+
+
+def test_evidence_addresses_rejects_competitor_without_product_cooccurrence():
+    pack = EvidencePack(
+        question="What is a possible competitor to Meta Glasses among major tech companies?",
+        items=[
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="Meta competes with Apple Inc.",
+                chunk_ids=["c1"],
+            ),
+            LabeledEvidenceItem(
+                source_label="VECTOR",
+                statement="Our current AI glasses include the Ray-Ban Meta glasses.",
+                chunk_ids=["c2"],
+            ),
+        ],
+        allowed_chunk_ids=["c1", "c2"],
+    )
+    assert not evidence_addresses_question(pack)
+
+
+def test_evidence_addresses_accepts_on_topic_risk():
+    pack = EvidencePack(
+        question="What geopolitical risks is Nvidia exposed to?",
+        items=[
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="NVIDIA is exposed to risk Geopolitical Export Controls affecting China.",
+                chunk_ids=["c1"],
+            )
+        ],
+        allowed_chunk_ids=["c1"],
+    )
+    assert evidence_addresses_question(pack)
+
+
+def test_validate_citations_allows_empty_cites_when_refused():
+    draft = GroundedAnswerDraft(
+        summary="No evidence for this topic.",
+        claims=[AnswerClaim(text="Cannot answer from pack.", citation_chunk_ids=[])],
+        refused=True,
+    )
+    result = validate_citations(draft, ["c1", "c2"])
+    assert result.valid
+
+
+def test_normalize_refused_draft_validates():
+    draft = normalize_refused_draft("What battery risks?", allowed_chunk_ids=["c9"])
+    assert draft.refused
+    assert validate_citations(draft, ["c9"]).valid
