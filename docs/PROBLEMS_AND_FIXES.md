@@ -264,5 +264,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-27 | Fix Apple supply/China window + product crowding; supply resmoke **1.0**. |
 | 2026-10-27 | Full v3 n=44 rebench → hybrid **0.83** / vector **0.87**; hop-2 hybrid **0.96**. Softened over-strict topic gate after first full run over-refused. |
 | 2026-10-28 | Fix false-refuse / NFLX-AWS dump / planner invent / NVDA+Meta route; rebench → hybrid **0.92** / vector **0.89**. |
+| 2026-10-28 | JPM hop-2 resmoke (full-run flake 0.375→1.0); headline patched to hybrid **0.94** / hop-2 **0.96** (no full rebench). |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.

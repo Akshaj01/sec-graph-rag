@@ -1,0 +1,115 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "3",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop2_jpm_credit_vs_market",
+        "mode": "hybrid",
+        "question": "Briefly compare JPMorgan's credit risk and market risk as named risk factors.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": true,
+        "summary": "JPMorgan identifies both credit risk and market risk as named risk factors in its filings. Credit risk relates to potential losses from borrower defaults and collateral value declines, while market risk involves exposure to adverse movements in market prices and rates. Both are fundamental financial risks managed through the firm's risk governance framework.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001628280-26-008131:Item1A:3",
+          "0001628280-26-008131:Item1A:4",
+          "0001628280-26-008131:Item7:10",
+          "0001628280-26-008131:Item7:11",
+          "0001628280-26-008131:Item7:12",
+          "0001628280-26-008131:Item7:16",
+          "0001628280-26-008131:Item7:17",
+          "0001628280-26-008131:Item7:25",
+          "0001628280-26-008131:Item7:5"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Credit",
+          "Market"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions credit risk as a named risk",
+          "Mentions market risk as a named risk",
+          "Distinguishes them (credit = default/credit loss vs market = market-price/market movements) or treats them as separate factors"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer clearly covers all required facts: it identifies both credit risk and market risk as named risk factors, and explicitly distinguishes them—credit risk relating to borrower defaults and collateral value declines, market risk to adverse market price and rate movements. The distinction aligns well with the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 15073.7,
+        "estimated_cost_usd": 0.011355,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_2": 1.0
+    },
+    "mean_latency_ms": 15073.7,
+    "mean_cost_usd": 0.011355,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop2_jpm_credit_vs_market",
+        "mode": "vector_only",
+        "question": "Briefly compare JPMorgan's credit risk and market risk as named risk factors.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "JPMorgan's 10-K identifies both credit risk and market risk as distinct risk factors. Credit risk includes exposure to defaults on payment obligations, collateral value declines during market stress, and the risk that counterparties cannot post collateral or that collateral is liquidated at insufficient prices. Market risk is managed separately and includes exposure inherent in investment portfolios and capital markets activities. The Firm monitors both through dedicated risk governance functions—Wholesale Credit Risk, Consumer Credit Risk, and Market Risk Management—each overseeing different risk types that may arise from overlapping drivers such as country risk.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-008131:Item1A:4",
+          "0001628280-26-008131:Item7:11",
+          "0001628280-26-008131:Item7:25"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Credit",
+          "Market"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions credit risk as a named risk",
+          "Mentions market risk as a named risk",
+          "Distinguishes them (credit = default/credit loss vs market = market-price/market movements) or treats them as separate factors"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all three required facts. It explicitly names both credit risk and market risk as distinct risk factors, clearly distinguishes them (credit = defaults and collateral issues vs. market = market price movements and capital markets activities), and structures the answer around their separation in JPMorgan's risk governance.",
+        "correct_refuse": null,
+        "latency_ms": 10975.8,
+        "estimated_cost_usd": 0.011346,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_2": 1.0
+    },
+    "mean_latency_ms": 10975.8,
+    "mean_cost_usd": 0.011346,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

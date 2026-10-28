@@ -556,7 +556,7 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers all required facts. It mentions multiple hardware devices (iPhone, iPad, Mac, Wearables/smartwatches, etc.—clearly exceeding the \"at least two\" requirement) and multiple service offerings (AppleCare, Cloud Services, Payment Services, Digital Content, and Advertising services). All claims are supported by the gold answer and represent accurate information about Apple's product portfolio.",
+        "judge_rationale": "The model answer comprehensively covers all required facts. It mentions multiple hardware devices (iPhone, iPad, Mac, Wearables/smartwatches, etc.\u2014clearly exceeding the \"at least two\" requirement) and multiple service offerings (AppleCare, Cloud Services, Payment Services, Digital Content, and Advertising services). All claims are supported by the gold answer and represent accurate information about Apple's product portfolio.",
         "correct_refuse": null,
         "latency_ms": 11526.4,
         "estimated_cost_usd": 0.009864,
@@ -638,7 +638,7 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers all required facts: it explicitly identifies Facebook and Instagram as Family of Apps products, clearly distinguishes Reality Labs as a separate segment/product line focused on AR/VR hardware, and establishes that they are distinct businesses with different purposes—one for social connection/sharing via traditional platforms, the other for immersive experiences via emerging hardware. The answer provides good supporting detail and directly addresses the relationship between these areas.",
+        "judge_rationale": "The model answer comprehensively covers all required facts: it explicitly identifies Facebook and Instagram as Family of Apps products, clearly distinguishes Reality Labs as a separate segment/product line focused on AR/VR hardware, and establishes that they are distinct businesses with different purposes\u2014one for social connection/sharing via traditional platforms, the other for immersive experiences via emerging hardware. The answer provides good supporting detail and directly addresses the relationship between these areas.",
         "correct_refuse": null,
         "latency_ms": 9920.5,
         "estimated_cost_usd": 0.011955,
@@ -694,7 +694,7 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": true,
-        "summary": "JPMorgan identifies both credit risk and market risk as named risk factors in its filings. Credit risk includes consumer credit risk and collateral risk, relating to potential losses from borrower defaults or declining collateral values. Market risk is not explicitly detailed in the provided evidence, though liquidity risk—which relates to the firm's ability to meet cash and collateral needs—is mentioned as a separate risk category.",
+        "summary": "JPMorgan identifies both credit risk and market risk as named risk factors in its filings. Credit risk relates to potential losses from borrower defaults and collateral value declines, while market risk involves exposure to adverse movements in market prices and rates. Both are fundamental financial risks managed through the firm's risk governance framework.",
         "claim_count": 3,
         "cited_chunk_ids": [
           "0001628280-26-008131:Item1A:3",
@@ -714,21 +714,20 @@
         ],
         "keyword_misses": [],
         "keyword_recall": 1.0,
-        "judge_correctness": 0.375,
+        "judge_correctness": 1.0,
         "judge_fact_hits": [
-          "Mentions credit risk as a named risk"
-        ],
-        "judge_fact_misses": [
+          "Mentions credit risk as a named risk",
           "Mentions market risk as a named risk",
           "Distinguishes them (credit = default/credit loss vs market = market-price/market movements) or treats them as separate factors"
         ],
+        "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer covers credit risk well (mentioning borrower defaults and collateral value declines) and identifies it as a named risk. However, it explicitly states that \"market risk is not explicitly detailed in the provided evidence,\" which means it fails to adequately cover the required fact that market risk should be mentioned as a named risk. The answer also introduces liquidity risk as a separate category, which is not part of the required facts. A partial score reflects coverage of credit risk but omission of meaningful coverage of market risk.",
+        "judge_rationale": "The model answer clearly covers all required facts: it identifies both credit risk and market risk as named risk factors, and explicitly distinguishes them\u2014credit risk relating to borrower defaults and collateral value declines, market risk to adverse market price and rate movements. The distinction aligns well with the gold answer.",
         "correct_refuse": null,
-        "latency_ms": 14679.5,
-        "estimated_cost_usd": 0.012075,
+        "latency_ms": 15073.7,
+        "estimated_cost_usd": 0.011355,
         "error": null,
-        "score": 0.375
+        "score": 1.0
       },
       {
         "item_id": "hop2_nvda_products_and_geo_risk",
@@ -1141,7 +1140,7 @@
       {
         "item_id": "oos_msft_xbox_named_rival",
         "mode": "hybrid",
-        "question": "What is Microsoft’s major competition to Xbox?",
+        "question": "What is Microsoft\u2019s major competition to Xbox?",
         "hop": 0,
         "must_refuse": true,
         "refused": true,
@@ -1265,7 +1264,7 @@
       {
         "item_id": "hop1_nflx_aws_relationship",
         "mode": "hybrid",
-        "question": "What is Netflix’s relationship to Amazon and AWS?",
+        "question": "What is Netflix\u2019s relationship to Amazon and AWS?",
         "hop": 1,
         "must_refuse": false,
         "refused": false,
@@ -1381,7 +1380,7 @@
       {
         "item_id": "oos_tesla_competitors_risks",
         "mode": "hybrid",
-        "question": "What are Tesla’s major international competitors and what major risks come with their competitors?",
+        "question": "What are Tesla\u2019s major international competitors and what major risks come with their competitors?",
         "hop": 0,
         "must_refuse": true,
         "refused": true,
@@ -1571,12 +1570,12 @@
     "accuracy_by_hop": {
       "hop_0": 0.9375,
       "hop_1": 0.8828,
-      "hop_2": 0.8803,
+      "hop_2": 0.9584,
       "oos": 1.0
     },
     "mean_latency_ms": 9644.6,
     "mean_cost_usd": 0.010372,
-    "mean_score": 0.9243,
+    "mean_score": 0.9385,
     "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
   },
   "vector_only": {
@@ -1985,7 +1984,7 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Google Cloud (with details about Google Cloud Platform and Google Workspace) and Google Services (through discussion of Google Search, YouTube, consumer subscriptions, Google Play, and Pixel devices—all core service offerings). The answer goes beyond minimum requirements with specific product details but accurately represents Alphabet/Google's product portfolio.",
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Google Cloud (with details about Google Cloud Platform and Google Workspace) and Google Services (through discussion of Google Search, YouTube, consumer subscriptions, Google Play, and Pixel devices\u2014all core service offerings). The answer goes beyond minimum requirements with specific product details but accurately represents Alphabet/Google's product portfolio.",
         "correct_refuse": null,
         "latency_ms": 9810.4,
         "estimated_cost_usd": 0.009519,
@@ -2163,7 +2162,7 @@
         ],
         "judge_fact_misses": [],
         "judge_hallucination": false,
-        "judge_rationale": "The model answer comprehensively addresses all required facts: it explicitly mentions Azure and Intelligent Cloud offerings (enterprise/cloud services with AI focus), explicitly mentions Xbox and More Personal Computing (gaming platform), and clearly draws a contrast by stating they \"serve different customer needs\"—Azure for businesses/developers and enterprise solutions versus Xbox for personal gaming experiences.",
+        "judge_rationale": "The model answer comprehensively addresses all required facts: it explicitly mentions Azure and Intelligent Cloud offerings (enterprise/cloud services with AI focus), explicitly mentions Xbox and More Personal Computing (gaming platform), and clearly draws a contrast by stating they \"serve different customer needs\"\u2014Azure for businesses/developers and enterprise solutions versus Xbox for personal gaming experiences.",
         "correct_refuse": null,
         "latency_ms": 8526.5,
         "estimated_cost_usd": 0.011047,
@@ -2253,7 +2252,7 @@
         "refused": false,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "JPMorgan's 10-K identifies both credit risk and market risk as distinct risk factors. Credit risk includes exposure to defaults on payment obligations, collateral value declines during market stress, and the risk that counterparties cannot post collateral or that collateral is liquidated at insufficient prices. Market risk encompasses exposures inherent in trading and investment portfolios, including the Treasury and CIO investment securities portfolio. The Firm monitors both through separate governance and oversight functions—Wholesale Credit Risk, Consumer Credit Risk, and Market Risk Management—each addressing different drivers and types of risk across the organization.",
+        "summary": "JPMorgan's 10-K identifies both credit risk and market risk as distinct risk factors. Credit risk includes exposure to defaults on payment obligations, collateral value declines during market stress, and the risk that counterparties cannot post collateral or that collateral is liquidated at insufficient prices. Market risk encompasses exposures inherent in trading and investment portfolios, including the Treasury and CIO investment securities portfolio. The Firm monitors both through separate governance and oversight functions\u2014Wholesale Credit Risk, Consumer Credit Risk, and Market Risk Management\u2014each addressing different drivers and types of risk across the organization.",
         "claim_count": 4,
         "cited_chunk_ids": [
           "0001628280-26-008131:Item1A:4",
@@ -2329,7 +2328,7 @@
         "refused": true,
         "citations_valid": true,
         "regenerated": false,
-        "summary": "The evidence provided does not contain information about Tesla's battery supply risks. The evidence comes from Apple Inc.'s 10-K filing (filing number 0000320193-25-000079), not Tesla's, and discusses Apple's competitive landscape, intellectual property, IT systems, and regulatory compliance risks—none of which address battery supply chain issues.",
+        "summary": "The evidence provided does not contain information about Tesla's battery supply risks. The evidence comes from Apple Inc.'s 10-K filing (filing number 0000320193-25-000079), not Tesla's, and discusses Apple's competitive landscape, intellectual property, IT systems, and regulatory compliance risks\u2014none of which address battery supply chain issues.",
         "claim_count": 2,
         "cited_chunk_ids": [],
         "route_effective": "vector",
@@ -2685,7 +2684,7 @@
       {
         "item_id": "oos_msft_xbox_named_rival",
         "mode": "vector_only",
-        "question": "What is Microsoft’s major competition to Xbox?",
+        "question": "What is Microsoft\u2019s major competition to Xbox?",
         "hop": 0,
         "must_refuse": true,
         "refused": true,
@@ -2806,7 +2805,7 @@
       {
         "item_id": "hop1_nflx_aws_relationship",
         "mode": "vector_only",
-        "question": "What is Netflix’s relationship to Amazon and AWS?",
+        "question": "What is Netflix\u2019s relationship to Amazon and AWS?",
         "hop": 1,
         "must_refuse": false,
         "refused": false,
@@ -2914,7 +2913,7 @@
       {
         "item_id": "oos_tesla_competitors_risks",
         "mode": "vector_only",
-        "question": "What are Tesla’s major international competitors and what major risks come with their competitors?",
+        "question": "What are Tesla\u2019s major international competitors and what major risks come with their competitors?",
         "hop": 0,
         "must_refuse": true,
         "refused": true,
@@ -3108,5 +3107,5 @@
     "mean_score": 0.8864,
     "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
   },
-  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+  "notes": "Full v3 rebench 2026-10-28 after topic-gate / NFLX-AWS / planner-coerce / route-both fixes; hybrid hop2_jpm_credit_vs_market patched from targeted resmoke 2026-10-28 (full-run 0.375 \u2192 1.0; vector unchanged). Hybrid 0.9385 vs vector 0.8864."
 }

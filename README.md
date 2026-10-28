@@ -60,14 +60,14 @@ OOS = correct refuse. Keyword recall secondary. Not a human panel.
 |--------------|-------:|------------:|--:|
 | Hop 0 (definitions) | **0.94** | 0.92 | 8 |
 | Hop 1 (single edge) | **0.88** | 0.79 | 16 |
-| Hop 2 (compare / multi-rel) | **0.88** | 0.88 | 8 |
+| Hop 2 (compare / multi-rel) | **0.96** | 0.88 | 8 |
 | OOS (must refuse) | **1.00** | **1.00** | 12 |
-| **Overall mean** | **0.92** | 0.89 | 44 |
+| **Overall mean** | **0.94** | 0.89 | 44 |
 
 Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json)  
-(full v3 rebench 2026-10-28 — also `multi_company_smoke_v3_full.json`)
+(full v3 rebench 2026-10-28; `hop2_jpm_credit_vs_market` hybrid patched from targeted resmoke — full-run flake 0.375→1.0; also `multi_company_smoke_v3_full.json` / `…_jpm_hop2_resmoke.json`)
 
-**How to read it:** After fixing false-refuse / bad graph dumps / planner crashes, **hybrid leads overall** on the harder n=44 suite (**0.92 vs 0.89**), with the clearest gap on hop 1. OOS is clean on both. The older curated **n=24** sync was hybrid **0.98** / vector **0.92** (`multi_company_smoke_full_sync.json`). Remaining soft spots are mostly Meta product/apps wording and a couple of partial hop-2s — not systemic hybrid loss.
+**How to read it:** After fixing false-refuse / bad graph dumps / planner crashes, **hybrid leads overall** on the harder n=44 suite (**0.94 vs 0.89**). **Hop 2 is again the clearest structural win** (0.96 vs 0.88). OOS is clean on both. The older curated **n=24** sync was hybrid **0.98** / vector **0.92** (`multi_company_smoke_full_sync.json`). Remaining soft spots are mostly Meta product/apps wording — not systemic hybrid loss.
 
 **Systems fixes from eval:** issuer write gate + chunk ticker filter; `COMPETES_WITH` provenance exempt; MedTech `both` + drop unmatched products; OOS topic-gated refuse; Apple supply/China query-centered windows; topic-gate open product/competition asks; AWS supplier templates + ranking; planner template coerce; narrative/SKU → `both`.
 
