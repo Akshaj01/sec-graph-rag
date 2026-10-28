@@ -1,0 +1,189 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "3",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop0_meta_ai_glasses",
+        "mode": "hybrid",
+        "question": "What AI glasses or Reality Labs hardware products does Meta describe?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes several Reality Labs hardware products, including AI glasses and the Meta Quest portfolio of VR headsets. These products enable people to connect and share through virtual reality headsets and AI glasses, and are part of Meta's efforts to move beyond 2D screens toward immersive augmented and virtual reality experiences.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:1",
+          "0001628280-26-003942:Item1A:8",
+          "0001628280-26-003942:Item7:4"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "glasses",
+          "Quest"
+        ],
+        "keyword_misses": [
+          "Ray-Ban"
+        ],
+        "keyword_recall": 0.6666666666666666,
+        "judge_correctness": 0.5,
+        "judge_fact_hits": [
+          "Mentions Reality Labs / Quest / AR-VR hardware context"
+        ],
+        "judge_fact_misses": [
+          "Names Meta AI glasses or Ray-Ban Meta / Oakley Meta glasses (or equivalent)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer correctly mentions Reality Labs and AI glasses, and identifies Meta Quest as a VR product line. However, it fails to name the specific AI glasses products (Ray-Ban Meta and Oakley Meta) that are clearly identified in the gold answer. Naming these specific glasses products is a key required fact.",
+        "correct_refuse": null,
+        "latency_ms": 16026.6,
+        "estimated_cost_usd": 0.010362,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "hop1_nvda_automotive",
+        "mode": "hybrid",
+        "question": "How is NVIDIA involved in the automotive space?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA is involved in the automotive space through its self-driving platforms. The company's software stack includes vertical-specific optimizations for the automotive industry, and its Automotive revenue segment grew 39% year-over-year in fiscal year 2026, driven by continued adoption of these self-driving platforms.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item7:0"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "automotive",
+          "DRIVE"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States NVIDIA has automotive products, platforms, or partnerships",
+          "Mentions automotive / autonomous / DRIVE (or similar) offerings"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers both required facts: it clearly identifies NVIDIA's automotive products (self-driving platforms) and mentions automotive/autonomous offerings (self-driving platforms). The answer goes further by providing financial performance data and partnership information, which aligns well with the gold answer's description of platforms and partnerships.",
+        "correct_refuse": null,
+        "latency_ms": 9700.7,
+        "estimated_cost_usd": 0.011964,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 0.5,
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 12863.7,
+    "mean_cost_usd": 0.011163,
+    "mean_score": 0.75,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop0_meta_ai_glasses",
+        "mode": "vector_only",
+        "question": "What AI glasses or Reality Labs hardware products does Meta describe?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes virtual reality (VR) headsets and AI glasses as hardware products. The company specifically mentions Meta Quest as a VR headset product line, and states that their products enable people to connect through VR headsets and AI glasses as part of their vision to move beyond 2D screens toward immersive augmented and virtual reality experiences.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "glasses",
+          "Quest"
+        ],
+        "keyword_misses": [
+          "Ray-Ban"
+        ],
+        "keyword_recall": 0.6666666666666666,
+        "judge_correctness": 0.5,
+        "judge_fact_hits": [
+          "Mentions Reality Labs / Quest / AR-VR hardware context"
+        ],
+        "judge_fact_misses": [
+          "Names Meta AI glasses or Ray-Ban Meta / Oakley Meta glasses (or equivalent)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers the Reality Labs/Quest context (VR headsets and the vision for immersive AR/VR) but critically fails to name the specific AI glasses products—Ray-Ban Meta and Oakley Meta—which are explicitly required facts. The answer is partially correct but omits the key product names.",
+        "correct_refuse": null,
+        "latency_ms": 5325.2,
+        "estimated_cost_usd": 0.008139,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "hop1_nvda_automotive",
+        "mode": "vector_only",
+        "question": "How is NVIDIA involved in the automotive space?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA is involved in the automotive space through partnerships to accelerate AI adoption and by offering self-driving platforms. Automotive revenue for fiscal year 2026 was up 39% year-over-year, driven by continued adoption of these self-driving platforms.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item7:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "automotive",
+          "DRIVE"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States NVIDIA has automotive products, platforms, or partnerships",
+          "Mentions automotive / autonomous / DRIVE (or similar) offerings"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer clearly covers both required facts: it explicitly mentions NVIDIA's involvement in automotive (multiple mentions of automotive space, self-driving platforms, and partnerships) and references self-driving platforms and partnerships with automotive industry. While the gold answer specifically names \"NVIDIA DRIVE,\" the model's reference to \"self-driving platforms\" adequately conveys the same concept, and partnerships are explicitly mentioned.",
+        "correct_refuse": null,
+        "latency_ms": 5537.8,
+        "estimated_cost_usd": 0.008364,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 0.5,
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 5431.5,
+    "mean_cost_usd": 0.008252,
+    "mean_score": 0.75,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

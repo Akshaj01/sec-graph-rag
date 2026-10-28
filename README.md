@@ -58,18 +58,18 @@ OOS = correct refuse. Keyword recall secondary. Not a human panel.
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
-| Hop 0 (definitions) | 0.81 | **0.92** | 8 |
-| Hop 1 (single edge) | 0.72 | **0.78** | 16 |
-| Hop 2 (compare / multi-rel) | **0.96** | 0.81 | 8 |
-| OOS (must refuse) | 0.92 | **1.00** | 12 |
-| **Overall mean** | 0.83 | **0.87** | 44 |
+| Hop 0 (definitions) | **0.94** | 0.92 | 8 |
+| Hop 1 (single edge) | **0.88** | 0.79 | 16 |
+| Hop 2 (compare / multi-rel) | **0.88** | 0.88 | 8 |
+| OOS (must refuse) | **1.00** | **1.00** | 12 |
+| **Overall mean** | **0.92** | 0.89 | 44 |
 
 Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json)  
-(full v3 rebench 2026-10-27 — also `multi_company_smoke_v3_full.json`)
+(full v3 rebench 2026-10-28 — also `multi_company_smoke_v3_full.json`)
 
-**How to read it:** On the **harder n=44** suite, **hybrid’s clearest win is still hop 2** (0.96 vs 0.81). Vector leads hop 0–1 and overall. The older curated **n=24** full-sync was hybrid **0.98** / vector **0.92** (`multi_company_smoke_full_sync.json`) — same system, easier question mix. Growing the suite exposed remaining false-refuse / OOS edge cases; we fixed the worst (off-topic GRAPH dumps, Apple supply window) before this table.
+**How to read it:** After fixing false-refuse / bad graph dumps / planner crashes, **hybrid leads overall** on the harder n=44 suite (**0.92 vs 0.89**), with the clearest gap on hop 1. OOS is clean on both. The older curated **n=24** sync was hybrid **0.98** / vector **0.92** (`multi_company_smoke_full_sync.json`). Remaining soft spots are mostly Meta product/apps wording and a couple of partial hop-2s — not systemic hybrid loss.
 
-**Systems fixes from eval:** issuer write gate + chunk ticker filter; `COMPETES_WITH` provenance exempt; MedTech `both` + drop unmatched products; OOS topic-gated refuse; Apple supply/China query-centered windows.
+**Systems fixes from eval:** issuer write gate + chunk ticker filter; `COMPETES_WITH` provenance exempt; MedTech `both` + drop unmatched products; OOS topic-gated refuse; Apple supply/China query-centered windows; topic-gate open product/competition asks; AWS supplier templates + ranking; planner template coerce; narrative/SKU → `both`.
 
 ---
 

@@ -1,0 +1,87 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "3",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "oos_googl_blockchain_investments",
+        "mode": "hybrid",
+        "question": "What material investments has Google made in Blockchain or Cryptocurrency focused entities?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence does not contain any information about Google's investments in blockchain or cryptocurrency-focused entities.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "graph",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 6434.6,
+        "estimated_cost_usd": 0.004464,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "oos": 1.0
+    },
+    "mean_latency_ms": 6434.6,
+    "mean_cost_usd": 0.004464,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "oos_googl_blockchain_investments",
+        "mode": "vector_only",
+        "question": "What material investments has Google made in Blockchain or Cryptocurrency focused entities?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain any information about Google or Alphabet making material investments in blockchain or cryptocurrency-focused entities. The documents discuss Google's AI initiatives, Other Bets portfolio, advertising revenues, and general business structure, but do not mention blockchain or cryptocurrency investments.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 5198.0,
+        "estimated_cost_usd": 0.007437,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "oos": 1.0
+    },
+    "mean_latency_ms": 5198.0,
+    "mean_cost_usd": 0.007437,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

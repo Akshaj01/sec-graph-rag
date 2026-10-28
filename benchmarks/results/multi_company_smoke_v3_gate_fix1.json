@@ -1,0 +1,190 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "3",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop1_msft_products",
+        "mode": "hybrid",
+        "question": "What product lines or segments does Microsoft produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft produces a wide range of product lines and segments, including cloud services (Azure, Microsoft Cloud), productivity and business solutions (Dynamics, Enterprise Mobility + Security, GitHub), search and advertising products (Bing, Microsoft Edge, Microsoft News), AI-powered tools (Copilot, Microsoft Copilot), security solutions (Microsoft Defender for Endpoint), industry-specific cloud services (Health and Life Sciences), and gaming services (Xbox, Cloud Gaming Services).",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2",
+          "0001193125-26-323660:Item1A:0",
+          "0001193125-26-323660:Item1A:1",
+          "0001193125-26-323660:Item7:0",
+          "0001193125-26-323660:Item7:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Azure",
+          "Xbox"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)",
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure (multiple times, including as \"cloud services\") and Xbox (with gaming services). The answer provides substantial additional detail beyond requirements without inventing material facts.",
+        "correct_refuse": null,
+        "latency_ms": 16356.8,
+        "estimated_cost_usd": 0.009255,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_meta_ai_competition",
+        "mode": "hybrid",
+        "question": "What major competitors or competitive pressures does Meta describe around AI and its core products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta faces competitive pressures from TikTok, Apple, and Google around its core products. TikTok has reduced user growth and engagement on Meta's platforms. Apple and Google have integrated competitive products into iOS and Android, and Apple has implemented iOS changes that limit Meta's ability to target and measure advertising, negatively impacting advertiser budgets. Meta is also investing heavily in AI initiatives, including generative AI and frontier AI models, while facing regulatory scrutiny around AI technologies and potential risks from third-party AI misuse.",
+        "claim_count": 7,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:1",
+          "0001628280-26-003942:Item1A:0",
+          "0001628280-26-003942:Item1A:2",
+          "0001628280-26-003942:Item1A:3",
+          "0001628280-26-003942:Item1A:4",
+          "0001628280-26-003942:Item1A:5"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "competition",
+          "AI",
+          "TikTok"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Describes competition Meta faces for users, advertisers, and/or AI features",
+          "Names at least one competitor or competitor category (e.g. TikTok, other AI companies, or connection/sharing platforms)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It names specific competitors (TikTok, Apple, Google) and describes competitive pressures across users (TikTok reducing engagement), advertisers (Apple's iOS changes limiting ad targeting), and AI features (Meta's investment in AI while facing competition and regulatory scrutiny). All claims are supported by the gold answer's framing of competition for users, advertisers, and AI.",
+        "correct_refuse": null,
+        "latency_ms": 16952.1,
+        "estimated_cost_usd": 0.016362,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 16654.4,
+    "mean_cost_usd": 0.012809,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop1_msft_products",
+        "mode": "vector_only",
+        "question": "What product lines or segments does Microsoft produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft produces a broad portfolio of technology solutions organized around AI, cloud computing, productivity and collaboration, and personal computing. Key product lines include Dynamics (cloud-based and on-premises business solutions for ERP, CRM, and supply chain management), Office (productivity and collaboration tools), Windows (operating system), Microsoft Edge browser, Bing search engine with Copilot, and devices (computers and tablets).",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [
+          "Azure",
+          "Xbox"
+        ],
+        "keyword_recall": 0.0,
+        "judge_correctness": 0.125,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)",
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers multiple legitimate Microsoft product lines (Dynamics, Office, Windows, Edge, Bing, Devices) but critically fails to explicitly mention Azure, which is a required fact. While Xbox/gaming is also a required fact and is omitted, the phrase \"personal computing\" in the initial summary could partially imply it, but the subsequent detailed sections do not clarify Xbox specifically. The answer is accurate in what it states but incomplete against the required facts.",
+        "correct_refuse": null,
+        "latency_ms": 7750.4,
+        "estimated_cost_usd": 0.011949,
+        "error": null,
+        "score": 0.125
+      },
+      {
+        "item_id": "hop1_meta_ai_competition",
+        "mode": "vector_only",
+        "question": "What major competitors or competitive pressures does Meta describe around AI and its core products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes competitive pressures from mobile operating system and browser providers, particularly Apple and Google, who have implemented changes that limit Meta's ability to target and measure advertising. Apple's 2021 iOS changes reduced Meta's ability to target and measure ads, negatively impacting advertiser budgets. Meta also faces regulatory scrutiny and evolving legal frameworks around AI from government agencies including the FTC, Congress, state attorneys general, and international regulators applying various laws to AI technologies.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:2",
+          "0001628280-26-003942:Item1A:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AI"
+        ],
+        "keyword_misses": [
+          "competition",
+          "TikTok"
+        ],
+        "keyword_recall": 0.3333333333333333,
+        "judge_correctness": 0.0,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Describes competition Meta faces for users, advertisers, and/or AI features",
+          "Names at least one competitor or competitor category (e.g. TikTok, other AI companies, or connection/sharing platforms)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer focuses entirely on regulatory and platform provider pressures (Apple, Google, FTC) rather than competitive pressures for users, advertisers, and AI features. It does not address competition from other social media platforms (e.g., TikTok) or competitor companies developing AI features, which are the core required facts.",
+        "correct_refuse": null,
+        "latency_ms": 7585.6,
+        "estimated_cost_usd": 0.012126,
+        "error": null,
+        "score": 0.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 0.0625
+    },
+    "mean_latency_ms": 7668.0,
+    "mean_cost_usd": 0.012037,
+    "mean_score": 0.0625,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

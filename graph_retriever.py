@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Optional
 import anthropic
 import instructor
 from neo4j import Driver
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from config import settings
 from chunk_ticker import filter_chunk_ids_for_ticker
@@ -50,6 +50,7 @@ _TEMPLATES: Dict[GraphTemplateId, str] = {
                r.source_chunk_ids AS source_chunk_ids,
                r.context AS context,
                r.confidence AS confidence
+        ORDER BY coalesce(r.confidence, 0) DESC
         LIMIT $limit
         """,
     GraphTemplateId.COMPANY_RISKS: """
@@ -73,13 +74,14 @@ _TEMPLATES: Dict[GraphTemplateId, str] = {
         LIMIT $limit
         """,
     GraphTemplateId.COMPANY_SUPPLIERS: """
-        MATCH (c {id: $entity_id})-[r:SUPPLIED_BY]->(s)
+        MATCH (c {id: $entity_id})-[r:SUPPLIED_BY|DEPENDS_ON]->(s)
         RETURN c.id AS source_id, c.name AS source_name,
                type(r) AS rel_type,
                s.id AS target_id, s.name AS target_name,
                r.source_chunk_ids AS source_chunk_ids,
                r.context AS context,
                r.confidence AS confidence
+        ORDER BY coalesce(r.confidence, 0) DESC
         LIMIT $limit
         """,
     GraphTemplateId.COMPANY_SUBSIDIARIES: """
@@ -100,6 +102,7 @@ _TEMPLATES: Dict[GraphTemplateId, str] = {
                r.source_chunk_ids AS source_chunk_ids,
                r.context AS context,
                r.confidence AS confidence
+        ORDER BY coalesce(r.confidence, 0) DESC
         LIMIT $limit
         """,
 }
@@ -116,9 +119,11 @@ Guidance:
 - company_products: what products / product lines a company produces
 - company_risks: risks a company is exposed to
 - company_competitors: who / what a company competes with
-- company_suppliers: suppliers of a company
+- company_suppliers: suppliers / cloud infrastructure / "relies on AWS" (SUPPLIED_BY + DEPENDS_ON)
 - company_subsidiaries: subsidiaries owned by a company
-- entity_outgoing: broad "what is connected to X" when no narrower template fits
+- entity_outgoing: broad "what is connected to X" ONLY when no narrower template fits
+  (never prefer this for supplier/competitor/product/risk asks). Also use this for
+  investments / M&A / crypto holdings — there is NO company_investments template.
 
 Multi-aspect questions (compare products AND risks, hardware AND services, etc.):
 include TWO templates (e.g. company_products then company_risks). Do NOT emit multiple
@@ -128,7 +133,19 @@ Also extract entity_mentions: company/product/risk names in the question (or cle
 implied). Prefer the primary subject company first.
 
 Never invent Cypher. Only pick template_ids + entity names.
+Never invent template ids outside the allowlist (no company_investments, company_outgoing, …).
 """.strip()
+
+
+# Hallucinated planner ids → nearest allowlisted template.
+_TEMPLATE_ALIASES = {
+    "company_investments": GraphTemplateId.ENTITY_OUTGOING,
+    "company_investment": GraphTemplateId.ENTITY_OUTGOING,
+    "company_holdings": GraphTemplateId.ENTITY_OUTGOING,
+    "company_outgoing": GraphTemplateId.ENTITY_OUTGOING,
+    "company_depends": GraphTemplateId.COMPANY_SUPPLIERS,
+    "company_dependencies": GraphTemplateId.COMPANY_SUPPLIERS,
+}
 
 
 class GraphQueryPlan(BaseModel):
@@ -150,6 +167,27 @@ class GraphQueryPlan(BaseModel):
         description="Names to resolve to Neo4j ids; primary subject first.",
     )
     rationale: str = Field(..., description="One sentence why these templates fit.")
+
+    @field_validator("template_ids", mode="before")
+    @classmethod
+    def _coerce_template_ids(cls, value: Any) -> List[Any]:
+        """Map invented template strings to the allowlist so Instructor retries don't crash."""
+        if not isinstance(value, list) or not value:
+            return [GraphTemplateId.ENTITY_OUTGOING]
+        allowed = {t.value: t for t in GraphTemplateId}
+        out: List[Any] = []
+        seen: set = set()
+        for item in value:
+            raw = item.value if isinstance(item, GraphTemplateId) else str(item or "").strip()
+            key = raw.lower()
+            tid = allowed.get(key) or _TEMPLATE_ALIASES.get(key) or GraphTemplateId.ENTITY_OUTGOING
+            if tid.value in seen:
+                continue
+            seen.add(tid.value)
+            out.append(tid)
+            if len(out) >= 3:
+                break
+        return out or [GraphTemplateId.ENTITY_OUTGOING]
 
     @property
     def template_id(self) -> GraphTemplateId:
@@ -248,6 +286,17 @@ def augment_template_ids(
     )
     wants_risks = bool(re.search(r"\b(risks?|exposed)\b", q))
     wants_competitors = bool(re.search(r"\bcompet| vs | versus ", q))
+    # Cloud / infra / "relationship to Amazon and AWS" — not a risk dump.
+    wants_suppliers = bool(
+        re.search(
+            r"\b(suppliers?|supplied|aws|amazon web services|depends?\b|dependenc|"
+            r"relies|rely upon|rely on|infrastructure)\b",
+            q,
+        )
+    ) or bool(
+        re.search(r"\brelationship\b", q)
+        and re.search(r"\b(aws|amazon|supplier|cloud)\b", q)
+    )
 
     def _add(tid: GraphTemplateId) -> None:
         if tid not in have and len(out) < 3:
@@ -256,6 +305,11 @@ def augment_template_ids(
 
     if wants_competitors:
         _add(GraphTemplateId.COMPANY_COMPETITORS)
+    if wants_suppliers:
+        _add(GraphTemplateId.COMPANY_SUPPLIERS)
+        # Amazon retail vs AWS supplier is often one combined ask.
+        if re.search(r"\b(amazon|aws)\b", q):
+            _add(GraphTemplateId.COMPANY_COMPETITORS)
     if wants_products and wants_risks:
         _add(GraphTemplateId.COMPANY_PRODUCTS)
         _add(GraphTemplateId.COMPANY_RISKS)
@@ -269,6 +323,17 @@ def augment_template_ids(
         _add(GraphTemplateId.COMPANY_RISKS)
         out = [t for t in out if t != GraphTemplateId.COMPANY_PRODUCTS]
         have = set(out)
+
+    # Prefer specific templates over ENTITY_OUTGOING laundry lists.
+    specific = {
+        GraphTemplateId.COMPANY_PRODUCTS,
+        GraphTemplateId.COMPANY_RISKS,
+        GraphTemplateId.COMPANY_COMPETITORS,
+        GraphTemplateId.COMPANY_SUPPLIERS,
+        GraphTemplateId.COMPANY_SUBSIDIARIES,
+    }
+    if any(t in specific for t in out) and GraphTemplateId.ENTITY_OUTGOING in out:
+        out = [t for t in out if t != GraphTemplateId.ENTITY_OUTGOING]
 
     return out[:3]
 
@@ -308,6 +373,27 @@ def _build_client() -> instructor.Instructor:
     return instructor.from_anthropic(raw, mode=mode)
 
 
+def _fallback_graph_plan(question: str) -> GraphQueryPlan:
+    """Deterministic plan when Instructor validation / tool-loop fails."""
+    mentions: List[str] = []
+    for m in re.findall(
+        r"\b([A-Z][A-Za-z0-9]+(?:\s+[A-Z][A-Za-z0-9]+)*)\b", question or ""
+    ):
+        if m.upper() in {"WHAT", "WHEN", "WHERE", "WHICH", "WHO", "HOW", "THE", "AND"}:
+            continue
+        if m not in mentions:
+            mentions.append(m)
+        if len(mentions) >= 4:
+            break
+    if not mentions:
+        mentions = ["Company"]
+    return GraphQueryPlan(
+        template_ids=[GraphTemplateId.ENTITY_OUTGOING],
+        entity_mentions=mentions,
+        rationale="Fallback plan after planner validation failure.",
+    )
+
+
 def plan_graph_query(
     question: str,
     *,
@@ -315,14 +401,25 @@ def plan_graph_query(
 ) -> GraphQueryPlan:
     """LLM picks an allowlisted template + entity mentions — never Cypher."""
     client = client or _build_client()
-    return client.messages.create(
-        model=settings.ROUTER_MODEL,
-        max_tokens=settings.ROUTER_MAX_TOKENS,
-        max_retries=settings.ROUTER_MAX_RETRIES,
-        system=PLAN_SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": question}],
-        response_model=GraphQueryPlan,
-    )
+    try:
+        return client.messages.create(
+            model=settings.ROUTER_MODEL,
+            max_tokens=settings.ROUTER_MAX_TOKENS,
+            max_retries=settings.ROUTER_MAX_RETRIES,
+            system=PLAN_SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": question}],
+            response_model=GraphQueryPlan,
+        )
+    except Exception:
+        # Invalid invented template ids / orphan tool_use on retry → still answer/refuse.
+        return _fallback_graph_plan(question)
+
+
+# Short surface names that collide with stub Company nodes missing issuer edges.
+_PREFERRED_ENTITY_IDS = {
+    "meta": "METAPLATFORMS",
+    "facebook": "METAPLATFORMS",
+}
 
 
 def resolve_mention_to_node(
@@ -338,26 +435,29 @@ def resolve_mention_to_node(
     own = driver is None
     driver = driver or get_driver()
     candidate_id = normalize_name(mention) or mention.upper().replace(" ", "")
+    preferred = _PREFERRED_ENTITY_IDS.get((mention or "").strip().lower())
 
     try:
         with driver.session() as session:
-            # Exact id hit (canonical resolver ids).
-            row = session.run(
-                """
-                MATCH (n {id: $id})
-                RETURN n.id AS id, n.name AS name, labels(n) AS labels
-                LIMIT 1
-                """,
-                id=candidate_id,
-            ).single()
-            if row:
-                return ResolvedEntity(
-                    mention=mention,
-                    entity_id=row["id"],
-                    name=row["name"],
-                    labels=list(row["labels"] or []),
-                    resolved=True,
-                )
+            for eid in (preferred, candidate_id):
+                if not eid:
+                    continue
+                row = session.run(
+                    """
+                    MATCH (n {id: $id})
+                    RETURN n.id AS id, n.name AS name, labels(n) AS labels
+                    LIMIT 1
+                    """,
+                    id=eid,
+                ).single()
+                if row:
+                    return ResolvedEntity(
+                        mention=mention,
+                        entity_id=row["id"],
+                        name=row["name"],
+                        labels=list(row["labels"] or []),
+                        resolved=True,
+                    )
 
             # Fallback: name / alias contains (still parameterized — no LLM Cypher).
             row = session.run(

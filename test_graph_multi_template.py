@@ -29,6 +29,23 @@ def test_plan_accepts_multiple_template_ids():
     assert len(plan.template_ids) == 2
 
 
+def test_preferred_meta_resolves_to_metaplatforms():
+    from graph_retriever import _PREFERRED_ENTITY_IDS
+
+    assert _PREFERRED_ENTITY_IDS["meta"] == "METAPLATFORMS"
+
+
+def test_plan_coerces_invented_investment_template():
+    plan = GraphQueryPlan(
+        template_ids=["company_subsidiaries", "company_investments"],  # type: ignore[arg-type]
+        entity_mentions=["Google", "Blockchain"],
+        rationale="Investments ask — invented id must not crash.",
+    )
+    assert GraphTemplateId.COMPANY_SUBSIDIARIES in plan.template_ids
+    assert GraphTemplateId.ENTITY_OUTGOING in plan.template_ids
+    assert all(isinstance(t, GraphTemplateId) for t in plan.template_ids)
+
+
 def test_dedupe_facts_keeps_first():
     a = GraphFact(
         source_id="NVIDIA",
@@ -105,6 +122,17 @@ def test_augment_template_ids_adds_risks_for_products_and_risks_question():
     assert GraphTemplateId.COMPANY_PRODUCTS in out
     assert GraphTemplateId.COMPANY_RISKS in out
     assert len(out) <= 3
+
+
+def test_augment_template_ids_aws_relationship_prefers_suppliers():
+    from graph_retriever import GraphTemplateId, augment_template_ids
+
+    out = augment_template_ids(
+        "What is Netflix’s relationship to Amazon and AWS?",
+        [GraphTemplateId.ENTITY_OUTGOING],
+    )
+    assert GraphTemplateId.COMPANY_SUPPLIERS in out
+    assert GraphTemplateId.ENTITY_OUTGOING not in out
 
 
 def test_augment_template_ids_drops_products_for_risk_only_ask():

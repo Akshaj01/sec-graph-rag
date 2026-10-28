@@ -316,6 +316,8 @@ _TOPIC_GENERIC = {
     "manufactures",
     "lines",
     "line",
+    "segment",
+    "segments",
     "major",
     "possible",
     "exist",
@@ -384,7 +386,18 @@ _TOPIC_STOP = {
     "their",
     "there",
     "about",
+    # Weak ask scaffolding — never treat as the evidence topic.
+    "around",
+    "pressures",
+    "pressure",
+    "involved",
+    "space",
+    "core",
 }
+
+
+# Short tokens query_needles drops (len<3) or topic_needles would drop (len<4).
+_SHORT_TOPIC_KEEP = {"ai", "aws", "gpu", "vr", "ar", "ml"}
 
 
 def topic_needles(question: str) -> List[str]:
@@ -393,7 +406,9 @@ def topic_needles(question: str) -> List[str]:
     seen: Set[str] = set()
     for n in query_needles(question):
         key = n.lower()
-        if key in _TOPIC_GENERIC or key in _TOPIC_STOP or len(n) < 4:
+        if key in _TOPIC_GENERIC or key in _TOPIC_STOP:
+            continue
+        if len(n) < 4 and key not in _SHORT_TOPIC_KEEP:
             continue
         # "China-related" never appears verbatim in filings — keep the stem.
         if key.endswith("-related"):
@@ -406,6 +421,12 @@ def topic_needles(question: str) -> List[str]:
             continue
         seen.add(key)
         out.append(n)
+    # AI / AWS etc. are often the real topic but shorter than query_needles' floor.
+    for m in re.findall(r"\b([A-Za-z]{2,3})\b", question or ""):
+        key = m.lower()
+        if key in _SHORT_TOPIC_KEEP and key not in seen:
+            seen.add(key)
+            out.append(m.upper() if m.isupper() or len(m) <= 3 else m)
     return out
 
 
@@ -426,12 +447,30 @@ def evidence_addresses_question(evidence: EvidencePack) -> bool:
         # Open asks ("what products?") — any on-ticker pack is fair game.
         return True
 
+    # Filing/graph often say DRIVE / vehicle instead of the question's "automotive".
+    _topic_equiv = {
+        "automotive": (
+            "automotive",
+            "automobile",
+            "vehicle",
+            "vehicles",
+            "drive",
+            "autonomous",
+            "self-driving",
+            "hyperion",
+        ),
+    }
+
     def _topic_in_blob(t: str) -> bool:
         tl = t.lower()
-        if tl in blob or tl in blob_norm:
-            return True
-        spaced = re.sub(r"[\s\-]+", " ", tl)
-        return spaced in blob_norm
+        variants = _topic_equiv.get(tl, (tl,))
+        for v in variants:
+            if v in blob or v in blob_norm:
+                return True
+            spaced = re.sub(r"[\s\-]+", " ", v)
+            if spaced in blob_norm:
+                return True
+        return False
 
     hits = [t for t in topics if _topic_in_blob(t)]
     # Rare / false-premise topics must hit themselves (battery ≠ generic "supply").
@@ -452,14 +491,24 @@ def evidence_addresses_question(evidence: EvidencePack) -> bool:
         for t in topics
         if t.lower() in _must or t.lower().rstrip("s") in _must
     ]
+    q = evidence.question or ""
+    is_compet_ask = bool(
+        re.search(r"\bcompetitor|\bcompetition to\b|\bcompete with\b", q, re.I)
+    )
+    has_compet_signal = any(
+        "compet" in item.statement.lower() for item in evidence.items
+    )
+
     if must_topics:
         if not any(_topic_in_blob(t) for t in must_topics):
             return False
     elif not hits:
         # Ordinary multi-aspect asks: any distinctive topic is enough.
-        return False
+        # Exception: general competition asks often only have COMPETES_WITH names
+        # (TikTok/Google) with no "AI"/"pressures" lexical hit — still on-topic.
+        if not (is_compet_ask and not must_topics and has_compet_signal):
+            return False
 
-    q = evidence.question or ""
     if looks_like_strict_quantitative_question(q):
         # Money/count asks: need a figure in the pack, not just a topic word.
         if not re.search(r"\$\s?\d|\d+\s*%|\d{1,3}(?:,\d{3})+", blob):
@@ -467,15 +516,26 @@ def evidence_addresses_question(evidence: EvidencePack) -> bool:
 
     # "Competitor to <product>" needs product + competition in the *same* item —
     # otherwise Meta COMPETES_WITH Apple gets treated as a glasses-rival answer.
-    if re.search(r"\bcompetitor|\bcompetition to\b|\bcompete with\b", q, re.I):
-        for item in evidence.items:
-            s = item.statement.lower()
-            s_norm = re.sub(r"[\s\-]+", " ", s)
-            if "compet" not in s:
-                continue
-            if any(re.sub(r"[\s\-]+", " ", t.lower()) in s_norm for t in topics):
-                return True
-        return False
+    # General "competitors / competitive pressures" asks only need a competition signal.
+    if is_compet_ask:
+        product_topics = [
+            t
+            for t in topics
+            if t.lower() in _must or t.lower().rstrip("s") in _must
+        ]
+        if product_topics:
+            for item in evidence.items:
+                s = item.statement.lower()
+                s_norm = re.sub(r"[\s\-]+", " ", s)
+                if "compet" not in s:
+                    continue
+                if any(
+                    re.sub(r"[\s\-]+", " ", t.lower()) in s_norm
+                    for t in product_topics
+                ):
+                    return True
+            return False
+        return has_compet_signal or bool(hits)
 
     return True
 
@@ -707,12 +767,12 @@ def truncate_passage_for_query(
 
 
 def _graph_fact_matches_needles(fact, needles: List[str]) -> bool:
-    """True if any needle appears in product/risk target name, id, or context."""
+    """True if any needle appears in target name/id or context (not issuer source_name)."""
     if not needles:
         return True
-    blob = (
-        f"{fact.target_name} {fact.target_id} {fact.source_name} {fact.context or ''}"
-    ).lower()
+    # Exclude source_name: issuer tokens ("Netflix") otherwise make every edge "match"
+    # and ranking collapses to confidence → risk laundry lists crowd out AWS.
+    blob = f"{fact.target_name} {fact.target_id} {fact.context or ''}".lower()
     blob_norm = re.sub(r"[\s\-]+", " ", blob)
     for n in needles:
         nl = n.lower()

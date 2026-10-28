@@ -263,5 +263,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-27 | Fix hybrid unjustified answers on OOS (topic gate + force refuse); OOS resmoke **8/8**. |
 | 2026-10-27 | Fix Apple supply/China window + product crowding; supply resmoke **1.0**. |
 | 2026-10-27 | Full v3 n=44 rebench → hybrid **0.83** / vector **0.87**; hop-2 hybrid **0.96**. Softened over-strict topic gate after first full run over-refused. |
+| 2026-10-28 | Fix false-refuse / NFLX-AWS dump / planner invent / NVDA+Meta route; rebench → hybrid **0.92** / vector **0.89**. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.

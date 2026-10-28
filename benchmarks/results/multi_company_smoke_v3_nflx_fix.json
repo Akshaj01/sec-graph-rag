@@ -1,0 +1,104 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "3",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop1_nflx_aws_relationship",
+        "mode": "hybrid",
+        "question": "What is Netflix’s relationship to Amazon and AWS?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Netflix has a dual relationship with Amazon: Netflix relies on Amazon Web Services (AWS) as a critical infrastructure supplier for operating certain aspects of its streaming service, while simultaneously competing with Amazon in the entertainment streaming market. Netflix believes that Amazon will not use AWS operations to gain competitive advantage against them.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001065280-26-000034:Item1A:3"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "AWS",
+          "Amazon"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States Netflix relies on / uses Amazon Web Services (AWS)",
+          "Notes Amazon's retail side competes with Netflix and/or that AWS is part of Amazon"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it clearly states Netflix relies on AWS for infrastructure operations, and it explicitly acknowledges that Amazon's retail/entertainment business competes with Netflix while AWS is the cloud supplier. The answer provides accurate detail about Netflix's belief regarding AWS not being used against them, which is supported material from the 10-K context.",
+        "correct_refuse": null,
+        "latency_ms": 8656.8,
+        "estimated_cost_usd": 0.00717,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 8656.8,
+    "mean_cost_usd": 0.00717,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "3",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop1_nflx_aws_relationship",
+        "mode": "vector_only",
+        "question": "What is Netflix’s relationship to Amazon and AWS?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Netflix relies on Amazon Web Services (AWS) as a critical cloud computing infrastructure provider for the vast majority of its operations. Netflix runs most of its computing on AWS, using AWS's distributed computing platform for data processing, storage, and other services. However, Amazon also competes directly with Netflix as a streaming entertainment provider. Any disruption to Netflix's use of AWS would adversely impact Netflix's operations and business.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001065280-26-000034:Item1A:1",
+          "0001065280-26-000034:Item1A:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AWS",
+          "Amazon"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States Netflix relies on / uses Amazon Web Services (AWS)",
+          "Notes Amazon's retail side competes with Netflix and/or that AWS is part of Amazon"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it clearly states Netflix relies on/uses AWS for computing infrastructure and operations, and it explicitly notes that Amazon competes with Netflix as a streaming provider. The answer goes beyond minimum requirements with details about switching costs and service disruption risks, all of which are accurate and well-supported.",
+        "correct_refuse": null,
+        "latency_ms": 7513.8,
+        "estimated_cost_usd": 0.009753,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 7513.8,
+    "mean_cost_usd": 0.009753,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

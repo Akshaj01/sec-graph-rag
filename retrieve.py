@@ -35,6 +35,29 @@ def wants_produce_yes_no(question: str) -> bool:
     return bool(_PRODUCE_YES_NO.search(question or ""))
 
 
+def wants_graph_plus_vector_narrative(question: str) -> bool:
+    """
+    Asks where graph edges are sparse/SKU-level and filing prose is needed.
+
+    Graph-only often misses 'AI glasses' narrative or 'automotive' MD&A even when
+    related product nodes (DRIVE, Reality Labs) exist.
+    """
+    q = question or ""
+    if re.search(
+        r"\b(glasses|automotive|autonomous|self-driving|reality labs)\b",
+        q,
+        re.I,
+    ):
+        return True
+    if re.search(r"\b(how is|involved in|describe)\b", q, re.I) and re.search(
+        r"\b(product|hardware|space|segment|platform)\b",
+        q,
+        re.I,
+    ):
+        return True
+    return False
+
+
 def retrieve(
     question: str,
     *,
@@ -61,17 +84,25 @@ def retrieve(
         decision = route_question(question, log=log_route)
         # Graph-only "does X produce Y?" fails when Y is a segment name not a
         # ProductLine node (e.g. J&J MedTech). Pull vector too.
+        bump_both = False
+        note = ""
         if (
             decision.effective_route == RetrievalRoute.GRAPH
             and wants_produce_yes_no(question)
         ):
+            bump_both = True
+            note = " [produce-yes/no heuristic → both for segment prose]"
+        elif (
+            decision.effective_route == RetrievalRoute.GRAPH
+            and wants_graph_plus_vector_narrative(question)
+        ):
+            bump_both = True
+            note = " [narrative/SKU heuristic → both for filing prose]"
+        if bump_both:
             decision = decision.model_copy(
                 update={
                     "effective_route": RetrievalRoute.BOTH,
-                    "rationale": (
-                        decision.rationale
-                        + " [produce-yes/no heuristic → both for segment prose]"
-                    ),
+                    "rationale": decision.rationale + note,
                 }
             )
 

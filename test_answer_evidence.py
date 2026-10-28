@@ -286,9 +286,20 @@ def test_fact_context_truncated():
 
 
 def test_wants_produce_yes_no():
+    from retrieve import wants_graph_plus_vector_narrative
+
     assert wants_produce_yes_no("Does Johnson & Johnson produce MedTech products?")
     assert wants_produce_yes_no("Do they manufacture medical devices?")
     assert not wants_produce_yes_no("What product lines does Apple produce?")
+    assert wants_graph_plus_vector_narrative(
+        "How is NVIDIA involved in the automotive space?"
+    )
+    assert wants_graph_plus_vector_narrative(
+        "What AI glasses or Reality Labs hardware products does Meta describe?"
+    )
+    assert not wants_graph_plus_vector_narrative(
+        "What product lines does Apple produce?"
+    )
 
 
 def test_filter_unmatched_produces_drops_drug_laundry_list():
@@ -448,6 +459,83 @@ def test_evidence_addresses_rejects_competitor_without_product_cooccurrence():
         allowed_chunk_ids=["c1", "c2"],
     )
     assert not evidence_addresses_question(pack)
+
+
+def test_evidence_addresses_open_product_segments_ask():
+    """'segments' alone must not force-refuse a real products pack (MSFT)."""
+    from answer import topic_needles
+
+    q = "What product lines or segments does Microsoft produce?"
+    assert topic_needles(q) == []
+    pack = EvidencePack(
+        question=q,
+        items=[
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="Microsoft produces product Azure.",
+                chunk_ids=["c1"],
+            ),
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="Microsoft produces product Xbox.",
+                chunk_ids=["c1"],
+            ),
+        ],
+        allowed_chunk_ids=["c1"],
+    )
+    assert evidence_addresses_question(pack)
+
+
+def test_evidence_addresses_general_competition_ask():
+    """General AI/competition asks need a competition signal, not 'pressures'/'around'."""
+    from answer import topic_needles
+
+    q = (
+        "What major competitors or competitive pressures does Meta describe "
+        "around AI and its core products?"
+    )
+    assert "AI" in topic_needles(q) or "ai" in [t.lower() for t in topic_needles(q)]
+    pack = EvidencePack(
+        question=q,
+        items=[
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="Meta Platforms competes with TikTok.",
+                chunk_ids=["c1"],
+            ),
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="Meta Platforms competes with Google.",
+                chunk_ids=["c1"],
+            ),
+        ],
+        allowed_chunk_ids=["c1"],
+    )
+    assert evidence_addresses_question(pack)
+
+
+def test_topic_needles_keeps_short_aws():
+    from answer import topic_needles
+
+    needles = [t.lower() for t in topic_needles(
+        "What is Netflix’s relationship to Amazon and AWS?"
+    )]
+    assert "aws" in needles
+
+
+def test_evidence_addresses_automotive_via_drive_synonym():
+    pack = EvidencePack(
+        question="How is NVIDIA involved in the automotive space?",
+        items=[
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="NVIDIA produces product NVIDIA DRIVE.",
+                chunk_ids=["c1"],
+            )
+        ],
+        allowed_chunk_ids=["c1"],
+    )
+    assert evidence_addresses_question(pack)
 
 
 def test_evidence_addresses_accepts_on_topic_risk():
