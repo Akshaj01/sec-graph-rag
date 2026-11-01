@@ -48,8 +48,8 @@ Track so we don’t thrash.
 
 Copy from personal plan; tick as we finish.
 
-- [ ] Stratified golden set with **gold chunk IDs** versioned in repo (extend v3; don’t throw away n=44)
-- [ ] **Retrieval** metrics (recall@5/10, MRR) **and** **generation** metrics, by hop, hybrid vs vector-only
+- [x] Stratified golden set with **gold chunk IDs** versioned in repo (extend v3; don’t throw away n=44) — suite **v4**, 32/32 answerable labeled, 12 OOS empty
+- [x] **Retrieval** metrics (recall@5/10, MRR) **and** **generation** metrics, by hop, hybrid vs vector-only — retrieval table in `benchmarks/results/retrieval_v4.md`; generation table already in README
 - [ ] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items)
 - [ ] One **ablation** table with bootstrap CIs + one-paragraph recommendation
 - [ ] **CI gate** demonstrated failing a bad PR (e.g. recall@10 drop > ~2 points; cache LLM calls)
@@ -71,19 +71,19 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** design pasted under §8 or linked from NOTES. ✅
 
 ### WP1 — Gold chunk IDs on the suite
-**Status:** `todo`  
+**Status:** `done` (5-item spot-check accepted 2026-11-01, including Meta Item1A:4)  
 **Why:** retrieval metrics need labeled relevant chunks; answer-judge alone can’t separate retrieve vs generate failures.  
 **You:** for each non-OOS item (or a agreed subset if time-boxed), verify 1–3 `gold_chunk_ids` from real filings (schema already has the field).  
 **Cursor:** labeling helper / Streamlit-or-CLI to browse chunks by ticker+query; suite JSON updates; validation that IDs exist in the store.  
-**Exit:** ≥ most answerable items have `gold_chunk_ids`; OOS stay empty; suite version bumped or notes updated.
+**Exit:** ≥ most answerable items have `gold_chunk_ids`; OOS stay empty; suite version bumped or notes updated. ✅ suite v4; `label_chunks.py check --postgres` ok.
 
 ### WP2 — Retrieval metrics harness
-**Status:** `todo`  
+**Status:** `done`  
 **Why:** “Is the pack wrong or the answer model wrong?”  
 **You own conceptually:** recall@k, MRR definitions; hop bucketing.  
 **Cursor:** script that runs graph / vector / hybrid **retrieve-only**, scores vs gold chunks, writes JSON + table by hop.  
 **Hand-write (plan rule):** core metric functions (or thoroughly re-derive them in NOTES if AI drafts).  
-**Exit:** README or `benchmarks/results/` table: recall@5/10 + MRR by hop × system.
+**Exit:** README or `benchmarks/results/` table: recall@5/10 + MRR by hop × system. ✅ `benchmarks/results/retrieval_v4.md`
 
 ### WP3 — Weighted κ + self-agreement
 **Status:** `todo`  
@@ -151,11 +151,13 @@ If only **~10h/week**: keep n≈40–44, skip nDCG, one ablation (hybrid vs vect
 
 | Path | Role |
 |------|------|
-| `benchmarks/multi_company_smoke.json` | Golden suite v3 |
+| `benchmarks/multi_company_smoke.json` | Golden suite v4 (gold chunks on all answerable items) |
+| `label_chunks.py` | Search ingest chunks; `check` gold ids vs cache / Postgres |
 | `benchmark_schema.py` | `gold_chunk_ids`, `required_facts`, … |
 | `benchmark_runner.py` / `benchmark_judge.py` | Answer eval |
 | `benchmarks/judge_calibration_hybrid.md` | Human calibration worksheet |
-| `benchmarks/results/` | Reports |
+| `benchmarks/results/` | Reports (`retrieval_v4.md` is the WP2 table) |
+| `retrieval_metrics.py` / `retrieval_benchmark.py` | recall@k, MRR, retrieve-only runner |
 | `docs/PROBLEMS_AND_FIXES.md` | Failure → fix history |
 | `docs/MEASURE_IT_PLAN.md` | **This file** |
 | `README.md` | Public headline |
@@ -177,6 +179,22 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Ablation choice:** Formalize **hybrid vs vector-only** with **bootstrap CIs** (overall + preferably hop-2).
 
+### WP1 — gold chunks (2026-11-01)
+
+**Rule:** smallest covering set, max 3. A chunk counts only if its text supports at least one `required_fact`. One chunk when it covers every fact. A second chunk when a fact lives in a different passage (hop-2 with two topics). Out-of-scope stays empty. Labels come from ingest-cache text, not from hybrid citations.
+
+**Exception to read:** `hop1_aapl_competes_meta` gold is Meta `Item1A:4` (Apple “integrated competitive products”). Apple’s own chunks never name Meta. A ticker-scoped AAPL retrieve will miss this on purpose. Spot-check accepted this label.
+
+### WP2 — retrieval metrics (2026-11-01)
+
+**recall@k** = (gold chunks found in the first k unique retrieved ids) / (number of gold chunks). Each question counts once.
+
+**MRR** = 1 / rank of the first gold chunk. Rank 1 → 1.0. No gold chunk in the list → 0.
+
+**Rank:** first time a chunk id appears. Hybrid list is graph ids, then vector ids that were not already in the graph list. Vector list is depth 10. Out-of-scope items are not scored.
+
+**Result to be able to say:** on suite v4, vector retrieval leads (overall recall@5 **0.82**, MRR **0.67**). Hybrid is lower (**0.67** / **0.51**) because graph chunks are placed first and often are not the gold prose chunks. Graph alone is lower still (**0.42** / **0.37**). This does not replace the generation table (hybrid **0.94** vs vector **0.89**). A good answer can come from a graph statement whose source chunk is not the gold passage.
+
 ---
 
 ## 9. Session log
@@ -186,6 +204,9 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-10-28 | — | Plan file created after GraphRAG rebench (hybrid 0.94). | WP0 design, then WP1 gold chunks |
 | 2026-11-01 | WP0 | Pasted “what good means” (retrieve / answer+cite / refuse). | Finish WP0: metrics, κ hold-out, ablation |
 | 2026-11-01 | WP0 | Closed: recall@5+MRR (+@10), hop judge H vs V, κ on 15–20 v3 hold-out, ablation H vs V + bootstrap CI. | WP1 gold chunk IDs |
+| 2026-11-01 | WP1 | Suite v4: gold chunks on 32/32 answerable items (12 OOS empty). `label_chunks.py` + check vs ingest cache and Postgres. | Spot-check 5 labels, then WP2 retrieval harness |
+| 2026-11-01 | WP1 | Spot-check accepted, including Meta Item1A:4 for Apple–Meta competition. | WP2 |
+| 2026-11-01 | WP2 | Retrieve-only recall@5/10 + MRR by hop for graph, vector, hybrid. Vector leads retrieval; hybrid leads generation. | WP3 κ |
 
 ---
 

@@ -48,8 +48,7 @@ Question → Haiku router (graph | vector | both)
 
 ## Benchmark (hybrid vs vector-only)
 
-Suite: `multi_company_smoke` v3 — **44** hand-labeled questions on a local **10-ticker** corpus  
-(`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7). Includes harder author-written items + more OOS refuses.
+Suite: `multi_company_smoke` v4 — **44** hand-labeled questions on a local **10-ticker** corpus (`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`, full Item 1/1A/7). v4 adds `gold_chunk_ids` on the same questions; the generation numbers below are the v3 judged run. Includes harder author-written items and more out-of-scope refuses.
 
 **Primary metric:** LLM-as-judge (Haiku + Instructor) vs `required_facts` / `gold_answer`.  
 OOS = correct refuse. Keyword recall secondary. Not a human panel.
@@ -68,6 +67,29 @@ Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/result
 (full v3 rebench 2026-10-28; `hop2_jpm_credit_vs_market` hybrid patched from targeted resmoke — full-run flake 0.375→1.0; also `multi_company_smoke_v3_full.json` / `…_jpm_hop2_resmoke.json`)
 
 **How to read it:** After fixing false-refuse / bad graph dumps / planner crashes, **hybrid leads overall** on the harder n=44 suite (**0.94 vs 0.89**). **Hop 2 is again the clearest structural win** (0.96 vs 0.88). OOS is clean on both. The older curated **n=24** sync was hybrid **0.98** / vector **0.92** (`multi_company_smoke_full_sync.json`). Remaining soft spots are mostly Meta product/apps wording — not systemic hybrid loss.
+
+### Retrieval (separate from the answer score)
+
+Retrieve-only, scored against v4 `gold_chunk_ids`. Macro-average over the 32 answerable items. Out-of-scope items are skipped. **recall@k** is the fraction of gold chunks in the top k. **MRR** is 1 / rank of the first gold chunk.
+
+| Hop | n | System | Recall@5 | Recall@10 | MRR |
+|-----|--:|--------|--------:|----------:|----:|
+| Hop 0 | 8 | graph | 0.44 | 0.44 | 0.31 |
+| Hop 0 | 8 | vector | **1.00** | **1.00** | **0.71** |
+| Hop 0 | 8 | hybrid | **1.00** | **1.00** | 0.61 |
+| Hop 1 | 16 | graph | 0.36 | 0.47 | 0.29 |
+| Hop 1 | 16 | vector | **0.73** | **0.85** | **0.59** |
+| Hop 1 | 16 | hybrid | 0.46 | 0.65 | 0.39 |
+| Hop 2 | 8 | graph | 0.50 | 0.67 | 0.57 |
+| Hop 2 | 8 | vector | **0.81** | **1.00** | **0.79** |
+| Hop 2 | 8 | hybrid | 0.75 | 0.92 | 0.62 |
+| **Overall** | 32 | graph | 0.42 | 0.51 | 0.37 |
+| **Overall** | 32 | vector | **0.82** | **0.93** | **0.67** |
+| **Overall** | 32 | hybrid | 0.67 | 0.80 | 0.51 |
+
+Report: [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md).
+
+Vector leads retrieval. Hybrid leads generation. Hybrid ranks graph chunks before vector passages, and those graph chunks are often a different passage than the gold prose chunk, so they push the gold id down the list. The answer can still be right because the graph statement carries the fact.
 
 **Systems fixes from eval:** issuer write gate + chunk ticker filter; `COMPETES_WITH` provenance exempt; MedTech `both` + drop unmatched products; OOS topic-gated refuse; Apple supply/China query-centered windows; topic-gate open product/competition asks; AWS supplier templates + ranking; planner template coerce; narrative/SKU → `both`.
 

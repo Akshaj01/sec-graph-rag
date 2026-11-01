@@ -1,7 +1,7 @@
 {
   "name": "multi_company_smoke",
-  "version": "3",
-  "corpus_notes": "Hand-labeled against the local 10-ticker full Item 1/1A/7 corpus (AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM). Primary score = LLM-as-judge vs required_facts; keyword recall secondary. v3 adds author-written golden questions (some lightly rephrased for single-ticker retrieve / chunk grounding; false-premise and OOS items marked must_refuse). Not a 50-100 portfolio eval.",
+  "version": "4",
+  "corpus_notes": "Hand-labeled against the local 10-ticker full Item 1/1A/7 corpus (AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM). Primary score = LLM-as-judge vs required_facts; keyword recall secondary. v3 adds author-written golden questions (some lightly rephrased for single-ticker retrieve / chunk grounding; false-premise and OOS items marked must_refuse). v4 adds gold_chunk_ids on every answerable item (OOS stay empty): smallest covering set, max 3, from ingest-cache text rather than system citations. Not a 50-100 portfolio eval.",
   "items": [
     {
       "id": "hop0_aapl_applecare",
@@ -13,6 +13,9 @@
         "AppleCare",
         "support",
         "service"
+      ],
+      "gold_chunk_ids": [
+        "0000320193-25-000079:Item1:0"
       ],
       "required_facts": [
         "Names AppleCare as an Apple offering",
@@ -33,6 +36,9 @@
       ],
       "gold_entity_ids": [
         "MSFT_AZURE"
+      ],
+      "gold_chunk_ids": [
+        "0001193125-26-323660:Item1:1"
       ],
       "required_facts": [
         "Identifies Azure as a Microsoft cloud offering",
@@ -55,6 +61,9 @@
       "gold_entity_ids": [
         "META_INSTAGRAM"
       ],
+      "gold_chunk_ids": [
+        "0001628280-26-003942:Item1:0"
+      ],
       "required_facts": [
         "Identifies Instagram as a Meta app/product/brand",
         "Mentions social / sharing / photo or video use, or Family of Apps context"
@@ -71,6 +80,9 @@
       "gold_keywords": [
         "Data Center",
         "GPU"
+      ],
+      "gold_chunk_ids": [
+        "0001045810-26-000021:Item1:1"
       ],
       "required_facts": [
         "Mentions Data Center products or platforms",
@@ -92,6 +104,9 @@
       "gold_entity_ids": [
         "AMZN_AWS"
       ],
+      "gold_chunk_ids": [
+        "0001018724-26-000004:Item1:0"
+      ],
       "required_facts": [
         "Expands or identifies AWS as Amazon Web Services",
         "Describes AWS as cloud / technology services or an Amazon segment"
@@ -111,6 +126,9 @@
       ],
       "gold_entity_ids": [
         "JPM_CREDITRISK"
+      ],
+      "gold_chunk_ids": [
+        "0001628280-26-008131:Item7:18"
       ],
       "required_facts": [
         "Defines or describes credit risk (borrower/obligor default or credit loss)",
@@ -135,6 +153,9 @@
         "AAPL_MAC",
         "AAPL_IPAD"
       ],
+      "gold_chunk_ids": [
+        "0000320193-25-000079:Item1:0"
+      ],
       "required_facts": [
         "Mentions iPhone",
         "Mentions Mac",
@@ -156,6 +177,9 @@
       "gold_entity_ids": [
         "MSFT_AZURE",
         "MSFT_XBOX"
+      ],
+      "gold_chunk_ids": [
+        "0001193125-26-323660:Item1:1"
       ],
       "required_facts": [
         "Mentions Azure (or Intelligent Cloud cloud offerings)",
@@ -180,6 +204,9 @@
         "META_INSTAGRAM",
         "META_WHATSAPP"
       ],
+      "gold_chunk_ids": [
+        "0001628280-26-003942:Item1:0"
+      ],
       "required_facts": [
         "Mentions Facebook",
         "Mentions Instagram",
@@ -202,6 +229,9 @@
         "NVDA_A100",
         "NVDA_AUTOMOTIVE"
       ],
+      "gold_chunk_ids": [
+        "0001045810-26-000021:Item1:1"
+      ],
       "required_facts": [
         "Mentions a data-center / compute GPU product (e.g. A100 or similar)",
         "Mentions automotive offerings or another distinct NVIDIA product line"
@@ -223,6 +253,9 @@
         "GOOGL_GOOGLECLOUD",
         "GOOGL_GOOGLESERVICES"
       ],
+      "gold_chunk_ids": [
+        "0001652044-26-000018:Item1:1"
+      ],
       "required_facts": [
         "Mentions Google Cloud (or cloud offerings)",
         "Mentions Google Services (or consumer/ads/services segment)"
@@ -243,6 +276,9 @@
       "gold_entity_ids": [
         "XOM_COMMODITYPRICERISK"
       ],
+      "gold_chunk_ids": [
+        "0000034088-26-000045:Item1A:0"
+      ],
       "required_facts": [
         "States ExxonMobil is exposed to commodity price risk",
         "Links the risk to oil/gas/energy commodity prices or price volatility"
@@ -261,6 +297,9 @@
       ],
       "gold_entity_ids": [
         "JNJ_MEDTECH"
+      ],
+      "gold_chunk_ids": [
+        "0000200406-26-000016:Item7:0"
       ],
       "required_facts": [
         "Answers yes / affirms that J&J produces MedTech",
@@ -281,12 +320,15 @@
       "gold_entity_ids": [
         "META"
       ],
+      "gold_chunk_ids": [
+        "0001628280-26-003942:Item1A:4"
+      ],
       "required_facts": [
         "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
         "Frames it as competition / competitive relationship"
       ],
       "gold_answer": "Yes \u2014 the graph encodes that Apple competes with Meta.",
-      "notes": "COMPETES_WITH onto global Company node META."
+      "notes": "COMPETES_WITH onto global Company node META. Gold chunk is Meta Item1A:4 (Apple integrated competitive products). Apple's own Item 1/1A/7 chunks never name Meta or Facebook."
     },
     {
       "id": "hop2_aapl_hardware_services",
@@ -298,6 +340,9 @@
         "iPhone",
         "Mac",
         "AppleCare"
+      ],
+      "gold_chunk_ids": [
+        "0000320193-25-000079:Item1:0"
       ],
       "required_facts": [
         "Mentions at least two hardware devices (e.g. iPhone, Mac, iPad)",
@@ -320,6 +365,9 @@
         "MSFT_AZURE",
         "MSFT_XBOX"
       ],
+      "gold_chunk_ids": [
+        "0001193125-26-323660:Item1:1"
+      ],
       "required_facts": [
         "Mentions Azure / Intelligent Cloud offerings",
         "Mentions Xbox / More Personal Computing",
@@ -338,6 +386,9 @@
         "Facebook",
         "Instagram",
         "Reality Labs"
+      ],
+      "gold_chunk_ids": [
+        "0001628280-26-003942:Item1:0"
       ],
       "required_facts": [
         "Mentions Facebook and/or Instagram as Family of Apps products",
@@ -361,6 +412,9 @@
         "AMZN_AWS",
         "AMZN_AMAZONPRIME"
       ],
+      "gold_chunk_ids": [
+        "0001018724-26-000004:Item1:0"
+      ],
       "required_facts": [
         "Describes AWS as cloud / technology services",
         "Describes Amazon Prime as a membership/subscription or store-related offering"
@@ -382,6 +436,10 @@
         "JPM_CREDITRISK",
         "JPM_MARKETRISK"
       ],
+      "gold_chunk_ids": [
+        "0001628280-26-008131:Item7:18",
+        "0001628280-26-008131:Item7:10"
+      ],
       "required_facts": [
         "Mentions credit risk as a named risk",
         "Mentions market risk as a named risk",
@@ -399,6 +457,10 @@
       "gold_keywords": [
         "A100",
         "Geopolitical"
+      ],
+      "gold_chunk_ids": [
+        "0001045810-26-000021:Item1:1",
+        "0001045810-26-000021:Item1A:6"
       ],
       "required_facts": [
         "Names compute products (e.g. data-center GPUs such as A100/H100 or GeForce)",

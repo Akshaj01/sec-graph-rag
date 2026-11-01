@@ -64,11 +64,13 @@ def retrieve(
     ticker: Optional[str] = None,
     log_route: bool = True,
     force_route: Optional[RetrievalRoute] = None,
+    vector_k: Optional[int] = None,
 ) -> HybridRetrievalResult:
     """
     Route → execute graph / vector / both based on effective_route.
 
     force_route: skip the router (Phase 5 vector-only baseline uses VECTOR).
+    vector_k: override vector top-k (retrieval metrics use 10; answer path keeps the default).
     """
     if force_route is not None:
         decision = RouteDecision(
@@ -115,7 +117,7 @@ def retrieve(
         graph_result = retrieve_graph(question, ticker=ticker)
 
     if route in (RetrievalRoute.VECTOR, RetrievalRoute.BOTH):
-        vector_result = retrieve_vector(question, ticker=ticker)
+        vector_result = retrieve_vector(question, ticker=ticker, k=vector_k)
 
     return HybridRetrievalResult(
         question=question,

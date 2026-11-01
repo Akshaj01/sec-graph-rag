@@ -59,12 +59,12 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 - Step S: README accuracy table [COMPLETED]
 - Step T: FastAPI `/ask` (`api.py`) [COMPLETED]
 
-**Phase 5 COMPLETE** (build). Corpus is now multi-company; suite v3 n=44.
+**Phase 5 COMPLETE** (build). Corpus is now multi-company; suite v4 n=44 with gold chunk ids.
 
 ## Current phase (2026-11-01) — Measure it
 Personal plan **Project 1 · Measure it** ≈ roadmap **P4 evals** on the built GraphRAG.  
 **Source of truth:** `docs/MEASURE_IT_PLAN.md`  
-**Status:** WP0 **done** → next **WP1** (`gold_chunk_ids`). Do not start gateway until Measure-it ship gate is checked.  
+**Status:** WP2 retrieval table is in `benchmarks/results/retrieval_v4.md`. Next is WP3 (weighted κ). Do not start gateway until Measure-it ship gate is checked.  
 Also read `docs/dev-notes/HANDOFF.md` for the new-chat paste prompt.
 
 Do not skip Learning Protocol.

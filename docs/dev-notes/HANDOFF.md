@@ -37,11 +37,13 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | Item | Status |
 |------|--------|
 | Corpus | **10 tickers** full Item 1/1A/7 (`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`) |
-| Suite | `multi_company_smoke` **v3**, **n=44**, hop 0/1/2 + OOS |
+| Suite | `multi_company_smoke` **v4**, **n=44**, hop 0/1/2 + OOS; **gold_chunk_ids on 32/32 answerable** (12 OOS empty) |
 | Headline (generation) | Hybrid **0.94** / vector **0.89**; hop-2 **0.96** / **0.88** (JPM hop-2 patched from resmoke) |
 | Judge | LLM-as-judge vs `required_facts`; old human agree **24/24** (history, not κ) |
 | **WP0** (design) | **DONE** — see MEASURE_IT_PLAN §8 |
-| **Next** | **WP1** — label `gold_chunk_ids` on answerable suite items |
+| **WP1** (gold chunks) | **DONE** — spot-check accepted |
+| **WP2** (retrieval) | **DONE** — vector recall@5 **0.82** / MRR **0.67**; hybrid **0.67** / **0.51**; graph **0.42** / **0.37** (`benchmarks/results/retrieval_v4.md`) |
+| **Next** | **WP3** — weighted κ + self-agreement on a held-out v3/v4 slice |
 
 **WP0 locked decisions:** “good” = retrieve supporting evidence (quality > volume) + accurate cited answers + refuse OOS; retrieval headline = recall@5 + MRR (@10 supporting); generation = hop judge hybrid vs vector; κ on ~15–20 held-out v3; ablation = hybrid vs vector + bootstrap CI.
 
@@ -56,7 +58,7 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | 3 Route + retrieve | **DONE** | Router + templates + `retrieve.py` |
 | 4 Grounded answer + citations | **DONE** | `answer.py` + topic gate / repair |
 | 5 Benchmark vs vector-only | **DONE** (build) | Suite + runner + README + `/ask` |
-| Measure it (evals) | **IN PROGRESS** | WP0 done → WP1 next |
+| Measure it (evals) | **IN PROGRESS** | WP2 retrieval table done → WP3 κ |
 
 ---
 
@@ -169,8 +171,7 @@ Do **not** use neo4j.com Google/Aura login for this project.
 
 ## What is NOT done (Measure-it / resume honesty)
 
-- Gold `chunk_ids` on suite + retrieval recall@5 / MRR tables (WP1–WP2)
-- Weighted Cohen’s κ + self-agreement on held-out v3 (WP3)
+- Weighted Cohen’s κ + self-agreement on held-out v4 (WP3). Retrieval table is done (WP2)
 - Bootstrap CIs on hybrid vs vector ablation (WP4)
 - CI regression gate (WP5)
 - README packaging polish + short demo (WP6)
@@ -284,13 +285,13 @@ FastAPI `/ask` live at `api.py` (see README).
 
 ```text
 You are continuing SEC GraphRAG (Akshaj). Read completely:
-1) docs/MEASURE_IT_PLAN.md  — current phase plan (WP0 done; next = WP1)
+1) docs/MEASURE_IT_PLAN.md  — current phase plan (WP2 retrieval done; next = WP3 κ)
 2) docs/dev-notes/HANDOFF.md
 3) docs/dev-notes/AGENTS.md
 
 BASWE build Phases 1–5 are DONE (10-ticker corpus, suite v3 n=44, hybrid 0.94 vs vector 0.89).
 We are in personal-plan “Measure it” (evals). WP0 design is locked in MEASURE_IT_PLAN §8.
-Next: WP1 gold_chunk_ids. Tutor-style / learn-by-doing: I design; you implement after I confirm.
+Next: WP3 weighted κ. Tutor-style / learn-by-doing: I design; you implement after I confirm.
 Do NOT start the LLM gateway until Measure-it ship gate is checked.
 Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit .env or My Resume/.
 ```
