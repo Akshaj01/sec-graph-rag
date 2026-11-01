@@ -142,8 +142,3 @@ Neo4j Browser: http://localhost:7474 (`neo4j` / `password` by default) · API do
 | Learning / interview log | [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md) — bugs we hit and how we fixed them |
 | Internal build notes | [`docs/dev-notes/`](docs/dev-notes/) (curriculum handoff; not required to use the system) |
 
----
-
-## Status
-
-End-to-end **demo-quality** system: Phases 1–5 of the original build curriculum, plus a live 10-company local corpus and multi-company correctness fixes. **Not** a production multi-tenant service.
