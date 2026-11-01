@@ -59,10 +59,16 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 - Step S: README accuracy table [COMPLETED]
 - Step T: FastAPI `/ask` (`api.py`) [COMPLETED]
 
-**Phase 5 COMPLETE.** Project 1 curriculum done on AAPL smoke scale.
+**Phase 5 COMPLETE** (build). Corpus is now multi-company; suite v3 n=44.
+
+## Current phase (2026-11-01) — Measure it
+Personal plan **Project 1 · Measure it** ≈ roadmap **P4 evals** on the built GraphRAG.  
+**Source of truth:** `docs/MEASURE_IT_PLAN.md`  
+**Status:** WP0 **done** → next **WP1** (`gold_chunk_ids`). Do not start gateway until Measure-it ship gate is checked.  
+Also read `docs/dev-notes/HANDOFF.md` for the new-chat paste prompt.
 
 Do not skip Learning Protocol.
-See `docs/dev-notes/HANDOFF.md` for full PC verification notes, credentials, CLI commands, and the copy-paste prompt for a new chat.
+See `docs/dev-notes/HANDOFF.md` for credentials, CLI commands, and the copy-paste prompt for a new chat.
 
 ## BASWE Project 1 — remaining phases (follow in order)
 Do **not** invent a different architecture. These are the curriculum phases after graph extraction:

@@ -1,10 +1,10 @@
 # SEC GraphRAG — Handoff
 
-**Last updated:** 2026-08-25 (Phase 5 complete — Phases 1–5)  
+**Last updated:** 2026-11-01  
 **Repo:** https://github.com/Akshaj01/sec-graph-rag (private)  
-**Latest relevant commit:** pending — Phases 4–5 + README + API
+**Primary living plan:** [`docs/MEASURE_IT_PLAN.md`](../MEASURE_IT_PLAN.md)
 
-Use this file + `docs/dev-notes/AGENTS.md` to continue in a **new Cursor chat**. Chat history will not transfer.
+Use this file + `docs/dev-notes/AGENTS.md` + **`docs/MEASURE_IT_PLAN.md`** to continue in a **new Cursor chat**. Chat history will not transfer.
 
 ---
 
@@ -13,11 +13,12 @@ Use this file + `docs/dev-notes/AGENTS.md` to continue in a **new Cursor chat**.
 A new agent only knows:
 
 1. This GitHub repo (code + docs)
-2. **`docs/dev-notes/AGENTS.md`** — Learning Protocol, ontology, Phases 1–5 roadmap
-3. **`docs/dev-notes/HANDOFF.md`** (this file) — current status, verified results, next step
-4. Whatever you paste into the first message
+2. **`docs/dev-notes/AGENTS.md`** — Learning Protocol, ontology, build phases
+3. **`docs/dev-notes/HANDOFF.md`** (this file) — current status + next step
+4. **`docs/MEASURE_IT_PLAN.md`** — Measure-it work packages (WP0–WP7) and design decisions
+5. Whatever you paste into the first message
 
-Do **not** invent architecture. Follow BASWE Project 1 phases in order.
+Do **not** invent architecture. Do **not** start the LLM gateway until Measure-it ship gate is checked.
 
 ---
 
@@ -25,21 +26,37 @@ Do **not** invent architecture. Follow BASWE Project 1 phases in order.
 
 Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 
-**Done when (full Project 1):** FastAPI answers with validated citations; README opens with hybrid vs vector-only accuracy by hop count.
+**BASWE Project 1 (build) — DONE:** FastAPI `/ask` with validated citations; README hybrid vs vector-only table.
 
-**Where we are now:** Phases **1–5 complete** (Project 1 curriculum). Optional future: expand corpus / larger benchmark set.
+**Personal plan “Measure it” (Plan P1 ≈ roadmap P4) — IN PROGRESS:** retrieval metrics + κ + CI gate on top of the built system. Gateway is **after** this phase.
 
 ---
 
-## Status checklist
+## Where we are now (2026-11-01)
+
+| Item | Status |
+|------|--------|
+| Corpus | **10 tickers** full Item 1/1A/7 (`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`) |
+| Suite | `multi_company_smoke` **v3**, **n=44**, hop 0/1/2 + OOS |
+| Headline (generation) | Hybrid **0.94** / vector **0.89**; hop-2 **0.96** / **0.88** (JPM hop-2 patched from resmoke) |
+| Judge | LLM-as-judge vs `required_facts`; old human agree **24/24** (history, not κ) |
+| **WP0** (design) | **DONE** — see MEASURE_IT_PLAN §8 |
+| **Next** | **WP1** — label `gold_chunk_ids` on answerable suite items |
+
+**WP0 locked decisions:** “good” = retrieve supporting evidence (quality > volume) + accurate cited answers + refuse OOS; retrieval headline = recall@5 + MRR (@10 supporting); generation = hop judge hybrid vs vector; κ on ~15–20 held-out v3; ablation = hybrid vs vector + bootstrap CI.
+
+---
+
+## Status checklist (build)
 
 | Phase | Status | Notes |
 |-------|--------|-------|
-| 1 Graph extraction | **DONE** | Live AAPL Neo4j smoke test |
-| 2 pgvector index | **DONE** | Shared `chunk_id`, HNSW, recall@3 = 1.0 (tiny labeled set) |
-| 3 Route + retrieve | **DONE** | Router + graph templates + vector search + `retrieve.py` glue |
-| 4 Grounded answer + citations | **DONE** | Live AAPL smoke: cites valid, no regenerate |
-| 5 Benchmark vs vector-only | **DONE** | Q–T: suite, runner, README table, FastAPI `/ask` |
+| 1 Graph extraction | **DONE** | Multi-company Neo4j |
+| 2 pgvector index | **DONE** | Shared `chunk_id`, HNSW |
+| 3 Route + retrieve | **DONE** | Router + templates + `retrieve.py` |
+| 4 Grounded answer + citations | **DONE** | `answer.py` + topic gate / repair |
+| 5 Benchmark vs vector-only | **DONE** (build) | Suite + runner + README + `/ask` |
+| Measure it (evals) | **IN PROGRESS** | WP0 done → WP1 next |
 
 ---
 
@@ -150,14 +167,15 @@ Do **not** use neo4j.com Google/Aura login for this project.
 
 ---
 
-## What is NOT done (do not claim on resume yet)
+## What is NOT done (Measure-it / resume honesty)
 
-- Large multi-company corpus / 50–100 Q portfolio-grade benchmark (current table is AAPL smoke-scale)
-- Treating smoke keyword scores as production accuracy
-- Actually running `grow_corpus.py` — it's built and unit-tested (mocked write/embed steps),
-  but not live-verified: this dev environment has no Docker daemon, no
-  `ANTHROPIC_API_KEY`/`OPENAI_API_KEY`, and no route to SEC EDGAR. Run it on the PC
-  per "Growing the corpus" below.
+- Gold `chunk_ids` on suite + retrieval recall@5 / MRR tables (WP1–WP2)
+- Weighted Cohen’s κ + self-agreement on held-out v3 (WP3)
+- Bootstrap CIs on hybrid vs vector ablation (WP4)
+- CI regression gate (WP5)
+- README packaging polish + short demo (WP6)
+- Gateway / agent / red-team (after Measure-it ship gate)
+- Not a 50–100 human-panel eval — n=44 automated judge + growing retrieval labels
 
 ---
 
@@ -265,15 +283,16 @@ FastAPI `/ask` live at `api.py` (see README).
 ## Copy-paste into a NEW Cursor chat
 
 ```text
-You are continuing the SEC GraphRAG project on PC.
-Read `docs/dev-notes/AGENTS.md` and `docs/dev-notes/HANDOFF.md` completely. Obey the Learning Protocol:
-one step at a time, explain WHY, wait for my confirmation before coding.
+You are continuing SEC GraphRAG (Akshaj). Read completely:
+1) docs/MEASURE_IT_PLAN.md  — current phase plan (WP0 done; next = WP1)
+2) docs/dev-notes/HANDOFF.md
+3) docs/dev-notes/AGENTS.md
 
-Phases 1–5 COMPLETE (grounded answers, benchmark harness, README table, FastAPI /ask).
-
-Optional next: expand corpus, grow labeled benchmark set, harden hop-2 answer failures.
-
-Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit My Resume/.
+BASWE build Phases 1–5 are DONE (10-ticker corpus, suite v3 n=44, hybrid 0.94 vs vector 0.89).
+We are in personal-plan “Measure it” (evals). WP0 design is locked in MEASURE_IT_PLAN §8.
+Next: WP1 gold_chunk_ids. Tutor-style / learn-by-doing: I design; you implement after I confirm.
+Do NOT start the LLM gateway until Measure-it ship gate is checked.
+Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit .env or My Resume/.
 ```
 
 ---
@@ -325,6 +344,6 @@ $env:EXTRACTION_MAX_TOKENS = "16384"
 | Answer (Phase 4) | `answer.py` (N+O: draft + citation validation) |
 | Benchmark (Phase 5) | `benchmark_schema.py`, `benchmarks/`, `benchmark_runner.py` |
 | API | `api.py` |
-| Docs | `README.md`, `docs/dev-notes/HANDOFF.md`, `docs/dev-notes/AGENTS.md` |
+| Docs | `README.md`, `docs/MEASURE_IT_PLAN.md`, `docs/PROBLEMS_AND_FIXES.md`, `docs/dev-notes/HANDOFF.md`, `docs/dev-notes/AGENTS.md` |
 
 **Do not commit:** `.env`, `./data/*.db`, `My Resume/`
