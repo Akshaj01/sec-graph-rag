@@ -64,7 +64,7 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 ## Current phase (2026-11-01) — Measure it
 Personal plan **Project 1 · Measure it** ≈ roadmap **P4 evals** on the built GraphRAG.  
 **Source of truth:** `docs/MEASURE_IT_PLAN.md`  
-**Status:** WP5 is done (green push + red break dispatch). Next is WP6, the README packaging. Do not start gateway until Measure-it ship gate is checked.  
+**Status:** WP6 README packaging is done. Next is WP7, closing Measure it. Do not start gateway until that close is honest.  
 Also read `docs/dev-notes/HANDOFF.md` for the new-chat paste prompt.
 
 Do not skip Learning Protocol.

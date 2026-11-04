@@ -53,8 +53,8 @@ Copy from personal plan; tick as we finish.
 - [x] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items) — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15); rubric v1 unchanged (`benchmarks/calibration/RESULTS.md`)
 - [x] One **ablation** table with bootstrap CIs + one-paragraph recommendation — overall gap 0.052, CI −0.026 to 0.136; hop-2 gap 0.083, CI 0.000 to 0.250; lead not stable (`benchmarks/results/ablation_bootstrap.md`)
 - [x] **CI gate** demonstrated failing a bad PR (e.g. recall@10 drop > ~2 points; cache LLM calls) — green push [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304); red break dispatch [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624)
-- [ ] README top: results → short capture → design decisions → **what didn’t work**
-- [ ] Five worst remaining failures explained in NOTES / PROBLEMS
+- [x] README top: results → short capture → design decisions → **what didn’t work**
+- [x] Five worst remaining failures explained in NOTES / PROBLEMS — Meta apps refuse, Meta AI competition, Meta AI glasses, NVDA auto hop-2, JPM hop-2 flake (`docs/PROBLEMS_AND_FIXES.md` §A)
 
 **Explicitly out of scope for this phase:** nDCG (optional), hosted demo, gateway, new RAG features unless a metric forces a tiny fix.
 
@@ -109,7 +109,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** badge or Actions run showing green on main + red on a deliberate break (screenshot or link).
 
 ### WP6 — Packaging for interviews
-**Status:** `todo`  
+**Status:** `done` — README opens with results, the 60-second pass, design decisions, and the five misses. Recording a demo is still optional.  
 **Cursor:** README reorder; “What didn’t work” from PROBLEMS + JPM flake + false-refuse story; optional 60–90s capture script/checklist.  
 **You:** record demo; write design-decisions in your words; LinkedIn one-liner later (optional).  
 **Exit:** stranger can judge the repo in two minutes from README top.
@@ -251,6 +251,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-11-03 | WP4 | Recommendation recorded: average lead is real, intervals do not sit entirely above zero, so the lead is not stable. | WP5 CI gate |
 | 2026-11-03 | WP5 | Recall gate on saved hybrid recall@10. Threshold drop > 0.02. Local green drop 0.0000. Local red drop 0.0312. Pushed so Actions can run the green check. | Dispatch the break job for the red run |
 | 2026-11-03 | WP5 | Break dispatch failed on purpose (`deliberate-break`). `gate` job on that run passed. | WP6 README packaging |
+| 2026-11-03 | WP6 | README reordered: results, 60-second pass, design decisions, five remaining misses. | WP7 close the phase |
 
 ---
 

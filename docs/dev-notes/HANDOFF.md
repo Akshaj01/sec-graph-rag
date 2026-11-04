@@ -46,7 +46,8 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | **WP3** (κ) | **DONE** — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15). Rubric v1 unchanged. `benchmarks/calibration/RESULTS.md` |
 | **WP4** (bootstrap) | **DONE** — overall gap **0.052** [−0.026, 0.136]; hop-2 **0.083** [0.000, 0.250]. Lead is not stable. |
 | **WP5** (CI gate) | **DONE** — green [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304), red break [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624). |
-| **Next** | **WP6** — README: results, design decisions, what didn’t work. |
+| **WP6** (README) | **DONE** — results, 60-second pass, design decisions, five misses. Demo recording still optional. |
+| **Next** | **WP7** — close Measure it, then the gateway plan. |
 
 **WP0 locked decisions:** “good” = retrieve supporting evidence (quality > volume) + accurate cited answers + refuse OOS; retrieval headline = recall@5 + MRR (@10 supporting); generation = hop judge hybrid vs vector; κ on ~15–20 held-out v3; ablation = hybrid vs vector + bootstrap CI.
 

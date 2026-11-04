@@ -4,7 +4,7 @@ Living log of real failures we hit building SEC GraphRAG, why they happened, and
 Use this to prep interviews: every row is a story of **symptom → root cause → fix → what you’d say out loud**.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Last updated:** 2026-10-03
+**Last updated:** 2026-11-03
 
 ---
 
@@ -13,7 +13,7 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 1. Pick 2–3 stories (metric lie, cross-issuer leak, hop-2, ticker clobber).
 2. Speak in this order: **what broke → how I found it → what I changed → what I’d still improve**.
 3. Prefer numbers and file names over buzzwords.
-4. Be honest about open issues (hop-0 false refuses, small-n bench).
+4. Be honest about what is still open: the five misses below, κ **0.00** on the hold-out, and a hybrid lead whose interval crosses zero.
 
 ---
 
@@ -172,12 +172,26 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 
 ## Open / known weaknesses (not fully fixed)
 
+### A. Five remaining misses on the published hybrid run
+
+Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). These are the items that are not a clean 1.0.
+
+| Item | Score | What happened |
+|------|------:|----------------|
+| `hop1_meta_apps` | 0.00 | Graph route refused "Which apps or product lines does Meta produce?" The summary says the retrieved evidence does not address the question. |
+| `hop1_meta_ai_competition` | 0.125 | Answer covers Apple/Google ad-targeting limits and AI regulators. It misses competition for users or advertisers from other platforms, and it does not name a competitor such as TikTok. |
+| `hop0_meta_ai_glasses` | 0.50 | Names AI glasses, Reality Labs, and Quest. Misses Ray-Ban Meta / Oakley Meta. |
+| `hop2_nvda_auto_competitors_risks` | 0.667 | Names automotive SoCs plus Ambarella and Broadcom. Misses DRIVE / autonomous by name. |
+| `hop2_jpm_credit_vs_market` | 0.375 on the full run, **1.0** on a targeted resmoke | The headline hop-2 cell uses the resmoke. The same question is not stable across runs. |
+
+**Interview angle:** "Four items are still wrong or partial, and one hop-2 score flipped from 0.375 to 1.0 when I reran it. I publish the rerun and I say that it moved."
+
 ### B. Labeled set growth (v3 smoke, not yet headline)
 
 | | |
 |--|--|
-| **Symptom** | Published README table is still full-sync **n=24**. Suite file is now **v3 n=44** (author golden questions). |
-| **Status** | Suite **v3 n=44**. OOS resmoke **8/8** after off-topic refuse gate. Apple supply/China asks fixed (window + drop product crowding) — resmoke **2/2 × hybrid/vector = 1.0** (`multi_company_smoke_v3_aapl_supply_resmoke.json`). Published README mean still n=24 full-sync. |
+| **Symptom** | The suite outgrew the first n=24 sync. |
+| **Status** | Headline is the n=44 judged run: hybrid **0.94** / vector **0.89**, with the JPM hop-2 cell patched from the resmoke. v4 adds gold chunk ids on the same questions. Retrieval is a separate table. |
 | **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; v3 items are already single-ticker. |
 | **Interview angle** | “Growing the suite exposed hybrid over-answering OOS from unrelated GRAPH edges — we gated refuse-repair on topic match and forced refuse when the pack is off-topic.” |
 
@@ -188,8 +202,8 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | | |
 |--|--|
 | **Symptom** | Needed a published “human agrees with judge X% of the time” number. |
-| **Status** | **Closed for this suite:** human agreed with judge on **24/24** hybrid answers (incl. partials on `hop0_jpm_credit_risk` 0.5 and `hop2_jpm_credit_vs_market` 0.375). Worksheet: `benchmarks/judge_calibration_hybrid.md`. |
-| **Caveat** | Same author as the gold facts; not an independent rater. Still better than unpublished. Revisit if suite grows. |
+| **Status** | The n=24 sheet agreed **24/24**. That sheet was used to read the rubric. Reported κ is the later hold-out: linear weighted κ **0.00** (raw 17/20), self-agreement κ **0.42** (13/15). Rubric v1 was not edited after the hold-out. [`benchmarks/calibration/RESULTS.md`](../benchmarks/calibration/RESULTS.md). |
+| **Caveat** | Same author as the gold facts. κ is 0 because every hold-out score was 1.0, so the three judge disagreements are exactly what chance predicts. |
 
 ---
 
@@ -230,7 +244,7 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 ## Quick “story cards” (memorize these)
 
 **Card 1 — Metric lied**  
-Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge → hybrid leads hop-1–2 (**1.00 / 1.00**) and overall **0.98 vs 0.92** (full sync).
+Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge. Current headline is hybrid **0.94** vs vector **0.89** on n=44, and the bootstrap interval on that gap crosses zero. Hold-out κ is **0.00**.
 
 **Card 2 — Eval → systems fix**  
 Apple products cited Meta accession → global Company + Meta-written `PRODUCES_PRODUCT` → issuer write gate + chunk ticker filter + Neo4j cleanup. Same filter then erased Meta-stamped `COMPETES_WITH` → exempt cross-company rels.
@@ -265,5 +279,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-27 | Full v3 n=44 rebench → hybrid **0.83** / vector **0.87**; hop-2 hybrid **0.96**. Softened over-strict topic gate after first full run over-refused. |
 | 2026-10-28 | Fix false-refuse / NFLX-AWS dump / planner invent / NVDA+Meta route; rebench → hybrid **0.92** / vector **0.89**. |
 | 2026-10-28 | JPM hop-2 resmoke (full-run flake 0.375→1.0); headline patched to hybrid **0.94** / hop-2 **0.96** (no full rebench). |
+| 2026-11-03 | Recorded the five remaining hybrid misses and replaced the 24/24 calibration claim with hold-out κ. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.
