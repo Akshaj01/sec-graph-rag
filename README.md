@@ -83,6 +83,8 @@ Full slice table: [`benchmarks/results/ablation_bootstrap.md`](benchmarks/result
 
 Retrieve-only, scored against v4 `gold_chunk_ids`. Macro-average over the 32 answerable items. Out-of-scope items are skipped. **recall@k** is the fraction of gold chunks in the top k. **MRR** is 1 / rank of the first gold chunk.
 
+CI reads the saved hybrid scores and fails if recall@10 drops by more than **0.02** from `benchmarks/fixtures/recall_baseline.json` (currently **0.802**). It does not call a model.
+
 | Hop | n | System | Recall@5 | Recall@10 | MRR |
 |-----|--:|--------|--------:|----------:|----:|
 | Hop 0 | 8 | graph | 0.44 | 0.44 | 0.31 |

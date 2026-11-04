@@ -1,0 +1,38 @@
+name: Recall gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      break:
+        description: Score a deliberate one-hit drop (this job is meant to fail)
+        type: boolean
+        default: false
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Pin pytest
+        run: pip install pytest
+      - name: Gate tests
+        run: pytest test_recall_gate.py -q
+      - name: Hybrid recall@10 vs pinned baseline
+        run: python recall_gate.py
+
+  deliberate-break:
+    if: github.event_name == 'workflow_dispatch' && inputs.break
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: One saved hit zeroed
+        run: python recall_gate.py --degrade-first

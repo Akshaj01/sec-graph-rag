@@ -64,7 +64,7 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 ## Current phase (2026-11-01) — Measure it
 Personal plan **Project 1 · Measure it** ≈ roadmap **P4 evals** on the built GraphRAG.  
 **Source of truth:** `docs/MEASURE_IT_PLAN.md`  
-**Status:** WP4 is done. The hybrid lead is higher on average and not stable. Next is WP5, the CI recall gate. Do not start gateway until Measure-it ship gate is checked.  
+**Status:** WP5 recall gate is implemented locally (pass at the pinned 0.8021, fail when one hit is zeroed). The GitHub Actions green/red demo is still open. Do not start gateway until Measure-it ship gate is checked.  
 Also read `docs/dev-notes/HANDOFF.md` for the new-chat paste prompt.
 
 Do not skip Learning Protocol.

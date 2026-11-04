@@ -45,7 +45,8 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | **WP2** (retrieval) | **DONE** — vector recall@5 **0.82** / MRR **0.67**; hybrid **0.67** / **0.51**; graph **0.42** / **0.37** (`benchmarks/results/retrieval_v4.md`) |
 | **WP3** (κ) | **DONE** — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15). Rubric v1 unchanged. `benchmarks/calibration/RESULTS.md` |
 | **WP4** (bootstrap) | **DONE** — overall gap **0.052** [−0.026, 0.136]; hop-2 **0.083** [0.000, 0.250]. Lead is not stable. |
-| **Next** | **WP5** — CI gate that fails a PR when recall@10 drops |
+| **WP5** (CI gate) | Code done. Local green drop **0.0000**, local red drop **0.0312**. Actions demo not run yet. |
+| **Next** | After this push, confirm the green **Recall gate** check. Dispatch it with **break** checked for the red run. Then WP6. |
 
 **WP0 locked decisions:** “good” = retrieve supporting evidence (quality > volume) + accurate cited answers + refuse OOS; retrieval headline = recall@5 + MRR (@10 supporting); generation = hop judge hybrid vs vector; κ on ~15–20 held-out v3; ablation = hybrid vs vector + bootstrap CI.
 

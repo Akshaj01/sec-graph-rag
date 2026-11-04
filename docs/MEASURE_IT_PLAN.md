@@ -102,7 +102,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** table + paragraph in README or `benchmarks/`.
 
 ### WP5 — CI regression gate
-**Status:** `todo`  
+**Status:** `in_progress` — local green and local red are done. The GitHub Actions run is the remaining demo.  
 **Why:** proves eval isn’t a one-off notebook.  
 **Cursor:** GitHub Actions workflow; cached/fixture mode so CI isn’t a $ bill; intentional bad PR demo notes.  
 **You:** choose the fail threshold (start: recall@10 drop > 2 points on a fixed smoke subset).  
@@ -162,6 +162,9 @@ If only **~10h/week**: keep n≈40–44, skip nDCG, one ablation (hybrid vs vect
 | `retrieval_metrics.py` / `retrieval_benchmark.py` | recall@k, MRR, retrieve-only runner |
 | `bootstrap_ci.py` | Paired bootstrap CI for hybrid − vector-only |
 | `benchmarks/results/ablation_bootstrap.md` | WP4 gap table |
+| `recall_gate.py` | Fail if hybrid recall@10 drops more than 0.02 |
+| `benchmarks/fixtures/recall_baseline.json` | Pinned v4 hybrid recall@10 |
+| `.github/workflows/recall-gate.yml` | CI on the saved fixture |
 | `docs/PROBLEMS_AND_FIXES.md` | Failure → fix history |
 | `docs/MEASURE_IT_PLAN.md` | **This file** |
 | `README.md` | Public headline |
@@ -219,6 +222,16 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Recommendation (Akshaj):** Hybrid scores higher on average (0.052 overall, 0.083 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
 
+### WP5 — recall gate (2026-11-03)
+
+**Check:** hybrid recall@10 on the 32 answerable v4 items, read from `benchmarks/results/retrieval_v4.json`. Baseline pinned at **0.8021**. Fail when the drop is **greater than 0.02**. A drop of exactly 0.02 passes. The item ids are pinned too, so deleting a question does not raise the average.
+
+**CI** runs `pytest test_recall_gate.py` and `python recall_gate.py`. No model, no database.
+
+**Local demo:** `python recall_gate.py` prints drop **0.0000** and exits 0. `python recall_gate.py --degrade-first` zeros one hit (drop **0.0312**) and exits 1.
+
+**Actions demo still open:** push `main` for the green check. Then Actions → Recall gate → Run workflow with **break** checked. That job is supposed to fail.
+
 ---
 
 ## 9. Session log
@@ -236,6 +249,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-11-03 | WP3 | Self-agreement re-label. Linear κ **0.42**, raw **13/15**. Flips: AWS 1.0→0.5, JPM credit risk 0.5→1.0. README line added. Rubric not changed. | WP4 bootstrap CIs |
 | 2026-11-03 | WP4 | Paired bootstrap, 10k draws, seed 0. Overall gap 0.052, 95% CI −0.026 to 0.136. Hop-2 gap 0.083, CI 0.000 to 0.250. | Recommendation paragraph |
 | 2026-11-03 | WP4 | Recommendation recorded: average lead is real, intervals do not sit entirely above zero, so the lead is not stable. | WP5 CI gate |
+| 2026-11-03 | WP5 | Recall gate on saved hybrid recall@10. Threshold drop > 0.02. Local green drop 0.0000. Local red drop 0.0312. Pushed so Actions can run the green check. | Dispatch the break job for the red run |
 
 ---
 
