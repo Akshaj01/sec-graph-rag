@@ -68,6 +68,17 @@ Report: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/result
 
 **How to read it:** After fixing false-refuse / bad graph dumps / planner crashes, **hybrid leads overall** on the harder n=44 suite (**0.94 vs 0.89**). **Hop 2 is again the clearest structural win** (0.96 vs 0.88). OOS is clean on both. The older curated **n=24** sync was hybrid **0.98** / vector **0.92** (`multi_company_smoke_full_sync.json`). Remaining soft spots are mostly Meta product/apps wording — not systemic hybrid loss.
 
+**Uncertainty (paired bootstrap, 10,000 draws, seed 0):** the gap is hybrid minus vector-only. A 95% interval that includes values below zero means a resample of this suite can wipe out the lead.
+
+| Slice | n | Gap | 95% CI |
+|-------|--:|----:|--------|
+| Overall | 44 | 0.052 | −0.026 to 0.136 |
+| Hop 2 | 8 | 0.083 | 0.000 to 0.250 |
+
+Full slice table: [`benchmarks/results/ablation_bootstrap.md`](benchmarks/results/ablation_bootstrap.md).
+
+**Recommendation:** Hybrid scores higher on average (0.052 overall, 0.083 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
+
 ### Retrieval (separate from the answer score)
 
 Retrieve-only, scored against v4 `gold_chunk_ids`. Macro-average over the 32 answerable items. Out-of-scope items are skipped. **recall@k** is the fraction of gold chunks in the top k. **MRR** is 1 / rank of the first gold chunk.

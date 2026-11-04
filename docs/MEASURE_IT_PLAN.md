@@ -51,7 +51,7 @@ Copy from personal plan; tick as we finish.
 - [x] Stratified golden set with **gold chunk IDs** versioned in repo (extend v3; don’t throw away n=44) — suite **v4**, 32/32 answerable labeled, 12 OOS empty
 - [x] **Retrieval** metrics (recall@5/10, MRR) **and** **generation** metrics, by hop, hybrid vs vector-only — retrieval table in `benchmarks/results/retrieval_v4.md`; generation table already in README
 - [x] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items) — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15); rubric v1 unchanged (`benchmarks/calibration/RESULTS.md`)
-- [ ] One **ablation** table with bootstrap CIs + one-paragraph recommendation
+- [x] One **ablation** table with bootstrap CIs + one-paragraph recommendation — overall gap 0.052, CI −0.026 to 0.136; hop-2 gap 0.083, CI 0.000 to 0.250; lead not stable (`benchmarks/results/ablation_bootstrap.md`)
 - [ ] **CI gate** demonstrated failing a bad PR (e.g. recall@10 drop > ~2 points; cache LLM calls)
 - [ ] README top: results → short capture → design decisions → **what didn’t work**
 - [ ] Five worst remaining failures explained in NOTES / PROBLEMS
@@ -94,7 +94,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** README reports weighted κ and self-agreement; rubric version noted.
 
 ### WP4 — Ablation + confidence intervals
-**Status:** `todo`  
+**Status:** `done` — table + recommendation in the README. Lead is higher on average and not stable (intervals do not sit entirely above zero).  
 **Why:** one measured change with uncertainty > vibes.  
 **Pick one** (decide in session): hybrid vs vector-only is already the main ablation — formalize with bootstrap CIs on mean score and/or recall; **or** one config toggle (e.g. topic-gate on/off, multi-template on/off) if cheaper.  
 **Cursor:** bootstrap helper + table.  
@@ -160,6 +160,8 @@ If only **~10h/week**: keep n≈40–44, skip nDCG, one ablation (hybrid vs vect
 | `calibration_metrics.py` / `calibration_worksheet.py` | snap, linear κ, Spearman; write and score sheets |
 | `benchmarks/results/` | Reports (`retrieval_v4.md` is the WP2 table) |
 | `retrieval_metrics.py` / `retrieval_benchmark.py` | recall@k, MRR, retrieve-only runner |
+| `bootstrap_ci.py` | Paired bootstrap CI for hybrid − vector-only |
+| `benchmarks/results/ablation_bootstrap.md` | WP4 gap table |
 | `docs/PROBLEMS_AND_FIXES.md` | Failure → fix history |
 | `docs/MEASURE_IT_PLAN.md` | **This file** |
 | `README.md` | Public headline |
@@ -209,6 +211,14 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Sheets:** `benchmarks/calibration/kappa_holdout.md`, `benchmarks/calibration/self_agreement.md`. Score with `python calibration_worksheet.py score`.
 
+### WP4 — bootstrap (2026-11-03)
+
+**Draw:** one question at a time, with replacement, hybrid score and vector-only score kept together. **10,000** draws, seed **0**. **95%** interval = middle 95% of the recomputed gaps (linear percentile). Point estimate = mean of the original 44, not the mean of the draws.
+
+**Result:** overall gap **0.052**, interval **−0.026 to 0.136** (includes a negative gap). Hop-2 gap **0.083**, interval **0.000 to 0.250** (starts at zero, n=8).
+
+**Recommendation (Akshaj):** Hybrid scores higher on average (0.052 overall, 0.083 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
+
 ---
 
 ## 9. Session log
@@ -224,6 +234,8 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-11-02 | WP3 | Blind hold-out (n=20) and self-agreement (n=15) sheets. Linear κ on snapped 0/0.5/1. Rubric v1 frozen. | Fill both sheets, then `calibration_worksheet.py score` |
 | 2026-11-02 | WP3 | Blind hold-out scored all **1.0**. Linear κ **0.0**, raw agreement **0.85** (17/20). Splits: Meta AI competition, Meta AI glasses, NVDA auto competitors. Spearman undefined. | Self-agreement sheet still blank |
 | 2026-11-03 | WP3 | Self-agreement re-label. Linear κ **0.42**, raw **13/15**. Flips: AWS 1.0→0.5, JPM credit risk 0.5→1.0. README line added. Rubric not changed. | WP4 bootstrap CIs |
+| 2026-11-03 | WP4 | Paired bootstrap, 10k draws, seed 0. Overall gap 0.052, 95% CI −0.026 to 0.136. Hop-2 gap 0.083, CI 0.000 to 0.250. | Recommendation paragraph |
+| 2026-11-03 | WP4 | Recommendation recorded: average lead is real, intervals do not sit entirely above zero, so the lead is not stable. | WP5 CI gate |
 
 ---
 
