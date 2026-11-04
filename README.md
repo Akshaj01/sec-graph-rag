@@ -6,9 +6,7 @@ Hybrid **knowledge-graph + vector RAG** over SEC **10-K** filings. Closed ontolo
 
 ## Results
 
-Suite `multi_company_smoke` v4. Generation numbers are the v3 judged run on the same questions. Primary score is an LLM judge against `required_facts`. Out of scope means a correct refuse.
-
-**Judge calibration (rubric v1):** held-out linear weighted κ **0.00** (raw agreement 17/20). Self-agreement on a later re-label is κ **0.42** (13/15). The older 24/24 sheet is history. [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
+44 questions. The score is an LLM judge against required facts. Out of scope means a correct refuse.
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
@@ -18,16 +16,9 @@ Suite `multi_company_smoke` v4. Generation numbers are the v3 judged run on the 
 | OOS (must refuse) | **1.00** | **1.00** | 12 |
 | **Overall mean** | **0.94** | 0.89 | 44 |
 
-Paired bootstrap, 10,000 draws, seed 0. Gap = hybrid minus vector-only.
-
-| Slice | n | Gap | 95% CI |
-|-------|--:|----:|--------|
-| Overall | 44 | 0.052 | −0.026 to 0.136 |
-| Hop 2 | 8 | 0.083 | 0.000 to 0.250 |
-
 **Recommendation:** Hybrid scores higher on average (0.052 overall, 0.083 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
 
-Retrieval is scored separately, against v4 gold chunk ids. Macro-average over 32 answerable items. Out-of-scope items are skipped.
+Retrieval is scored separately, on 32 answerable items. Out-of-scope items are skipped.
 
 | | Recall@5 | Recall@10 | MRR |
 |--|--------:|----------:|----:|
@@ -35,11 +26,48 @@ Retrieval is scored separately, against v4 gold chunk ids. Macro-average over 32
 | Vector | **0.82** | **0.93** | **0.67** |
 | Hybrid | 0.67 | 0.80 | 0.51 |
 
-Hybrid lists graph chunks first. Those are often a different passage than the gold prose, so they push the gold id down. The answer can still be right because the graph statement carries the fact. CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.802**.
+Hybrid lists graph chunks first. Those are often a different passage than the gold prose, so they push the gold id down. The answer can still be right because the graph statement carries the fact.
+
+## Example
+
+**Q:** What product lines does Apple produce? · route `graph` · `citations_valid`
+
+> Apple produces hardware (iPhone, iPad, Mac, Wearables…), OSes, and services (AppleCare, Cloud Services, …).
+
+Cites include `0000320193-25-000079:Item1:0`, `…:Item7:0`.
+
+**Q:** What compute products does NVIDIA produce, and what geopolitical risks is it exposed to? · route `both`
+
+> NVIDIA produces data-center / gaming GPUs (A100, H100, …) and faces geopolitical / export-control risk (e.g. China-related controls) among other exposures.
+
+Cites include `0001045810-26-000021:Item1:0`, `…:Item1A:3`, …
+
+<p align="center">
+  <img src="docs/images/neo4j-graph.png" alt="Neo4j: Apple PRODUCES_PRODUCT graph" width="48%" />
+  <img src="docs/images/neo4j-risks.png" alt="Neo4j: Apple EXPOSED_TO_RISK graph" width="48%" />
+</p>
+<p align="center">
+  <img src="docs/images/ask-api.png" alt="POST /ask successful response with citations" width="80%" />
+</p>
+
+## How the numbers were measured
+
+Suite `multi_company_smoke` v4. Generation numbers are the judged run on the same questions.
+
+**Judge calibration (rubric v1):** held-out linear weighted κ **0.00** (raw agreement 17/20) because every human score on that slice was 1.0. Self-agreement on a later re-label is κ **0.42** (13/15). The older 24/24 sheet is history. [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
+
+Paired bootstrap, 10,000 draws, seed 0. Gap = hybrid minus vector-only.
+
+| Slice | n | Gap | 95% CI |
+|-------|--:|----:|--------|
+| Overall | 44 | 0.052 | −0.026 to 0.136 |
+| Hop 2 | 8 | 0.083 | 0.000 to 0.250 |
+
+CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.802**. It reads the saved file and does not call a model.
 
 Full tables: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md), [`benchmarks/results/ablation_bootstrap.md`](benchmarks/results/ablation_bootstrap.md). The hop-2 hybrid headline uses a targeted resmoke of `hop2_jpm_credit_vs_market` (full run 0.375, resmoke 1.0).
 
-## 60-second pass
+### 60-second pass
 
 1. Read the two tables above. Say the generation gap out loud, then say the interval crosses zero.
 2. Ask one graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`.
@@ -96,31 +124,6 @@ Question → Haiku router (graph | vector | both)
 ```
 
 **Ontology (6 / 8):** Company, Subsidiary, Supplier, ProductLine, RiskFactor, Executive · OWNS_SUBSIDIARY, SUPPLIED_BY, COMPETES_WITH, EXPOSED_TO_RISK, PRODUCES_PRODUCT, DEPENDS_ON, LED_BY, OPERATES_IN_SEGMENT
-
-<p align="center">
-  <img src="docs/images/neo4j-graph.png" alt="Neo4j: Apple PRODUCES_PRODUCT graph" width="48%" />
-  <img src="docs/images/neo4j-risks.png" alt="Neo4j: Apple EXPOSED_TO_RISK graph" width="48%" />
-</p>
-<p align="center">
-  <img src="docs/images/ask-api.png" alt="POST /ask successful response with citations" width="80%" />
-</p>
-
-
----
-
-## Example answers (from the hybrid rebench)
-
-**Q:** What product lines does Apple produce? · route `graph` · `citations_valid`
-
-> Apple produces hardware (iPhone, iPad, Mac, Wearables…), OSes, and services (AppleCare, Cloud Services, …).
-
-Cites include `0000320193-25-000079:Item1:0`, `…:Item7:0`.
-
-**Q:** What compute products does NVIDIA produce, and what geopolitical risks is it exposed to? · route `both`
-
-> NVIDIA produces data-center / gaming GPUs (A100, H100, …) and faces geopolitical / export-control risk (e.g. China-related controls) among other exposures.
-
-Cites include `0001045810-26-000021:Item1:0`, `…:Item1A:3`, …
 
 ---
 
