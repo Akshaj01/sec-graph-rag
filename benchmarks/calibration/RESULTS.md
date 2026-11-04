@@ -6,21 +6,22 @@ The n=24 sheet `benchmarks/judge_calibration_hybrid.md` is history. It was used 
 
 ## Judge vs human (hold-out, n=20)
 
-Labeled 2026-11-02. Every human score was 1.0. The judge snapped to 0 on one item and 0.5 on two.
+The first pass on 2026-11-02 scored every item **1.0**. Linear κ was **0.00** and raw agreement was 17/20. Two of those 1.0s contradicted the required facts and the failure table, so they were corrected on 2026-11-04. The numbers below are the corrected pass. Rubric v1 was not edited.
 
 | | |
 |--|--|
-| Linear weighted κ | **0.00** |
-| Quadratic weighted κ | 0.00 |
-| Raw agreement | **0.85** (17/20) |
-| Spearman | undefined (human side is constant) |
+| Linear weighted κ | **0.84** |
+| Quadratic weighted κ | 0.90 |
+| Raw agreement | **0.95** (19/20) |
+| Spearman | 0.82 |
 
-κ is 0 because one rater used a single category. The three misses are then exactly what chance predicts. Raw agreement is the number that says how often the scores matched.
+Corrected labels:
 
-Splits (you / judge snapped):
+- `hop1_meta_ai_competition` — 1.0 → **0**. Apple and Google show up as ad-tracking gatekeepers. The answer never names a platform or AI competitor. Judge snapped to 0 (raw 0.125).
+- `hop0_meta_ai_glasses` — 1.0 → **0.5**. Reality Labs and Quest are covered. Ray-Ban Meta / Oakley Meta are not named. Judge was 0.5.
 
-- `hop1_meta_ai_competition` — 1.0 / 0.0 (judge raw 0.125)
-- `hop0_meta_ai_glasses` — 1.0 / 0.5
+Remaining split (you / judge snapped):
+
 - `hop2_nvda_auto_competitors_risks` — 1.0 / 0.5 (judge raw 0.6675)
 
 ## Self-agreement (n=15)

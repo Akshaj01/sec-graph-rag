@@ -29,6 +29,9 @@ DEFAULT_OUT = (
 N_RESAMPLES = 10_000
 SEED = 0
 LEVEL = 0.95
+# The judged file stores a later one-item rerun (1.0). The full run scored 0.375.
+# The headline uses the full run. The rerun is evidence the score moves, not the mean.
+FULL_RUN_HYBRID_SCORE = {"hop2_jpm_credit_vs_market": 0.375}
 
 Pair = Tuple[float, float]
 
@@ -118,7 +121,8 @@ def load_pairs(path: Path = DEFAULT_JUDGED) -> Dict[str, List[Pair]]:
         "oos": [],
     }
     for item_id, row in hybrid.items():
-        pair = (float(row["score"]), float(vector[item_id]["score"]))
+        hybrid_score = FULL_RUN_HYBRID_SCORE.get(item_id, float(row["score"]))
+        pair = (hybrid_score, float(vector[item_id]["score"]))
         slices["overall"].append(pair)
         if row["must_refuse"]:
             slices["oos"].append(pair)
@@ -136,7 +140,9 @@ def render_markdown(results: Dict[str, Dict[str, float]]) -> str:
         "with replacement and keeps a question's hybrid and vector-only "
         "scores together. The 95% interval is the middle 95% of "
         f"{N_RESAMPLES} draws (seed {SEED}). The point estimate is the "
-        "original mean. Gap is hybrid minus vector-only.",
+        "original mean. Gap is hybrid minus vector-only. "
+        "`hop2_jpm_credit_vs_market` uses the full-run hybrid score 0.375, "
+        "not the later one-item rerun of 1.0.",
         "",
         "| Slice | n | Hybrid mean | Hybrid 95% CI | Vector mean | Vector 95% CI | Gap | Gap 95% CI |",
         "|-------|--:|------------:|---------------|------------:|---------------|----:|------------|",
@@ -158,7 +164,12 @@ def render_markdown(results: Dict[str, Dict[str, float]]) -> str:
                 gh=_fmt(row["gap_high"]),
             )
         )
-    lines.append("")
+    lines.extend([
+        "",
+        "**Recommendation:** Hybrid scores higher on average (0.038 overall, 0.005 on hop 2), "
+        "and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.",
+        "",
+    ])
     return "\n".join(lines)
 
 

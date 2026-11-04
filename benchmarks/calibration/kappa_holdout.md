@@ -27,8 +27,8 @@ Do not change the rubric from these items.
 
 Meta describes competitive pressures from mobile operating system and browser providers like Apple and Google, who have implemented product changes that limit Meta's ability to target and measure advertising. Apple's 2021 iOS changes reduced Meta's ability to target and measure ads, negatively impacting advertiser budgets. Meta also faces scrutiny and regulatory challenges around AI from government agencies including the FTC, members of Congress, and state attorneys general, as well as international regulators considering frameworks like the EU AI Act.
 
-- your_score: 1.0
-- note:
+- your_score: 0
+- note: Apple and Google are ad-tracking gatekeepers here, not a named platform or AI competitor. Neither required fact is covered.
 
 ---
 
@@ -84,8 +84,8 @@ Apple describes several China-related and international supply-chain risks in it
 
 Meta describes AI glasses and the Meta Quest portfolio as Reality Labs hardware products. These products enable people to connect and share through VR headsets and AI glasses, and Meta is focused on driving consumer and enterprise sales and adoption of these offerings.
 
-- your_score: 1.0
-- note:
+- your_score: 0.5
+- note: Reality Labs and Quest are covered. Ray-Ban Meta / Oakley Meta are not named.
 
 ---
 

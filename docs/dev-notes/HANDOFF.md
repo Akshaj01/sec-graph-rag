@@ -38,13 +38,13 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 |------|--------|
 | Corpus | **10 tickers** full Item 1/1A/7 (`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`) |
 | Suite | `multi_company_smoke` **v4**, **n=44**, hop 0/1/2 + OOS; **gold_chunk_ids on 32/32 answerable** (12 OOS empty) |
-| Headline (generation) | Hybrid **0.94** / vector **0.89**; hop-2 **0.96** / **0.88** (JPM hop-2 patched from resmoke) |
+| Headline (generation) | Full run: hybrid **0.92** / vector **0.89**; hop-2 **0.88** / **0.88**. JPM hop-2 stays at full-run **0.375** (a later rerun scored 1.0 and is not in the mean). |
 | Judge | LLM-as-judge vs `required_facts`; old human agree **24/24** (history, not κ) |
 | **WP0** (design) | **DONE** — see MEASURE_IT_PLAN §8 |
 | **WP1** (gold chunks) | **DONE** — spot-check accepted |
 | **WP2** (retrieval) | **DONE** — vector recall@5 **0.82** / MRR **0.67**; hybrid **0.67** / **0.51**; graph **0.42** / **0.37** (`benchmarks/results/retrieval_v4.md`) |
-| **WP3** (κ) | **DONE** — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15). Rubric v1 unchanged. `benchmarks/calibration/RESULTS.md` |
-| **WP4** (bootstrap) | **DONE** — overall gap **0.052** [−0.026, 0.136]; hop-2 **0.083** [0.000, 0.250]. Lead is not stable. |
+| **WP3** (κ) | **DONE** — corrected hold-out linear κ **0.84** (19/20). First pass was all 1.0s (κ 0.00). Self-agreement κ **0.42**. Rubric v1 unchanged. |
+| **WP4** (bootstrap) | **DONE** — full-run gap **0.038** [−0.047, 0.126]; hop-2 **0.005** [−0.234, 0.250]. Lead is not stable. |
 | **WP5** (CI gate) | **DONE** — green [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304), red break [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624). |
 | **WP6** (README) | **DONE** — results, 60-second pass, design decisions, five misses. Demo recording still optional. |
 | **WP7** (close) | **DONE** — retrospective in `docs/MEASURE_IT_PLAN.md` §10. Gateway stub only. |
@@ -178,7 +178,7 @@ Do **not** use neo4j.com Google/Aura login for this project.
 
 - Measure it ship gate is checked. Optional demo recording was not done.
 - Gateway is a stub only (`docs/GATEWAY_PLAN.md`). Agent / red-team (plan P3) stays closed.
-- Not a 50–100 human-panel eval — n=44 automated judge. Hold-out κ is **0.00**. The hybrid lead’s interval crosses zero.
+- Not a 50–100 human-panel eval — n=44 automated judge. Corrected hold-out κ is **0.84** (first pass was 0.00). The hybrid lead’s interval crosses zero.
 
 ---
 
@@ -292,7 +292,7 @@ You are continuing SEC GraphRAG (Akshaj). Read completely:
 3) docs/dev-notes/HANDOFF.md
 4) docs/dev-notes/AGENTS.md
 
-BASWE build Phases 1–5 are DONE. Measure it is DONE (hybrid 0.94 vs vector 0.89; gap CI crosses zero; hold-out κ 0.00).
+BASWE build Phases 1–5 are DONE. Measure it is DONE (full-run hybrid 0.92 vs vector 0.89; gap CI crosses zero; corrected hold-out κ 0.84).
 Next: Plan P2 design note (circuit breaker, semantic cache, chaos demo) before any gateway code.
 Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit .env or My Resume/.
 ```

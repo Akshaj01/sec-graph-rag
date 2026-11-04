@@ -2,7 +2,7 @@
 
 Hybrid **knowledge-graph + vector RAG** over SEC **10-K** filings. Closed ontology in Neo4j, the same chunks in pgvector, router picks graph and/or vectors, answers cite only chunks from that retrieval.
 
-10 tickers, 44 hop-stratified questions. Hybrid generation mean **0.94** vs vector-only **0.89**. That lead is **not stable**: the 95% interval on the gap includes values below zero. Vector leads retrieval (recall@5 **0.82** vs hybrid **0.67**).
+10 tickers, 44 hop-stratified questions. Hybrid generation mean **0.92** vs vector-only **0.89**. That lead is **not stable**: the 95% interval on the gap includes values below zero. Vector leads retrieval (recall@5 **0.82** vs hybrid **0.67**).
 
 ## Results
 
@@ -12,11 +12,11 @@ Hybrid **knowledge-graph + vector RAG** over SEC **10-K** filings. Closed ontolo
 |--------------|-------:|------------:|--:|
 | Hop 0 (definitions) | **0.94** | 0.92 | 8 |
 | Hop 1 (single edge) | **0.88** | 0.79 | 16 |
-| Hop 2 (compare / multi-rel) | **0.96** | 0.88 | 8 |
+| Hop 2 (compare / multi-rel) | 0.88 | 0.88 | 8 |
 | OOS (must refuse) | **1.00** | **1.00** | 12 |
-| **Overall mean** | **0.94** | 0.89 | 44 |
+| **Overall mean** | **0.92** | 0.89 | 44 |
 
-**Recommendation:** Hybrid scores higher on average (0.052 overall, 0.083 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
+**Recommendation:** Hybrid scores higher on average (0.038 overall, 0.005 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
 
 Retrieval is scored separately, on 32 answerable items. Out-of-scope items are skipped.
 
@@ -54,18 +54,18 @@ Cites include `0001045810-26-000021:Item1:0`, `…:Item1A:3`, …
 
 Suite `multi_company_smoke` v4. Generation numbers are the judged run on the same questions.
 
-**Judge calibration (rubric v1):** held-out linear weighted κ **0.00** (raw agreement 17/20) because every human score on that slice was 1.0. Self-agreement on a later re-label is κ **0.42** (13/15). The older 24/24 sheet is history. [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
+**Judge calibration (rubric v1):** held-out linear weighted κ **0.84** (raw agreement 19/20). Two first-pass scores of 1.0 were wrong and were corrected: Meta AI competition is a 0, Meta AI glasses is a 0.5. Self-agreement on a later re-label is κ **0.42** (13/15). The older 24/24 sheet is history. [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
 
 Paired bootstrap, 10,000 draws, seed 0. Gap = hybrid minus vector-only.
 
 | Slice | n | Gap | 95% CI |
 |-------|--:|----:|--------|
-| Overall | 44 | 0.052 | −0.026 to 0.136 |
-| Hop 2 | 8 | 0.083 | 0.000 to 0.250 |
+| Overall | 44 | 0.038 | −0.047 to 0.126 |
+| Hop 2 | 8 | 0.005 | −0.234 to 0.250 |
 
 CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.802**. It reads the saved file and does not call a model.
 
-Full tables: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md), [`benchmarks/results/ablation_bootstrap.md`](benchmarks/results/ablation_bootstrap.md). The hop-2 hybrid headline uses a targeted resmoke of `hop2_jpm_credit_vs_market` (full run 0.375, resmoke 1.0).
+Full tables: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md), [`benchmarks/results/ablation_bootstrap.md`](benchmarks/results/ablation_bootstrap.md). The means use the full-run score for `hop2_jpm_credit_vs_market` (**0.375**). A later one-item rerun scored **1.0**. That rerun is not in the table.
 
 ### 60-second pass
 
@@ -90,7 +90,7 @@ These five are still the weak spots on the published hybrid run. Detail is in [`
 | `hop1_meta_ai_competition` | 0.13 | Answered with Apple/Google ad limits, not platform or AI competitors |
 | `hop0_meta_ai_glasses` | 0.50 | Said AI glasses and Quest, missed Ray-Ban Meta / Oakley Meta |
 | `hop2_nvda_auto_competitors_risks` | 0.67 | Named auto SoCs and Ambarella, missed DRIVE / autonomous |
-| `hop2_jpm_credit_vs_market` | 0.38→1.0 | Same item moved between the full run and a resmoke. The headline uses 1.0 |
+| `hop2_jpm_credit_vs_market` | 0.38, then 1.0 | Full run scored 0.375. A later rerun of this item alone scored 1.0. The table uses 0.375. |
 
 Earlier failures that are fixed, and worth saying anyway: keyword overlap scored wrong answers as 1.0, a 1200-character window hid AppleCare and Azure, and an Apple product answer cited Meta's 10-K.
 

@@ -13,7 +13,7 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 1. Pick 2–3 stories (metric lie, cross-issuer leak, hop-2, ticker clobber).
 2. Speak in this order: **what broke → how I found it → what I changed → what I’d still improve**.
 3. Prefer numbers and file names over buzzwords.
-4. Be honest about what is still open: the five misses below, κ **0.00** on the hold-out, and a hybrid lead whose interval crosses zero.
+4. Be honest about what is still open: the five misses below, and a hybrid lead whose interval crosses zero. Hold-out κ is **0.84** after two bad 1.0 labels were corrected.
 
 ---
 
@@ -182,16 +182,16 @@ Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). T
 | `hop1_meta_ai_competition` | 0.125 | Answer covers Apple/Google ad-targeting limits and AI regulators. It misses competition for users or advertisers from other platforms, and it does not name a competitor such as TikTok. |
 | `hop0_meta_ai_glasses` | 0.50 | Names AI glasses, Reality Labs, and Quest. Misses Ray-Ban Meta / Oakley Meta. |
 | `hop2_nvda_auto_competitors_risks` | 0.667 | Names automotive SoCs plus Ambarella and Broadcom. Misses DRIVE / autonomous by name. |
-| `hop2_jpm_credit_vs_market` | 0.375 on the full run, **1.0** on a targeted resmoke | The headline hop-2 cell uses the resmoke. The same question is not stable across runs. |
+| `hop2_jpm_credit_vs_market` | 0.375 on the full run, **1.0** on a targeted resmoke | The headline uses **0.375**. The rerun shows the score moves. It is not in the mean. |
 
-**Interview angle:** "Four items are still wrong or partial, and one hop-2 score flipped from 0.375 to 1.0 when I reran it. I publish the rerun and I say that it moved."
+**Interview angle:** "Four items are still wrong or partial, and one hop-2 score flipped from 0.375 to 1.0 when I reran it. The published mean keeps 0.375. The rerun is the variance, not the headline."
 
 ### B. Labeled set growth (v3 smoke, not yet headline)
 
 | | |
 |--|--|
 | **Symptom** | The suite outgrew the first n=24 sync. |
-| **Status** | Headline is the n=44 judged run: hybrid **0.94** / vector **0.89**, with the JPM hop-2 cell patched from the resmoke. v4 adds gold chunk ids on the same questions. Retrieval is a separate table. |
+| **Status** | Headline is the n=44 full run: hybrid **0.92** / vector **0.89**. The JPM hop-2 item stays at its full-run **0.375**. A later rerun scored 1.0 and is not in the mean. v4 adds gold chunk ids on the same questions. Retrieval is a separate table. |
 | **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; v3 items are already single-ticker. |
 | **Interview angle** | “Growing the suite exposed hybrid over-answering OOS from unrelated GRAPH edges — we gated refuse-repair on topic match and forced refuse when the pack is off-topic.” |
 
@@ -202,8 +202,8 @@ Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). T
 | | |
 |--|--|
 | **Symptom** | Needed a published “human agrees with judge X% of the time” number. |
-| **Status** | The n=24 sheet agreed **24/24**. That sheet was used to read the rubric. Reported κ is the later hold-out: linear weighted κ **0.00** (raw 17/20), self-agreement κ **0.42** (13/15). Rubric v1 was not edited after the hold-out. [`benchmarks/calibration/RESULTS.md`](../benchmarks/calibration/RESULTS.md). |
-| **Caveat** | Same author as the gold facts. κ is 0 because every hold-out score was 1.0, so the three judge disagreements are exactly what chance predicts. |
+| **Status** | The n=24 sheet agreed **24/24**. That sheet was used to read the rubric. Reported κ is the hold-out after a correction: linear weighted κ **0.84** (raw 19/20), self-agreement κ **0.42** (13/15). The first hold-out pass was all 1.0s (κ **0.00**). Meta AI competition was rescored **0** and Meta AI glasses **0.5**. Rubric v1 was not edited. [`benchmarks/calibration/RESULTS.md`](../benchmarks/calibration/RESULTS.md). |
+| **Caveat** | Same author as the gold facts. One hold-out split remains: NVIDIA auto competitors, human 1.0 vs judge 0.5. |
 
 ---
 
@@ -244,7 +244,7 @@ Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). T
 ## Quick “story cards” (memorize these)
 
 **Card 1 — Metric lied**  
-Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge. Current headline is hybrid **0.94** vs vector **0.89** on n=44, and the bootstrap interval on that gap crosses zero. Hold-out κ is **0.00**.
+Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge. Current headline is hybrid **0.92** vs vector **0.89** on the n=44 full run, and the bootstrap interval on that gap crosses zero. Hold-out κ is **0.84** after two mistaken 1.0 labels were corrected.
 
 **Card 2 — Eval → systems fix**  
 Apple products cited Meta accession → global Company + Meta-written `PRODUCES_PRODUCT` → issuer write gate + chunk ticker filter + Neo4j cleanup. Same filter then erased Meta-stamped `COMPETES_WITH` → exempt cross-company rels.
@@ -280,5 +280,6 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-28 | Fix false-refuse / NFLX-AWS dump / planner invent / NVDA+Meta route; rebench → hybrid **0.92** / vector **0.89**. |
 | 2026-10-28 | JPM hop-2 resmoke (full-run flake 0.375→1.0); headline patched to hybrid **0.94** / hop-2 **0.96** (no full rebench). |
 | 2026-11-03 | Recorded the five remaining hybrid misses and replaced the 24/24 calibration claim with hold-out κ. |
+| 2026-11-04 | Corrected hold-out labels for Meta AI competition (0) and Meta AI glasses (0.5). Reported κ is 0.84, not the first-pass 0.00. |
 
 When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.

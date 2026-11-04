@@ -50,8 +50,8 @@ Copy from personal plan; tick as we finish.
 
 - [x] Stratified golden set with **gold chunk IDs** versioned in repo (extend v3; don’t throw away n=44) — suite **v4**, 32/32 answerable labeled, 12 OOS empty
 - [x] **Retrieval** metrics (recall@5/10, MRR) **and** **generation** metrics, by hop, hybrid vs vector-only — retrieval table in `benchmarks/results/retrieval_v4.md`; generation table already in README
-- [x] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items) — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15); rubric v1 unchanged (`benchmarks/calibration/RESULTS.md`)
-- [x] One **ablation** table with bootstrap CIs + one-paragraph recommendation — overall gap 0.052, CI −0.026 to 0.136; hop-2 gap 0.083, CI 0.000 to 0.250; lead not stable (`benchmarks/results/ablation_bootstrap.md`)
+- [x] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items) — hold-out linear κ **0.84** (raw 19/20) after correcting two bad 1.0s; self-agreement κ **0.42** (13/15); rubric v1 unchanged (`benchmarks/calibration/RESULTS.md`)
+- [x] One **ablation** table with bootstrap CIs + one-paragraph recommendation — full-run overall gap 0.038, CI −0.047 to 0.126; hop-2 gap 0.005, CI −0.234 to 0.250; lead not stable (`benchmarks/results/ablation_bootstrap.md`)
 - [x] **CI gate** demonstrated failing a bad PR (e.g. recall@10 drop > ~2 points; cache LLM calls) — green push [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304); red break dispatch [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624)
 - [x] README top: results → short capture → design decisions → **what didn’t work**
 - [x] Five worst remaining failures explained in NOTES / PROBLEMS — Meta apps refuse, Meta AI competition, Meta AI glasses, NVDA auto hop-2, JPM hop-2 flake (`docs/PROBLEMS_AND_FIXES.md` §A)
@@ -86,7 +86,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** README or `benchmarks/results/` table: recall@5/10 + MRR by hop × system. ✅ `benchmarks/results/retrieval_v4.md`
 
 ### WP3 — Weighted κ + self-agreement
-**Status:** `done` — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15); rubric v1 unchanged  
+**Status:** `done` — hold-out linear κ **0.84** (raw 19/20) after correcting Meta AI competition to 0 and Meta AI glasses to 0.5; first pass was κ **0.00**. Self-agreement κ **0.42** (13/15). Rubric v1 unchanged.  
 **Why:** 24/24 “agree” ≠ calibrated κ; interviewers ask for κ / bias honesty.  
 **You:** re-label ~15 items on a different day (self-agreement ceiling); hold out a slice for κ (don’t tune rubric on the report set).  
 **Cursor:** worksheet generator; κ / Spearman computation; update calibration doc + README line.  
@@ -217,9 +217,9 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Draw:** one question at a time, with replacement, hybrid score and vector-only score kept together. **10,000** draws, seed **0**. **95%** interval = middle 95% of the recomputed gaps (linear percentile). Point estimate = mean of the original 44, not the mean of the draws.
 
-**Result:** overall gap **0.052**, interval **−0.026 to 0.136** (includes a negative gap). Hop-2 gap **0.083**, interval **0.000 to 0.250** (starts at zero, n=8).
+**Result:** full-run overall gap **0.038**, interval **−0.047 to 0.126**. Hop-2 gap **0.005**, interval **−0.234 to 0.250**. `hop2_jpm_credit_vs_market` is the full-run **0.375**, not the later rerun of 1.0.
 
-**Recommendation (Akshaj):** Hybrid scores higher on average (0.052 overall, 0.083 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
+**Recommendation (Akshaj):** Hybrid scores higher on average (0.038 overall, 0.005 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
 
 ### WP5 — recall gate (2026-11-03)
 
@@ -252,6 +252,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-11-03 | WP5 | Break dispatch failed on purpose (`deliberate-break`). `gate` job on that run passed. | WP6 README packaging |
 | 2026-11-03 | WP6 | README reordered: results, 60-second pass, design decisions, five remaining misses. | WP7 close the phase |
 | 2026-11-03 | WP7 | Ship gate already checked. Retrospective written. Gateway stub opened. No gateway code. | Plan P2 design note, then the first gateway piece |
+| 2026-11-04 | WP3 | Corrected two hold-out labels that contradicted the failure table: Meta AI competition 1.0→0, Meta AI glasses 1.0→0.5. Linear κ 0.00→0.84 (19/20). | — |
 
 ---
 
@@ -259,9 +260,9 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 Ship gate in §3 is checked. The defendable answer to “how do you know the RAG is good?”:
 
-- Generation: hybrid **0.94** vs vector-only **0.89** on 44 questions. The paired-bootstrap gap is **0.052**, and the 95% interval **−0.026 to 0.136** includes a negative gap. The lead is not stable on this suite.
+- Generation: hybrid **0.92** vs vector-only **0.89** on the 44-question full run. The paired-bootstrap gap is **0.038**, and the 95% interval **−0.047 to 0.126** includes a negative gap. The lead is not stable on this suite. One JPM hop-2 item scored 0.375 on that run and 1.0 on a later rerun. The mean uses 0.375.
 - Retrieval is a different result. Vector recall@5 is **0.82**, hybrid **0.67**. Graph chunks are ranked first and often are not the gold prose chunk.
-- The judge is not a calibrated panel. Hold-out linear κ is **0.00** (raw agreement 17/20) because every human score was 1.0. Self-agreement is κ **0.42** (13/15). Rubric v1 was not edited on the hold-out.
+- The judge is not a large panel. The first hold-out pass scored every item 1.0 (κ **0.00**). Two of those labels contradicted the required facts, so Meta AI competition is now 0 and Meta AI glasses is 0.5. Corrected linear κ is **0.84** (19/20). Self-agreement is κ **0.42** (13/15). Rubric v1 was not edited.
 - The recall gate is a saved-file check. It fails when committed hybrid recall@10 drops more than 0.02. It does not re-run ingest. Green push and red break dispatch are both on Actions.
 - Five misses stay open: Meta apps refused, Meta AI competition, Meta AI glasses, NVIDIA auto hop-2, and the JPM hop-2 score that moved from 0.375 to 1.0.
 
