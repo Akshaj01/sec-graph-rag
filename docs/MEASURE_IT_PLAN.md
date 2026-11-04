@@ -52,7 +52,7 @@ Copy from personal plan; tick as we finish.
 - [x] **Retrieval** metrics (recall@5/10, MRR) **and** **generation** metrics, by hop, hybrid vs vector-only — retrieval table in `benchmarks/results/retrieval_v4.md`; generation table already in README
 - [x] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items) — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15); rubric v1 unchanged (`benchmarks/calibration/RESULTS.md`)
 - [x] One **ablation** table with bootstrap CIs + one-paragraph recommendation — overall gap 0.052, CI −0.026 to 0.136; hop-2 gap 0.083, CI 0.000 to 0.250; lead not stable (`benchmarks/results/ablation_bootstrap.md`)
-- [ ] **CI gate** demonstrated failing a bad PR (e.g. recall@10 drop > ~2 points; cache LLM calls)
+- [x] **CI gate** demonstrated failing a bad PR (e.g. recall@10 drop > ~2 points; cache LLM calls) — green push [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304); red break dispatch [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624)
 - [ ] README top: results → short capture → design decisions → **what didn’t work**
 - [ ] Five worst remaining failures explained in NOTES / PROBLEMS
 
@@ -102,7 +102,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** table + paragraph in README or `benchmarks/`.
 
 ### WP5 — CI regression gate
-**Status:** `in_progress` — local green and local red are done. The GitHub Actions run is the remaining demo.  
+**Status:** `done` — green push run and red break dispatch are both on Actions.  
 **Why:** proves eval isn’t a one-off notebook.  
 **Cursor:** GitHub Actions workflow; cached/fixture mode so CI isn’t a $ bill; intentional bad PR demo notes.  
 **You:** choose the fail threshold (start: recall@10 drop > 2 points on a fixed smoke subset).  
@@ -230,7 +230,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Local demo:** `python recall_gate.py` prints drop **0.0000** and exits 0. `python recall_gate.py --degrade-first` zeros one hit (drop **0.0312**) and exits 1.
 
-**Actions demo still open:** push `main` for the green check. Then Actions → Recall gate → Run workflow with **break** checked. That job is supposed to fail.
+**Actions demo:** green push [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304). Red break dispatch [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624): `gate` passed, `deliberate-break` failed on the zeroed hit.
 
 ---
 
@@ -250,6 +250,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-11-03 | WP4 | Paired bootstrap, 10k draws, seed 0. Overall gap 0.052, 95% CI −0.026 to 0.136. Hop-2 gap 0.083, CI 0.000 to 0.250. | Recommendation paragraph |
 | 2026-11-03 | WP4 | Recommendation recorded: average lead is real, intervals do not sit entirely above zero, so the lead is not stable. | WP5 CI gate |
 | 2026-11-03 | WP5 | Recall gate on saved hybrid recall@10. Threshold drop > 0.02. Local green drop 0.0000. Local red drop 0.0312. Pushed so Actions can run the green check. | Dispatch the break job for the red run |
+| 2026-11-03 | WP5 | Break dispatch failed on purpose (`deliberate-break`). `gate` job on that run passed. | WP6 README packaging |
 
 ---
 
