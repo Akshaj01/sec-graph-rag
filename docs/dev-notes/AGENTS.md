@@ -61,10 +61,9 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 
 **Phase 5 COMPLETE** (build). Corpus is now multi-company; suite v4 n=44 with gold chunk ids.
 
-## Current phase (2026-11-01) — Measure it
-Personal plan **Project 1 · Measure it** ≈ roadmap **P4 evals** on the built GraphRAG.  
-**Source of truth:** `docs/MEASURE_IT_PLAN.md`  
-**Status:** WP6 README packaging is done. Next is WP7, closing Measure it. Do not start gateway until that close is honest.  
+## Current phase (2026-11-03) — gateway stub
+Measure it is closed. Personal plan **Project 2 · Run it** is a stub only: `docs/GATEWAY_PLAN.md`.  
+**Status:** write the gateway design note before any code. Do not start plan P3.  
 Also read `docs/dev-notes/HANDOFF.md` for the new-chat paste prompt.
 
 Do not skip Learning Protocol.

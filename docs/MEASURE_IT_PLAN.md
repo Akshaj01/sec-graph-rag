@@ -115,8 +115,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** stranger can judge the repo in two minutes from README top.
 
 ### WP7 — Phase retrospective → gateway
-**Status:** `todo`  
-**Exit:** all ship-gate boxes checked; open `docs/` gateway plan stub or start plan P2.
+**Status:** `done` — ship gate is checked. Retrospective is below. Gateway stub is `docs/GATEWAY_PLAN.md`. No gateway code.
 
 ---
 
@@ -252,11 +251,22 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-11-03 | WP5 | Recall gate on saved hybrid recall@10. Threshold drop > 0.02. Local green drop 0.0000. Local red drop 0.0312. Pushed so Actions can run the green check. | Dispatch the break job for the red run |
 | 2026-11-03 | WP5 | Break dispatch failed on purpose (`deliberate-break`). `gate` job on that run passed. | WP6 README packaging |
 | 2026-11-03 | WP6 | README reordered: results, 60-second pass, design decisions, five remaining misses. | WP7 close the phase |
+| 2026-11-03 | WP7 | Ship gate already checked. Retrospective written. Gateway stub opened. No gateway code. | Plan P2 design note, then the first gateway piece |
 
 ---
 
-## 10. After this phase
+## 10. Retrospective (2026-11-03)
 
-**Plan P2 · Run it** — resilient LLM gateway (circuit breakers, semantic cache, chaos demo).  
-Point SEC GraphRAG model calls through the gateway once it exists.  
-Do **not** start P2 until §3 ship gate is honestly checked.
+Ship gate in §3 is checked. The defendable answer to “how do you know the RAG is good?”:
+
+- Generation: hybrid **0.94** vs vector-only **0.89** on 44 questions. The paired-bootstrap gap is **0.052**, and the 95% interval **−0.026 to 0.136** includes a negative gap. The lead is not stable on this suite.
+- Retrieval is a different result. Vector recall@5 is **0.82**, hybrid **0.67**. Graph chunks are ranked first and often are not the gold prose chunk.
+- The judge is not a calibrated panel. Hold-out linear κ is **0.00** (raw agreement 17/20) because every human score was 1.0. Self-agreement is κ **0.42** (13/15). Rubric v1 was not edited on the hold-out.
+- The recall gate is a saved-file check. It fails when committed hybrid recall@10 drops more than 0.02. It does not re-run ingest. Green push and red break dispatch are both on Actions.
+- Five misses stay open: Meta apps refused, Meta AI competition, Meta AI glasses, NVIDIA auto hop-2, and the JPM hop-2 score that moved from 0.375 to 1.0.
+
+Demo recording and a LinkedIn line were optional and were not done.
+
+## 11. After this phase
+
+**Plan P2 · Run it** is open as a stub: [`docs/GATEWAY_PLAN.md`](GATEWAY_PLAN.md). Circuit breakers, semantic cache, chaos demo, then point model calls through it. The next session writes the design note before any gateway code. Plan P3 (agent / red-team) stays closed.

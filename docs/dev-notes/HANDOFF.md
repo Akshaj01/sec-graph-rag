@@ -18,7 +18,7 @@ A new agent only knows:
 4. **`docs/MEASURE_IT_PLAN.md`** — Measure-it work packages (WP0–WP7) and design decisions
 5. Whatever you paste into the first message
 
-Do **not** invent architecture. Do **not** start the LLM gateway until Measure-it ship gate is checked.
+Do **not** invent architecture. Measure it is closed. Gateway work starts from `docs/GATEWAY_PLAN.md` with a design note, not with code.
 
 ---
 
@@ -47,7 +47,8 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | **WP4** (bootstrap) | **DONE** — overall gap **0.052** [−0.026, 0.136]; hop-2 **0.083** [0.000, 0.250]. Lead is not stable. |
 | **WP5** (CI gate) | **DONE** — green [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304), red break [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624). |
 | **WP6** (README) | **DONE** — results, 60-second pass, design decisions, five misses. Demo recording still optional. |
-| **Next** | **WP7** — close Measure it, then the gateway plan. |
+| **WP7** (close) | **DONE** — retrospective in `docs/MEASURE_IT_PLAN.md` §10. Gateway stub only. |
+| **Next** | Plan P2 design note in `docs/GATEWAY_PLAN.md`. No gateway code until that note exists. |
 
 **WP0 locked decisions:** “good” = retrieve supporting evidence (quality > volume) + accurate cited answers + refuse OOS; retrieval headline = recall@5 + MRR (@10 supporting); generation = hop judge hybrid vs vector; κ on ~15–20 held-out v3; ablation = hybrid vs vector + bootstrap CI.
 
@@ -62,7 +63,7 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | 3 Route + retrieve | **DONE** | Router + templates + `retrieve.py` |
 | 4 Grounded answer + citations | **DONE** | `answer.py` + topic gate / repair |
 | 5 Benchmark vs vector-only | **DONE** (build) | Suite + runner + README + `/ask` |
-| Measure it (evals) | **IN PROGRESS** | WP2 retrieval table done → WP3 κ |
+| Measure it (evals) | **DONE** | Ship gate checked 2026-11-03. Stub: `docs/GATEWAY_PLAN.md` |
 
 ---
 
@@ -175,12 +176,9 @@ Do **not** use neo4j.com Google/Aura login for this project.
 
 ## What is NOT done (Measure-it / resume honesty)
 
-- Weighted Cohen’s κ + self-agreement on held-out v4 (WP3). Retrieval table is done (WP2)
-- Bootstrap CIs on hybrid vs vector ablation (WP4)
-- CI regression gate (WP5)
-- README packaging polish + short demo (WP6)
-- Gateway / agent / red-team (after Measure-it ship gate)
-- Not a 50–100 human-panel eval — n=44 automated judge + growing retrieval labels
+- Measure it ship gate is checked. Optional demo recording was not done.
+- Gateway is a stub only (`docs/GATEWAY_PLAN.md`). Agent / red-team (plan P3) stays closed.
+- Not a 50–100 human-panel eval — n=44 automated judge. Hold-out κ is **0.00**. The hybrid lead’s interval crosses zero.
 
 ---
 
@@ -289,14 +287,13 @@ FastAPI `/ask` live at `api.py` (see README).
 
 ```text
 You are continuing SEC GraphRAG (Akshaj). Read completely:
-1) docs/MEASURE_IT_PLAN.md  — current phase plan (WP2 retrieval done; next = WP3 κ)
-2) docs/dev-notes/HANDOFF.md
-3) docs/dev-notes/AGENTS.md
+1) docs/GATEWAY_PLAN.md — next phase stub (no code yet)
+2) docs/MEASURE_IT_PLAN.md — Measure it is closed; retrospective is §10
+3) docs/dev-notes/HANDOFF.md
+4) docs/dev-notes/AGENTS.md
 
-BASWE build Phases 1–5 are DONE (10-ticker corpus, suite v3 n=44, hybrid 0.94 vs vector 0.89).
-We are in personal-plan “Measure it” (evals). WP0 design is locked in MEASURE_IT_PLAN §8.
-Next: WP3 weighted κ. Tutor-style / learn-by-doing: I design; you implement after I confirm.
-Do NOT start the LLM gateway until Measure-it ship gate is checked.
+BASWE build Phases 1–5 are DONE. Measure it is DONE (hybrid 0.94 vs vector 0.89; gap CI crosses zero; hold-out κ 0.00).
+Next: Plan P2 design note (circuit breaker, semantic cache, chaos demo) before any gateway code.
 Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit .env or My Resume/.
 ```
 
