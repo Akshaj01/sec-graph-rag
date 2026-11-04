@@ -43,7 +43,8 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | **WP0** (design) | **DONE** — see MEASURE_IT_PLAN §8 |
 | **WP1** (gold chunks) | **DONE** — spot-check accepted |
 | **WP2** (retrieval) | **DONE** — vector recall@5 **0.82** / MRR **0.67**; hybrid **0.67** / **0.51**; graph **0.42** / **0.37** (`benchmarks/results/retrieval_v4.md`) |
-| **Next** | **WP3** — weighted κ + self-agreement on a held-out v3/v4 slice |
+| **WP3** (κ) | **DONE** — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15). Rubric v1 unchanged. `benchmarks/calibration/RESULTS.md` |
+| **Next** | **WP4** — bootstrap CIs on hybrid vs vector-only |
 
 **WP0 locked decisions:** “good” = retrieve supporting evidence (quality > volume) + accurate cited answers + refuse OOS; retrieval headline = recall@5 + MRR (@10 supporting); generation = hop judge hybrid vs vector; κ on ~15–20 held-out v3; ablation = hybrid vs vector + bootstrap CI.
 

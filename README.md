@@ -53,7 +53,7 @@ Suite: `multi_company_smoke` v4 — **44** hand-labeled questions on a local **1
 **Primary metric:** LLM-as-judge (Haiku + Instructor) vs `required_facts` / `gold_answer`.  
 OOS = correct refuse. Keyword recall secondary. Not a human panel.
 
-**Judge calibration:** human agreed with judge on **24/24** on an earlier hybrid set (`benchmarks/judge_calibration_hybrid.md`).
+**Judge calibration (rubric v1):** held-out linear weighted κ vs human is **0.00** (raw agreement 17/20). Self-agreement on a later re-label of 15 items is κ **0.42** (13/15). The older 24/24 sheet is history, not κ. Write-up: `benchmarks/calibration/RESULTS.md`.
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|

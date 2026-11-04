@@ -50,7 +50,7 @@ Copy from personal plan; tick as we finish.
 
 - [x] Stratified golden set with **gold chunk IDs** versioned in repo (extend v3; don’t throw away n=44) — suite **v4**, 32/32 answerable labeled, 12 OOS empty
 - [x] **Retrieval** metrics (recall@5/10, MRR) **and** **generation** metrics, by hop, hybrid vs vector-only — retrieval table in `benchmarks/results/retrieval_v4.md`; generation table already in README
-- [ ] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items)
+- [x] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items) — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15); rubric v1 unchanged (`benchmarks/calibration/RESULTS.md`)
 - [ ] One **ablation** table with bootstrap CIs + one-paragraph recommendation
 - [ ] **CI gate** demonstrated failing a bad PR (e.g. recall@10 drop > ~2 points; cache LLM calls)
 - [ ] README top: results → short capture → design decisions → **what didn’t work**
@@ -86,7 +86,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** README or `benchmarks/results/` table: recall@5/10 + MRR by hop × system. ✅ `benchmarks/results/retrieval_v4.md`
 
 ### WP3 — Weighted κ + self-agreement
-**Status:** `todo`  
+**Status:** `done` — hold-out linear κ **0.00** (raw 17/20); self-agreement κ **0.42** (13/15); rubric v1 unchanged  
 **Why:** 24/24 “agree” ≠ calibrated κ; interviewers ask for κ / bias honesty.  
 **You:** re-label ~15 items on a different day (self-agreement ceiling); hold out a slice for κ (don’t tune rubric on the report set).  
 **Cursor:** worksheet generator; κ / Spearman computation; update calibration doc + README line.  
@@ -155,7 +155,9 @@ If only **~10h/week**: keep n≈40–44, skip nDCG, one ablation (hybrid vs vect
 | `label_chunks.py` | Search ingest chunks; `check` gold ids vs cache / Postgres |
 | `benchmark_schema.py` | `gold_chunk_ids`, `required_facts`, … |
 | `benchmark_runner.py` / `benchmark_judge.py` | Answer eval |
-| `benchmarks/judge_calibration_hybrid.md` | Human calibration worksheet |
+| `benchmarks/judge_calibration_hybrid.md` | n=24 history (not the reported κ) |
+| `benchmarks/calibration/` | WP3 hold-out sheet, self-agreement sheet, hidden keys |
+| `calibration_metrics.py` / `calibration_worksheet.py` | snap, linear κ, Spearman; write and score sheets |
 | `benchmarks/results/` | Reports (`retrieval_v4.md` is the WP2 table) |
 | `retrieval_metrics.py` / `retrieval_benchmark.py` | recall@k, MRR, retrieve-only runner |
 | `docs/PROBLEMS_AND_FIXES.md` | Failure → fix history |
@@ -195,6 +197,18 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Result to be able to say:** on suite v4, vector retrieval leads (overall recall@5 **0.82**, MRR **0.67**). Hybrid is lower (**0.67** / **0.51**) because graph chunks are placed first and often are not the gold prose chunks. Graph alone is lower still (**0.42** / **0.37**). This does not replace the generation table (hybrid **0.94** vs vector **0.89**). A good answer can come from a graph statement whose source chunk is not the gold passage.
 
+### WP3 — κ split (2026-11-02)
+
+**Reported κ** is human vs judge on the **20** suite items that are not in `judge_calibration_hybrid.md`. That n=24 sheet stays history. Rubric stays **v1** (do not edit the judge prompt from this hold-out).
+
+**Scale:** both sides snap to **0 / 0.5 / 1**. Nearest bin. Midpoints **0.25** and **0.75** snap upward. So judge **0.125 → 0**, **0.6675 → 0.5**.
+
+**Weight:** reported number is **linear** weighted Cohen’s κ. A one-step miss counts half of a full miss. Quadratic is logged beside it.
+
+**Self-agreement:** re-score **15** of the original 24 (both first-pass partials included). Compare to the first `your_score`, not to the judge. Sheets hide the other score.
+
+**Sheets:** `benchmarks/calibration/kappa_holdout.md`, `benchmarks/calibration/self_agreement.md`. Score with `python calibration_worksheet.py score`.
+
 ---
 
 ## 9. Session log
@@ -207,6 +221,9 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-11-01 | WP1 | Suite v4: gold chunks on 32/32 answerable items (12 OOS empty). `label_chunks.py` + check vs ingest cache and Postgres. | Spot-check 5 labels, then WP2 retrieval harness |
 | 2026-11-01 | WP1 | Spot-check accepted, including Meta Item1A:4 for Apple–Meta competition. | WP2 |
 | 2026-11-01 | WP2 | Retrieve-only recall@5/10 + MRR by hop for graph, vector, hybrid. Vector leads retrieval; hybrid leads generation. | WP3 κ |
+| 2026-11-02 | WP3 | Blind hold-out (n=20) and self-agreement (n=15) sheets. Linear κ on snapped 0/0.5/1. Rubric v1 frozen. | Fill both sheets, then `calibration_worksheet.py score` |
+| 2026-11-02 | WP3 | Blind hold-out scored all **1.0**. Linear κ **0.0**, raw agreement **0.85** (17/20). Splits: Meta AI competition, Meta AI glasses, NVDA auto competitors. Spearman undefined. | Self-agreement sheet still blank |
+| 2026-11-03 | WP3 | Self-agreement re-label. Linear κ **0.42**, raw **13/15**. Flips: AWS 1.0→0.5, JPM credit risk 0.5→1.0. README line added. Rubric not changed. | WP4 bootstrap CIs |
 
 ---
 

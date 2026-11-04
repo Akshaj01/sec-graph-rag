@@ -1,0 +1,149 @@
+{
+  "rubric_version": "v1",
+  "bin_rule": "nearest of 0, 0.5, 1; midpoints 0.25 and 0.75 snap upward",
+  "reported_weight": "linear",
+  "holdout": [
+    {
+      "id": "hop1_meta_ai_competition",
+      "judge_score": 0.125
+    },
+    {
+      "id": "hop1_meta_china_international_risk",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop1_aapl_china_supply_risk",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop0_meta_ai_glasses",
+      "judge_score": 0.5
+    },
+    {
+      "id": "oos_meta_glasses_competitor",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop1_nvda_automotive",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop1_googl_waymo",
+      "judge_score": 1.0
+    },
+    {
+      "id": "oos_msft_xbox_named_rival",
+      "judge_score": 1.0
+    },
+    {
+      "id": "oos_cross_company_executives",
+      "judge_score": 1.0
+    },
+    {
+      "id": "oos_aapl_battery_supply",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop2_msft_cloud_and_geo_risk",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop1_nflx_aws_relationship",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop0_nflx_advertising",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop2_nvda_auto_competitors_risks",
+      "judge_score": 0.6675
+    },
+    {
+      "id": "oos_tesla_competitors_risks",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop1_nvda_geopolitical_risk",
+      "judge_score": 1.0
+    },
+    {
+      "id": "hop1_aapl_supply_chain_risk",
+      "judge_score": 1.0
+    },
+    {
+      "id": "oos_googl_blockchain_investments",
+      "judge_score": 1.0
+    },
+    {
+      "id": "oos_jpm_robotics_spend",
+      "judge_score": 1.0
+    },
+    {
+      "id": "oos_nflx_ai_compute_for_others",
+      "judge_score": 1.0
+    }
+  ],
+  "self_agreement": [
+    {
+      "id": "hop0_aapl_applecare",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop0_meta_instagram",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop0_amzn_aws",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop0_jpm_credit_risk",
+      "first_pass_score": 0.5
+    },
+    {
+      "id": "hop1_aapl_products",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop1_meta_apps",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop1_googl_products",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop1_jnj_medtech",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop1_aapl_competes_meta",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop2_aapl_hardware_services",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop2_meta_apps_vs_reality",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "hop2_jpm_credit_vs_market",
+      "first_pass_score": 0.375
+    },
+    {
+      "id": "hop2_nvda_products_and_geo_risk",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "oos_tesla_battery",
+      "first_pass_score": 1.0
+    },
+    {
+      "id": "oos_cook_comp",
+      "first_pass_score": 1.0
+    }
+  ]
+}

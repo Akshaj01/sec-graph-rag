@@ -64,7 +64,7 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 ## Current phase (2026-11-01) — Measure it
 Personal plan **Project 1 · Measure it** ≈ roadmap **P4 evals** on the built GraphRAG.  
 **Source of truth:** `docs/MEASURE_IT_PLAN.md`  
-**Status:** WP2 retrieval table is in `benchmarks/results/retrieval_v4.md`. Next is WP3 (weighted κ). Do not start gateway until Measure-it ship gate is checked.  
+**Status:** WP3 κ is reported (hold-out linear κ 0.00, self-agreement κ 0.42). Next is WP4 bootstrap CIs. Do not start gateway until Measure-it ship gate is checked.  
 Also read `docs/dev-notes/HANDOFF.md` for the new-chat paste prompt.
 
 Do not skip Learning Protocol.
