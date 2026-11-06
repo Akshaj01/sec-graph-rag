@@ -9,6 +9,7 @@ Akshaj + Cursor both use this file as the source of truth while we work through 
 | **Not this phase** | LLM gateway (plan P2), research agent / red-team (plan P3). |
 | **Goal** | Defendable answer to *“How do you know your RAG is good?”* — numbers, κ, CI gate, honest failures — then move to gateway. |
 | **Working style** | Learn by doing: Akshaj writes a short design note for each step; Cursor implements; Akshaj explains the non-trivial bits before commit. |
+| **Status** | Closed 2026-11-03. Generation headline was replaced 2026-11-05 by three temperature-0 runs (README). A new chat should read `docs/dev-notes/HANDOFF.md` section **Resume on the PC** and should not start another paid answer run unless asked. |
 
 ## Words this file uses
 
@@ -50,7 +51,7 @@ Akshaj + Cursor both use this file as the source of truth while we work through 
 
 **Paired.** A redrawn question brings its hybrid score and its vector score together. JPM's hybrid score stays with JPM's vector score.
 
-**Confidence interval.** That middle 95%. The rule used here: the lead is stable only when the whole interval sits above zero. Overall gap 0.038 has interval −0.047 to 0.126, so a negative gap is still inside it.
+**Confidence interval.** That middle 95%. The rule used on the older pair: the lead is stable only when the whole interval sits above zero. That older pair is `ablation_bootstrap.md`, gap 0.038, interval −0.047 to 0.126. The published generation number is the mean of three temperature-0 runs: hybrid 0.86 (0.856–0.862) vs vector 0.89 (0.878–0.889). Do not cite the older interval as that gap.
 
 **Seed.** The redraws start from a fixed number (0), so running the script again prints the same interval.
 

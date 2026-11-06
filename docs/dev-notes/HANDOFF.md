@@ -1,10 +1,10 @@
 # SEC GraphRAG — Handoff
 
-**Last updated:** 2026-11-01  
-**Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Primary living plan:** [`docs/MEASURE_IT_PLAN.md`](../MEASURE_IT_PLAN.md)
+**Last updated:** 2026-11-05  
+**Repo:** https://github.com/Akshaj01/sec-graph-rag (`main` at `e32f498`)  
+**Primary living plan:** [`docs/MEASURE_IT_PLAN.md`](../MEASURE_IT_PLAN.md) (closed). Next stub: [`docs/GATEWAY_PLAN.md`](../GATEWAY_PLAN.md).
 
-Use this file + `docs/dev-notes/AGENTS.md` + **`docs/MEASURE_IT_PLAN.md`** to continue in a **new Cursor chat**. Chat history will not transfer.
+Use this file + `docs/dev-notes/AGENTS.md` + **`docs/MEASURE_IT_PLAN.md`** to continue in a **new Cursor chat** on the PC. Chat history will not transfer. `git pull` first. The published numbers are already in the repo. Do not start another paid answer run to recreate them.
 
 ---
 
@@ -28,11 +28,42 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 
 **BASWE Project 1 (build) — DONE:** FastAPI `/ask` with validated citations; README hybrid vs vector-only table.
 
-**Personal plan “Measure it” (Plan P1 ≈ roadmap P4) — IN PROGRESS:** retrieval metrics + κ + CI gate on top of the built system. Gateway is **after** this phase.
+**Personal plan “Measure it” (Plan P1 ≈ roadmap P4) — DONE:** retrieval metrics, κ, CI gate, and a three-run generation table. Gateway is the next phase and is still a stub.
 
 ---
 
-## Where we are now (2026-11-01)
+## Resume on the PC (2026-11-05)
+
+`git pull` on `main`. HEAD is `e32f498`. The PC needs its own `.env` (never committed) and Docker (`neo4j_graphrag`, `pgvector_graphrag`). The corpus under `data/` is gitignored, so a fresh PC does not have the graph until ingest is run there. The score files below are in git. Reading them does not need Docker or an API key.
+
+**Generation headline.** Three runs, planner + router + answer + judge at temperature 0. Files: `benchmarks/results/multi_company_smoke_temp0_run1.json`, `run2`, `run3`. Suite `benchmarks/multi_company_smoke.json` (v4, n=44).
+
+| | Hybrid | Vector-only |
+|--|--:|--:|
+| Runs | 0.862, 0.862, 0.856 | 0.889, 0.878, 0.889 |
+| Mean | **0.86** | **0.89** |
+
+Gap of the means **−0.026**. Paired gaps **−0.033**, **−0.016**, **−0.027**. Hop table is in the README. Five items still moved. `hop1_aapl_products` hybrid text was identical and the judge scored it 1.0, 1.0, 0.5.
+
+**Retrieval headline** (retrieve-only, not re-run after the temperature pin): hybrid recall@5 **0.83**, recall@10 **0.92**, MRR **0.64**. Vector **0.82 / 0.93 / 0.67**. Graph-only on that run **0.43 / 0.51 / 0.38**. Recall gate baseline is hybrid recall@10 **0.9167**.
+
+**Code that produced this.** Unforced retrieve fetches graph and vector. The scored list and the evidence pack alternate vector, graph, vector, graph, and skip a chunk already used. Graph edges are ranked by question-word hits. Extraction confidence only breaks a tie. `force_route=VECTOR` stays vector-only. Reciprocal rank fusion was simulated and not shipped (recall@5 would have fallen to about 0.75).
+
+**Do not**
+
+- Quote hybrid **0.92** vs vector **0.89**, or the bootstrap gap **0.038**. That pair is older. `benchmarks/results/ablation_bootstrap.md` is that older pair.
+- Run `bootstrap_ci.py` on the new files and call the output the current gap. `FULL_RUN_HYBRID_SCORE` forces `hop2_jpm_credit_vs_market` back to **0.375**. The three-run files score that item **0.625** on every run.
+- Run `benchmark_runner.py` without `--suite benchmarks/multi_company_smoke.json`. The default suite is `benchmarks/aapl_smoke.json`.
+- Start another 44-question answer run unless Akshaj asks. The three runs already cost about $2.59.
+- Write gateway code before a design note in `docs/GATEWAY_PLAN.md`.
+
+**Still open, not a reason to rerun.** Hybrid does not beat vector on generation. Vector still leads recall@10 and MRR. `hop1_meta_ai_competition` hybrid is 0.00 on all three runs. `oos_nflx_ai_compute_for_others` denies the premise in prose and leaves `refused` false, so the score is 0. The judge can still move a score when the paragraph did not. Profile README and the GitHub repo description already say 0.86 vs 0.89.
+
+**Next, only if asked.** Gateway design note (circuit breaker, semantic cache, chaos demo). No code until that note exists.
+
+---
+
+## Where we are now (2026-11-05)
 
 | Item | Status |
 |------|--------|
@@ -44,9 +75,9 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | **WP1** (gold chunks) | **DONE** — spot-check accepted |
 | **WP2** (retrieval) | **DONE** — hybrid recall@5 **0.83** / MRR **0.64**; vector **0.82** / **0.67**; graph **0.43** / **0.38**. Edges ranked by question-word hits, confidence breaks ties (`benchmarks/results/retrieval_v4.md`) |
 | **WP3** (κ) | **DONE** — corrected hold-out linear κ **0.84** (19/20). First pass was all 1.0s (κ 0.00). Self-agreement κ **0.42**. Rubric v1 unchanged. |
-| **WP4** (bootstrap) | **DONE** — full-run gap **0.038** [−0.047, 0.126]; hop-2 **0.005** [−0.234, 0.250]. Lead is not stable. |
-| **WP5** (CI gate) | **DONE** — green [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304), red break [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624). |
-| **WP6** (README) | **DONE** — results, 60-second pass, design decisions, five misses. Demo recording still optional. |
+| **WP4** (bootstrap) | **DONE** on the older pair only — gap **0.038** [−0.047, 0.126]. Not the current headline. Current gap is the three-run mean, **−0.026**. |
+| **WP5** (CI gate) | **DONE** — green [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304), red break [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624). Baseline hybrid recall@10 **0.9167**. |
+| **WP6** (README) | **DONE** — three-run generation table, retrieval table, 60-second pass. Demo recording still optional. |
 | **WP7** (close) | **DONE** — retrospective in `docs/MEASURE_IT_PLAN.md` §10. Gateway stub only. |
 | **Next** | Plan P2 design note in `docs/GATEWAY_PLAN.md`. No gateway code until that note exists. |
 
@@ -286,14 +317,17 @@ FastAPI `/ask` live at `api.py` (see README).
 ## Copy-paste into a NEW Cursor chat
 
 ```text
-You are continuing SEC GraphRAG (Akshaj). Read completely:
-1) docs/GATEWAY_PLAN.md — next phase stub (no code yet)
-2) docs/MEASURE_IT_PLAN.md — Measure it is closed; retrospective is §10
-3) docs/dev-notes/HANDOFF.md
-4) docs/dev-notes/AGENTS.md
+You are continuing SEC GraphRAG (Akshaj) on the PC. git pull first. Read completely:
+1) docs/dev-notes/HANDOFF.md — section "Resume on the PC"
+2) README.md — the published tables
+3) docs/PROBLEMS_AND_FIXES.md — items 13–15 and section A
+4) docs/GATEWAY_PLAN.md — next phase stub (no code yet)
+5) docs/dev-notes/AGENTS.md
 
-BASWE build Phases 1–5 are DONE. Measure it is DONE (three temperature-0 runs: hybrid 0.86 vs vector 0.89; corrected hold-out κ 0.84).
-Next: Plan P2 design note (circuit breaker, semantic cache, chaos demo) before any gateway code.
+main is e32f498. Build phases 1–5 are DONE. Measure it is DONE.
+Generation: three temperature-0 runs, hybrid 0.86 (0.856–0.862) vs vector 0.89 (0.878–0.889). Gap of the means −0.026. Do not quote 0.92 vs 0.89.
+Retrieval: hybrid recall@5 0.83 vs vector 0.82. Vector leads recall@10 and MRR.
+Do not rerun the paid suite unless asked. Do not start gateway code before a design note.
 Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit .env or My Resume/.
 ```
 
@@ -325,8 +359,8 @@ $env:EXTRACTION_MAX_TOKENS = "16384"
 # Phase 5 Step Q (list labeled suite — no paid eval yet)
 .\.venv\Scripts\python.exe benchmark.py
 
-# Phase 5 Step R (runner — >4 calls need --confirm)
-.\.venv\Scripts\python.exe benchmark_runner.py --confirm
+# Phase 5 Step R — full suite is NOT the default. Default is aapl_smoke.json.
+.\.venv\Scripts\python.exe benchmark_runner.py --suite benchmarks/multi_company_smoke.json --modes hybrid,vector_only --confirm
 
 # Phase 5 Step T (API)
 .\.venv\Scripts\python.exe -m uvicorn api:app --host 127.0.0.1 --port 8000

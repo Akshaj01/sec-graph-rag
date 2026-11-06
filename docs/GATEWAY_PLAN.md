@@ -1,6 +1,6 @@
 # Run it — gateway stub (Plan P2)
 
-**Status:** stub only. Measure it (Plan P1) is closed. No gateway code until a design note exists, the same way WP0 came before the eval scripts.
+**Status:** stub only. Measure it (Plan P1) is closed. No gateway code until a design note exists, the same way WP0 came before the eval scripts. A new chat on the PC should read `docs/dev-notes/HANDOFF.md` section **Resume on the PC** first. The generation headline is hybrid **0.86** vs vector **0.89** across three temperature-0 runs, not the older **0.92** vs **0.89**.
 
 | | |
 |--|--|

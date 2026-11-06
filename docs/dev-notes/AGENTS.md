@@ -61,10 +61,11 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 
 **Phase 5 COMPLETE** (build). Corpus is now multi-company; suite v4 n=44 with gold chunk ids.
 
-## Current phase (2026-11-03) — gateway stub
-Measure it is closed. Personal plan **Project 2 · Run it** is a stub only: `docs/GATEWAY_PLAN.md`.  
-**Status:** write the gateway design note before any code. Do not start plan P3.  
-Also read `docs/dev-notes/HANDOFF.md` for the new-chat paste prompt.
+## Current phase (2026-11-05) — resume from the three-run table
+Measure it is closed. Published generation is three temperature-0 runs: hybrid **0.86** (0.856–0.862) vs vector-only **0.89** (0.878–0.889). Retrieval recall@5 is hybrid **0.83** vs vector **0.82**. Do not quote the older **0.92** vs **0.89** pair.
+Personal plan **Project 2 · Run it** is a stub only: `docs/GATEWAY_PLAN.md`.  
+**Status:** write the gateway design note before any code. Do not start plan P3. Do not rerun the paid answer suite unless asked.  
+Read `docs/dev-notes/HANDOFF.md` section **Resume on the PC** before doing anything else.
 
 Do not skip Learning Protocol.
 See `docs/dev-notes/HANDOFF.md` for credentials, CLI commands, and the copy-paste prompt for a new chat.

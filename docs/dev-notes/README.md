@@ -5,5 +5,5 @@ Curriculum handoff and agent protocol from the original phased build.
 
 | File | What it is |
 |------|------------|
-| `HANDOFF.md` | Phase 1–5 status / commands (historical; numbers may lag README) |
+| `HANDOFF.md` | Resume block for a new chat, plus Phase 1–5 commands. The resume section matches the README. |
 | `AGENTS.md` | Closed ontology + learning protocol used during the build |
