@@ -28,6 +28,40 @@ def unique_in_order(chunk_ids: Iterable[str]) -> List[str]:
     return ordered
 
 
+def interleave_ids(first: Sequence[str], second: Sequence[str]) -> List[str]:
+    """Alternate two id lists, starting with `first`.
+
+    A chunk already placed is skipped, and the next chunk from that same
+    side is used. When one side runs out, the rest of the other side follows.
+    """
+    left = unique_in_order(first)
+    right = unique_in_order(second)
+    out: List[str] = []
+    seen: set[str] = set()
+    i = 0
+    j = 0
+    take_left = True
+    while i < len(left) or j < len(right):
+        if take_left:
+            while i < len(left) and left[i] in seen:
+                i += 1
+            if i < len(left):
+                out.append(left[i])
+                seen.add(left[i])
+                i += 1
+        else:
+            while j < len(right) and right[j] in seen:
+                j += 1
+            if j < len(right):
+                out.append(right[j])
+                seen.add(right[j])
+                j += 1
+        take_left = not take_left
+        if i >= len(left) and j >= len(right):
+            break
+    return out
+
+
 def recall_at_k(retrieved: Sequence[str], gold: Sequence[str], k: int) -> float:
     """|gold ∩ top-k unique retrieved| / |gold|."""
     if k < 1:

@@ -175,6 +175,32 @@ def test_lexical_rerank_promotes_entity_match():
     ) > 0.7
 
 
+def test_evidence_pack_alternates_vector_then_graph():
+    retrieval = HybridRetrievalResult(
+        question="What products?",
+        routing=_route(),
+        graph=_graph_result(
+            [
+                _fact("Phone", confidence=0.9, chunk="g1"),
+                _fact("Watch", confidence=0.8, chunk="v1"),
+            ]
+        ),
+        vector=VectorRetrievalResult(
+            question="What products?",
+            ticker="AAPL",
+            k=2,
+            model="test",
+            passages=[
+                VectorPassage(chunk_id="v1", text="phones", section="Item1", score=0.9),
+                VectorPassage(chunk_id="v2", text="watches", section="Item1", score=0.8),
+            ],
+        ),
+    )
+    items = build_evidence_items(retrieval, max_graph=12, max_vector=5)
+    assert [item.chunk_ids[0] for item in items] == ["v1", "g1", "v2"]
+    assert [item.source_label for item in items] == ["VECTOR", "GRAPH", "VECTOR"]
+
+
 def test_build_evidence_items_caps_graph_by_confidence():
     facts = [_fact(f"P{i}", confidence=i / 10, chunk=f"c{i}") for i in range(20)]
     retrieval = HybridRetrievalResult(

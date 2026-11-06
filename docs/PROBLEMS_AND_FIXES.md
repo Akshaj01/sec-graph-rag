@@ -1,19 +1,9 @@
-# Problems & Fixes — Interview Learning Log
+# Problems & Fixes
 
-Living log of real failures we hit building SEC GraphRAG, why they happened, and what we changed.  
-Use this to prep interviews: every row is a story of **symptom → root cause → fix → what you’d say out loud**.
+Living log of failures hit while building SEC GraphRAG, why they happened, and what changed. Each closed item is symptom, root cause, and fix.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
 **Last updated:** 2026-11-03
-
----
-
-## How to use this in interviews
-
-1. Pick 2–3 stories (metric lie, cross-issuer leak, hop-2, ticker clobber).
-2. Speak in this order: **what broke → how I found it → what I changed → what I’d still improve**.
-3. Prefer numbers and file names over buzzwords.
-4. Be honest about what is still open: the five misses below, and a hybrid lead whose interval crosses zero. Hold-out κ is **0.84** after two bad 1.0 labels were corrected.
 
 ---
 
@@ -27,7 +17,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Root cause** | Default `EXTRACTION_MAX_TOKENS=4096` too small for Item 1. |
 | **Fix** | Raise to `16384` via `.env` / settings (`EXTRACTION_MAX_TOKENS`). |
 | **Where** | `config.py`, `.env.example` |
-| **Interview angle** | “Token limits aren’t abstract — they silently corrupt structured extraction. I treat max_tokens as a product knob and verify with a smoke extract.” |
 
 ---
 
@@ -39,7 +28,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Root cause** | `Company` is a **global** node (shared across filings). Early writes stored a single `ticker` property and overwrote it on every MERGE. |
 | **Fix** | `home_ticker` set only when the filing **issuer** writes that Company; accumulate `tickers[]` for all mentioning filings. |
 | **Where** | `resolver.py` (`is_issuer`, `mark_issuer_company`), `graph_writer.py` (`_merge_global_entity`), `test_ticker_clobber.py` |
-| **Interview angle** | “Global entities need multi-valued provenance. Issuer identity and ‘mentioned in filing X’ are different facts — I stopped conflating them.” |
 
 ---
 
@@ -51,7 +39,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Root cause** | Canonical ids were name-only for types that are **not** shared across issuers. |
 | **Fix** | Ticker-prefix RiskFactor / ProductLine / Executive ids (`AAPL_IPHONE` vs `META_FACEBOOK`). Keep Company / Subsidiary / Supplier global. |
 | **Where** | `resolver.py` (`TICKER_SCOPED_ENTITY_TYPES`, `canonical_entity_id`) |
-| **Interview angle** | “Ontology design is about which entities are world-unique vs issuer-local. Getting that wrong looks fine on a one-company demo.” |
 
 ---
 
@@ -63,7 +50,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Root causes** | (a) Planner often returned **one** template for a two-aspect ask. (b) Evidence packs blew token budget / order was wrong. (c) Answer model **false-refused** despite usable graph facts. |
 | **Fix** | Multi-template plans + deterministic `augment_template_ids`; evidence caps / packing; unjustified-refuse repair and `draft_from_graph_evidence` fallback; raise answer token budget where needed. |
 | **Where** | `graph_retriever.py`, `answer.py`, `config.py` (`ANSWER_MAX_TOKENS`, evidence caps) |
-| **Interview angle** | “Retrieval wasn’t always the bug — packing and answer-time refuse heuristics were. I fixed the path end-to-end, then re-benched hop-2.” |
 
 **After fixes (keyword era, then judge era):** hop-2 hybrid beat vector-only; under LLM judge ≈ **0.90 vs 0.69**.
 
@@ -79,7 +65,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Fix** | Suite v2: `required_facts` + `gold_answer`; Haiku + Instructor **LLM-as-judge**; keyword kept secondary. Rejudged saved answers without full re-answer (`--rejudge`). |
 | **Where** | `benchmarks/multi_company_smoke.json`, `benchmark_judge.py`, `benchmark_runner.py`, `benchmarks/results/multi_company_smoke_judged.json` |
 | **Headline (judge)** | Overall hybrid **0.79** vs vector **0.76**; hop-2 **0.90 vs 0.69** (n=24). |
-| **Interview angle** | “My keyword metric said multi-hop was perfect. I found 1.0 scores on wrong answers, replaced it with a fact-checklist judge, and published the honester numbers. That’s evals engineering.” |
 
 **Still not human accuracy** — automated judge, small n, no hand-label agreement % yet.
 
@@ -94,7 +79,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Not the bug** | Keeping `COMPETES_WITH → META` as a neighbor — that’s intentional. Wrong was citing **Meta’s 10-K text** for Apple product facts. |
 | **Fix** | Issuer-owned write skip; union `source_chunk_ids` + `write_tickers`; thread `ticker` into graph retrieve; filter fact chunks via `chunk_ticker.py`; `python graph_writer.py --cleanup-cross-issuer` (deleted 5 bad edges). |
 | **Where** | `graph_writer.py`, `retrieve.py`, `graph_retriever.py`, `chunk_ticker.py`, `test_cross_issuer_leak.py` |
-| **Interview angle** | “Citation validation only proves ‘we retrieved it,’ not ‘it’s the right issuer.’ Eval found Meta chunks on an Apple answer; I fixed write + retrieve + cleaned Neo4j.” |
 
 ---
 
@@ -105,7 +89,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Symptom** | Easy to accidentally burn paid extract/answer calls. |
 | **Fix** | `budget.py`, `--confirm` on grow/benchmark, rough cost estimates in runners. |
 | **Where** | `budget.py`, `grow_corpus.py`, `benchmark_runner.py` |
-| **Interview angle** | “I treat LLM spend like an API quota — estimate, smoke, then confirm full runs.” |
 
 ---
 
@@ -118,7 +101,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Fix** | `truncate_passage_for_query` (query-centered window); post-HNSW lexical/entity boost + over-fetch in `vector_retriever.py`. |
 | **Where** | `answer.py`, `vector_retriever.py`, `test_answer_evidence.py`; smoke report `benchmarks/results/multi_company_smoke_hop0_fix.json` |
 | **Verify** | Rebench both items × hybrid/vector_only → all **score=1.0**, `refuse=False`. |
-| **Interview angle** | “The refuse wasn’t over-caution — we truncated away the definition. Eval said refuse; I fixed packing, not the prompt.” |
 
 ---
 
@@ -131,7 +113,6 @@ Use this to prep interviews: every row is a story of **symptom → root cause �
 | **Fix** | Strict chunk-ticker filter only for `ISSUER_OWNED_REL_TYPES` (shared with write gate); keep foreign provenance on `COMPETES_WITH` / `SUPPLIED_BY` / `DEPENDS_ON`. Competition asks drop `PRODUCES_PRODUCT` from the pack + needle-rank competitors. Produce yes/no asks force route `both`; omit unmatched `PRODUCES_PRODUCT` when a specific product/segment needle doesn’t hit (generic “apps/products” lists keep the full set). |
 | **Where** | `graph_retriever.py`, `graph_writer.py`, `retrieve.py`, `answer.py`, `test_cross_issuer_leak.py`, `test_answer_evidence.py` |
 | **Verify** | Hop-1 rebench n=8 → hybrid **1.00**, vector **0.81** (`multi_company_smoke_hop1_fix.json`); overall hybrid **0.95** vs vector **0.90**. |
-| **Interview angle** | “Write-time issuer gates and retrieve-time filters aren’t the same. Competition evidence often lives in the *other* company’s 10-K — over-filtering erased a true edge. And when the graph lacks a node, stuffing unrelated products is worse than falling back to vector segment prose.” |
 
 ---
 
@@ -184,8 +165,6 @@ Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). T
 | `hop2_nvda_auto_competitors_risks` | 0.667 | Names automotive SoCs plus Ambarella and Broadcom. Misses DRIVE / autonomous by name. |
 | `hop2_jpm_credit_vs_market` | 0.375 on the full run, **1.0** on a targeted resmoke | The headline uses **0.375**. The rerun shows the score moves. It is not in the mean. |
 
-**Interview angle:** "Four items are still wrong or partial, and one hop-2 score flipped from 0.375 to 1.0 when I reran it. The published mean keeps 0.375. The rerun is the variance, not the headline."
-
 ### B. Labeled set growth (v3 smoke, not yet headline)
 
 | | |
@@ -193,7 +172,6 @@ Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). T
 | **Symptom** | The suite outgrew the first n=24 sync. |
 | **Status** | Headline is the n=44 full run: hybrid **0.92** / vector **0.89**. The JPM hop-2 item stays at its full-run **0.375**. A later rerun scored 1.0 and is not in the mean. v4 adds gold chunk ids on the same questions. Retrieval is a separate table. |
 | **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; v3 items are already single-ticker. |
-| **Interview angle** | “Growing the suite exposed hybrid over-answering OOS from unrelated GRAPH edges — we gated refuse-repair on topic match and forced refuse when the pack is off-topic.” |
 
 ---
 
@@ -233,7 +211,7 @@ Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). T
 1. Phase 1–5 curriculum: extract → graph → vectors → route → answer → keyword bench  
 2. Multi-company grow → **ticker clobber** + **scoped entity ids**  
 3. Hop-2 answer/retrieve fixes → hybrid wins hop-2 on keyword bench  
-4. Recruiter packaging (README, screenshots, public repo)  
+4. README, screenshots, public repo  
 5. **LLM judge** replaces keyword as primary metric  
 6. **Cross-issuer leak** found in judged/keyword results → write gate + retrieve filter + cleanup  
 7. **Hop-0 false refuses** → query-centered vector windows + lexical re-rank (AppleCare/Azure smoke = 1.0)  
@@ -241,7 +219,7 @@ Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). T
 
 ---
 
-## Quick “story cards” (memorize these)
+## Short versions
 
 **Card 1 — Metric lied**  
 Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge. Current headline is hybrid **0.92** vs vector **0.89** on the n=44 full run, and the bootstrap interval on that gap crosses zero. Hold-out κ is **0.84** after two mistaken 1.0 labels were corrected.
@@ -282,4 +260,4 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-11-03 | Recorded the five remaining hybrid misses and replaced the 24/24 calibration claim with hold-out κ. |
 | 2026-11-04 | Corrected hold-out labels for Meta AI competition (0) and Meta AI glasses (0.5). Reported κ is 0.84, not the first-pass 0.00. |
 
-When you hit a new bug: add a section under **Closed** or **Open**, link files, and one interview sentence. Keep claims tied to commits/results — don’t invent scale.
+When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

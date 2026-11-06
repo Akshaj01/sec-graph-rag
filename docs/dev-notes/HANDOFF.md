@@ -1,7 +1,7 @@
 # SEC GraphRAG — Handoff
 
 **Last updated:** 2026-11-01  
-**Repo:** https://github.com/Akshaj01/sec-graph-rag (private)  
+**Repo:** https://github.com/Akshaj01/sec-graph-rag  
 **Primary living plan:** [`docs/MEASURE_IT_PLAN.md`](../MEASURE_IT_PLAN.md)
 
 Use this file + `docs/dev-notes/AGENTS.md` + **`docs/MEASURE_IT_PLAN.md`** to continue in a **new Cursor chat**. Chat history will not transfer.
@@ -42,7 +42,7 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 | Judge | LLM-as-judge vs `required_facts`; old human agree **24/24** (history, not κ) |
 | **WP0** (design) | **DONE** — see MEASURE_IT_PLAN §8 |
 | **WP1** (gold chunks) | **DONE** — spot-check accepted |
-| **WP2** (retrieval) | **DONE** — vector recall@5 **0.82** / MRR **0.67**; hybrid **0.67** / **0.51**; graph **0.42** / **0.37** (`benchmarks/results/retrieval_v4.md`) |
+| **WP2** (retrieval) | **DONE** — 2026-11-05 alternating rerun: hybrid recall@5 **0.84** / MRR **0.63**; vector **0.82** / **0.67**; graph **0.49** / **0.44** (`benchmarks/results/retrieval_v4.md`) |
 | **WP3** (κ) | **DONE** — corrected hold-out linear κ **0.84** (19/20). First pass was all 1.0s (κ 0.00). Self-agreement κ **0.42**. Rubric v1 unchanged. |
 | **WP4** (bootstrap) | **DONE** — full-run gap **0.038** [−0.047, 0.126]; hop-2 **0.005** [−0.234, 0.250]. Lead is not stable. |
 | **WP5** (CI gate) | **DONE** — green [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304), red break [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624). |

@@ -875,6 +875,38 @@ def _rank_graph_facts_for_question(facts: List, question: str) -> List:
     return sorted(facts, key=_key, reverse=True)
 
 
+def _interleave_evidence(
+    first: List[LabeledEvidenceItem],
+    second: List[LabeledEvidenceItem],
+) -> List[LabeledEvidenceItem]:
+    """Vector passage, graph statement, and so on. Skip an item whose chunks are already used."""
+    out: List[LabeledEvidenceItem] = []
+    seen: Set[str] = set()
+    i = 0
+    j = 0
+    take_first = True
+    while i < len(first) or j < len(second):
+        pool = first if take_first else second
+        idx = i if take_first else j
+        while idx < len(pool):
+            item = pool[idx]
+            ids = [c for c in item.chunk_ids if c]
+            idx += 1
+            if ids and all(c in seen for c in ids):
+                continue
+            seen.update(ids)
+            out.append(item)
+            break
+        if take_first:
+            i = idx
+        else:
+            j = idx
+        take_first = not take_first
+        if i >= len(first) and j >= len(second):
+            break
+    return out
+
+
 def build_evidence_items(
     retrieval: HybridRetrievalResult,
     *,
@@ -901,7 +933,6 @@ def build_evidence_items(
         else max_vector_chars
     )
 
-    items: List[LabeledEvidenceItem] = []
     seen_graph: Set[tuple] = set()
     seen_vector: Set[str] = set()
     graph_candidates: List[tuple] = []  # (confidence, item)
@@ -929,10 +960,10 @@ def build_evidence_items(
             graph_candidates.append((float(fact.confidence or 0.0), item))
 
     graph_candidates.sort(key=lambda t: t[0], reverse=True)
-    items.extend(item for _, item in graph_candidates[:max_graph])
+    graph_items = [item for _, item in graph_candidates[:max_graph]]
 
+    vector_items: List[LabeledEvidenceItem] = []
     if retrieval.vector:
-        vector_items: List[LabeledEvidenceItem] = []
         for passage in retrieval.vector.passages:
             cid = str(passage.chunk_id)
             if cid in seen_vector:
@@ -954,9 +985,12 @@ def build_evidence_items(
             )
         # Keep highest-score passages first.
         vector_items.sort(key=lambda it: float(it.score or 0.0), reverse=True)
-        items.extend(vector_items[:max_vector])
+        vector_items = vector_items[:max_vector]
 
-    return items
+    # Same order as the hybrid recall list: vector, graph, vector, graph.
+    # A chunk already used is skipped. Extra graph statements sit at the tail,
+    # so a prompt-length cut drops those before the vector passages.
+    return _interleave_evidence(vector_items, graph_items)
 
 
 def _fit_items_to_prompt_budget(
@@ -975,8 +1009,8 @@ def _fit_items_to_prompt_budget(
         prompt = _render_evidence_prompt(question, kept, allowed)
         if len(prompt) <= max_chars:
             return kept
-        # Drop from the end (lower-confidence graph / lower-score vector first
-        # because we appended in priority order).
+        # Drop from the end. Interleave puts leftover graph statements there,
+        # so those go before a vector passage does.
         kept.pop()
     return kept
 

@@ -110,13 +110,23 @@ def retrieve(
 
     route = decision.effective_route
 
+    # A normal ask always builds both lists. The router choice stays on
+    # `effective_route` for the log. force_route keeps one list so the
+    # vector-only ablation does not secretly search the graph.
+    if force_route is None:
+        fetch_graph = True
+        fetch_vector = True
+    else:
+        fetch_graph = route in (RetrievalRoute.GRAPH, RetrievalRoute.BOTH)
+        fetch_vector = route in (RetrievalRoute.VECTOR, RetrievalRoute.BOTH)
+
     graph_result: Optional[GraphRetrievalResult] = None
     vector_result: Optional[VectorRetrievalResult] = None
 
-    if route in (RetrievalRoute.GRAPH, RetrievalRoute.BOTH):
+    if fetch_graph:
         graph_result = retrieve_graph(question, ticker=ticker)
 
-    if route in (RetrievalRoute.VECTOR, RetrievalRoute.BOTH):
+    if fetch_vector:
         vector_result = retrieve_vector(question, ticker=ticker, k=vector_k)
 
     return HybridRetrievalResult(

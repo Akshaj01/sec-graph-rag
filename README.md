@@ -2,7 +2,7 @@
 
 Hybrid **knowledge-graph + vector RAG** over SEC **10-K** filings. Closed ontology in Neo4j, the same chunks in pgvector, router picks graph and/or vectors, answers cite only chunks from that retrieval.
 
-10 tickers, 44 hop-stratified questions. Hybrid generation mean **0.92** vs vector-only **0.89**. That lead is **not stable**: the 95% interval on the gap includes values below zero. Vector leads retrieval (recall@5 **0.82** vs hybrid **0.67**).
+10 tickers, 44 hop-stratified questions. Hybrid generation mean **0.92** vs vector-only **0.89**. That lead is **not stable**: the 95% interval on the gap includes values below zero. Hybrid recall@5 is **0.84** vs vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.90**) and MRR (**0.67** vs **0.63**).
 
 ## Results
 
@@ -22,11 +22,11 @@ Retrieval is scored separately, on 32 answerable items. Out-of-scope items are s
 
 | | Recall@5 | Recall@10 | MRR |
 |--|--------:|----------:|----:|
-| Graph | 0.42 | 0.51 | 0.37 |
-| Vector | **0.82** | **0.93** | **0.67** |
-| Hybrid | 0.67 | 0.80 | 0.51 |
+| Graph | 0.49 | 0.59 | 0.44 |
+| Vector | 0.82 | **0.93** | **0.67** |
+| Hybrid | **0.84** | 0.90 | 0.63 |
 
-Hybrid lists graph chunks first. Those are often a different passage than the gold prose, so they push the gold id down. The answer can still be right because the graph statement carries the fact.
+Hybrid alternates a vector chunk, then a graph chunk. A chunk already used is skipped. Both lists are retrieved even when the router said graph. The graph-only column moved from the previous run (recall@5 **0.42**) because the graph planner does not return the same chunks every time. Vector did not move.
 
 ## Example
 
@@ -63,16 +63,16 @@ Paired bootstrap, 10,000 draws, seed 0. Gap = hybrid minus vector-only.
 | Overall | 44 | 0.038 | −0.047 to 0.126 |
 | Hop 2 | 8 | 0.005 | −0.234 to 0.250 |
 
-CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.802**. It reads the saved file and does not call a model.
+CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.901**. It reads the saved file and does not call a model.
 
 Full tables: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md), [`benchmarks/results/ablation_bootstrap.md`](benchmarks/results/ablation_bootstrap.md). The means use the full-run score for `hop2_jpm_credit_vs_market` (**0.375**). A later one-item rerun scored **1.0**. That rerun is not in the table.
 
 ### 60-second pass
 
-1. Read the two tables above. Say the generation gap out loud, then say the interval crosses zero.
-2. Ask one graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`.
-3. Ask one refusal: a question the 10-K corpus cannot answer (Tesla battery supply, Bitcoin on Apple's balance sheet).
-4. Name one miss from **What didn't work** (Meta apps refused).
+1. The generation gap is 0.038, and the interval crosses zero.
+2. One graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`.
+3. One refusal: a question the 10-K corpus cannot answer (Tesla battery supply, Bitcoin on Apple's balance sheet).
+4. One open miss: Meta apps refused. See **What didn't work**.
 
 ## Design decisions
 
@@ -177,6 +177,6 @@ Neo4j Browser: http://localhost:7474 (`neo4j` / `password` by default) · API do
 | Retrieve / answer / API | `router.py`, `graph_retriever.py`, `vector_retriever.py`, `answer.py`, `api.py` |
 | Batch growth / budget | `grow_corpus.py`, `budget.py` |
 | Eval | `benchmarks/`, `benchmark_runner.py`, `benchmark_judge.py`, `chunk_ticker.py` |
-| Learning / interview log | [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md) — bugs we hit and how we fixed them |
+| Failure log | [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md) — bugs we hit and how we fixed them |
 | Internal build notes | [`docs/dev-notes/`](docs/dev-notes/) (curriculum handoff; not required to use the system) |
 

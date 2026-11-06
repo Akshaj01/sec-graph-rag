@@ -31,8 +31,11 @@ def test_graph_chunk_ids_follow_first_occurrence_after_rank():
     ]
 
 
-def test_hybrid_puts_graph_ids_before_new_vector_ids():
-    assert hybrid_chunk_ids(["g1", "g2"], ["g2", "v1"]) == ["g1", "g2", "v1"]
+def test_hybrid_alternates_vector_then_graph_and_skips_duplicates():
+    graph = [f"g{i}" for i in range(11)]
+    vector = ["gold", "g0", "v2"]
+    assert hybrid_chunk_ids(graph, vector)[:5] == ["gold", "g0", "v2", "g1", "g2"]
+    assert hybrid_chunk_ids(["g1", "g2"], ["g2", "v1"]) == ["g2", "g1", "v1"]
 
 
 def test_score_retrieved_rounds_miss():

@@ -4,7 +4,8 @@ WP2: retrieve-only recall@5, recall@10, and MRR.
 Systems:
   graph  — graph facts only, chunk ids in evidence-pack order
   vector — vector passages only, top 10 after the lexical rerank
-  hybrid — same order the evidence pack uses: graph ids, then new vector ids
+  hybrid — vector id, graph id, vector id, graph id, skipping a chunk already used.
+           A normal hybrid ask always has both lists, even if the router said graph.
 
 Does not call the answer model. Out-of-scope items are skipped (no gold chunks).
 """
@@ -20,7 +21,7 @@ from answer import _rank_graph_facts_for_question, filter_unmatched_produces_fac
 from benchmark import load_suite
 from benchmark_schema import BenchmarkItem, BenchmarkSuite
 from graph_retriever import retrieve_graph
-from retrieval_metrics import mean, recall_at_k, reciprocal_rank, unique_in_order
+from retrieval_metrics import interleave_ids, mean, recall_at_k, reciprocal_rank, unique_in_order
 from retrieve import retrieve
 from vector_retriever import retrieve_vector
 
@@ -48,8 +49,8 @@ def vector_chunk_ids(passages: Sequence) -> List[str]:
 
 
 def hybrid_chunk_ids(graph_ids: Sequence[str], vector_ids: Sequence[str]) -> List[str]:
-    """Graph ids first, then vector ids that are not already in the graph list."""
-    return unique_in_order([*graph_ids, *vector_ids])
+    """Vector, graph, vector, graph. Skip a chunk that is already in the list."""
+    return interleave_ids(vector_ids, graph_ids)
 
 
 def score_retrieved(retrieved: Sequence[str], gold: Sequence[str]) -> Dict[str, float]:
@@ -131,7 +132,9 @@ def run_retrieval_eval(suite: BenchmarkSuite) -> dict:
         "notes": (
             "Macro-average over answerable items with gold_chunk_ids. "
             "Rank is first occurrence of a chunk id. "
-            "Hybrid list is graph ids, then vector ids not already present. "
+            "Hybrid list alternates vector id, graph id, vector id, graph id, "
+            "and skips a chunk already used. Both lists are retrieved even when "
+            "the router said graph. "
             "Vector depth is 10 so recall@10 can differ from recall@5. "
             "The answer model still caps the pack (graph facts 12, vector passages 5); "
             "this table is retrieve-only and does not apply that cap. "

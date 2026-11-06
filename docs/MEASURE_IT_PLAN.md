@@ -10,6 +10,54 @@ Akshaj + Cursor both use this file as the source of truth while we work through 
 | **Goal** | Defendable answer to *“How do you know your RAG is good?”* — numbers, κ, CI gate, honest failures — then move to gateway. |
 | **Working style** | Learn by doing: Akshaj writes a short design note for each step; Cursor implements; Akshaj explains the non-trivial bits before commit. |
 
+## Words this file uses
+
+**Suite / golden set.** The 44 questions in `benchmarks/multi_company_smoke.json`, with the facts each answer is supposed to hit written down ahead of time. A score is a check against that list.
+
+**Hop.** How many steps the question needs. Hop 0 is one definition ("what is AWS"). Hop 1 is one relationship ("what does Apple make"). Hop 2 joins or compares two facts ("JPM credit risk vs market risk"). Stratified means the 44 are spread across those buckets on purpose.
+
+**OOS.** Out of scope. The filing does not contain the answer, so the right behavior is to refuse. 12 of the 44 are OOS.
+
+**Required facts.** The checklist for an answerable question. The judge scores those facts. It does not score "does this paragraph sound like the sample answer."
+
+**LLM-as-judge.** A model reads the system's answer and the required facts and gives a number. That model is not you. It can be wrong, which is why the human labels exist.
+
+**Gold chunk.** The 10-K passage that actually contains a required fact, stored as an id. Retrieval is scored against these ids. Generation is scored against the facts.
+
+**Retrieval vs generation.** Retrieval asks whether the search returned the right passages. Generation asks whether the written answer included the required facts. Those are two tables. A useful graph sentence can still miss the gold passage, so hybrid can win generation and lose retrieval.
+
+**recall@k.** Of the gold chunks for one question, the fraction that showed up in the first k results. recall@5 uses the first 5. recall@10 uses the first 10. Two gold chunks, one of them in the top 5, scores 0.5.
+
+**MRR.** Mean reciprocal rank. First gold chunk in slot 1 scores 1. Slot 4 scores 1/4. Missing entirely scores 0. Average those. It pays for a right chunk near the top, not just somewhere in the list.
+
+**nDCG.** A ranking score that also cares how far down a relevant chunk sits, and can treat some chunks as more relevant than others. This phase left it optional and did not compute it.
+
+**κ (kappa).** Cohen's kappa. A 0-to-1 score for "did two graders agree more than luck would." Raw agreement is the simpler count: 19/20 means the snapped scores matched on 19 questions. κ drops when one grader gives almost everything the same score, because matching is then easy to get by chance. Weighted κ means a near miss (you 1.0, judge 0.5) hurts less than a total miss (you 1.0, judge 0). This repo reports the linear version. Quadratic is logged next to it and punishes the total miss more.
+
+**Hold-out.** The 20 questions that were not on the first 24-question practice sheet. The rubric was not edited from these. That is the κ in the README (0.84 after the two label fixes).
+
+**Self-agreement.** You scored 15 questions, came back later, and scored them again without looking. That κ (0.42) is how steady you are. A judge cannot be expected to match you more tightly than you match yourself.
+
+**Spearman.** Did the questions you scored higher also get scored higher by the judge? It compares the order, not the exact numbers. It was blank on the first hold-out pass because every human score was 1.0, so there was no order to compare.
+
+**Snap.** The judge prints decimals like 0.125 or 0.667. Before κ, both sides are forced onto 0, 0.5, or 1. The midpoints 0.25 and 0.75 go up.
+
+**Ablation.** Change one thing and measure again. Here the one thing is the graph. Hybrid is graph plus vectors. Vector-only is the same questions with the graph path removed. The gap between those two scores is the ablation.
+
+**Gap.** Hybrid mean minus vector-only mean on the same questions. Positive means hybrid scored higher on average.
+
+**Bootstrap.** A check on whether a slightly different draw of these 44 questions would still show that gap. Redraw 44 questions from the same 44, putting each one back, so some show up twice and some drop out. Recompute the gap. Do that 10,000 times. The interval is the middle 95% of those gaps.
+
+**Paired.** A redrawn question brings its hybrid score and its vector score together. JPM's hybrid score stays with JPM's vector score.
+
+**Confidence interval.** That middle 95%. The rule used here: the lead is stable only when the whole interval sits above zero. Overall gap 0.038 has interval −0.047 to 0.126, so a negative gap is still inside it.
+
+**Seed.** The redraws start from a fixed number (0), so running the script again prints the same interval.
+
+**Percentile.** Sort the 10,000 gaps. The interval edges are the gaps at the 2.5% and 97.5% positions. The number reported as the gap is the gap on the original 44, not the average of the redraws.
+
+**CI gate.** A GitHub Actions check. It fails if the saved hybrid recall@10 drops by more than 0.02. It reads a file and does not call a model. This "CI" means continuous integration. The other "CI" above means confidence interval.
+
 ---
 
 ## 1. Big picture
@@ -35,7 +83,7 @@ Track so we don’t thrash.
 | Hybrid vs vector-only runner | Done | `benchmark_runner.py` |
 | Suite v3, n=44, hop 0/1/2 + OOS | Done | `benchmarks/multi_company_smoke.json` |
 | LLM-as-judge vs `required_facts` | Done | `benchmark_judge.py` |
-| Headline table (hybrid **0.94** / vector **0.89**; hop-2 **0.96** / **0.88**) | Done | README + `…_judged.json` |
+| Headline table (full run: hybrid **0.92** / vector **0.89**; hop-2 **0.88** / **0.88**) | Done | README + `…_judged.json` |
 | Human ↔ judge agree **24/24** on older hybrid set | Done (agreement, not κ) | `benchmarks/judge_calibration_hybrid.md` |
 | Failure → fix loop (false refuse, NFLX AWS, planner coerce, Apple supply…) | Done | `docs/PROBLEMS_AND_FIXES.md` |
 | HANDOFF / agents notes out of root | Done | `docs/dev-notes/` |
@@ -87,7 +135,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 
 ### WP3 — Weighted κ + self-agreement
 **Status:** `done` — hold-out linear κ **0.84** (raw 19/20) after correcting Meta AI competition to 0 and Meta AI glasses to 0.5; first pass was κ **0.00**. Self-agreement κ **0.42** (13/15). Rubric v1 unchanged.  
-**Why:** 24/24 “agree” ≠ calibrated κ; interviewers ask for κ / bias honesty.  
+**Why:** 24/24 “agree” can hide a judge that does not match a second pass. κ is the number that shows that.  
 **You:** re-label ~15 items on a different day (self-agreement ceiling); hold out a slice for κ (don’t tune rubric on the report set).  
 **Cursor:** worksheet generator; κ / Spearman computation; update calibration doc + README line.  
 **Hand-write:** κ formula usage + rubric tweaks from disagreement reads.  
@@ -108,7 +156,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **You:** choose the fail threshold (start: recall@10 drop > 2 points on a fixed smoke subset).  
 **Exit:** badge or Actions run showing green on main + red on a deliberate break (screenshot or link).
 
-### WP6 — Packaging for interviews
+### WP6 — README packaging
 **Status:** `done` — README opens with results, the 60-second pass, design decisions, and the five misses. Recording a demo is still optional.  
 **Cursor:** README reorder; “What didn’t work” from PROBLEMS + JPM flake + false-refuse story; optional 60–90s capture script/checklist.  
 **You:** record demo; write design-decisions in your words; LinkedIn one-liner later (optional).  
@@ -138,11 +186,11 @@ If only **~10h/week**: keep n≈40–44, skip nDCG, one ablation (hybrid vs vect
 1. Pick **one WP** (or a sub-bullet) from this file.  
 2. Akshaj: 5–15 min design note (what / decide / measure) — can be in chat or §8.  
 3. Cursor: implement + tests.  
-4. Akshaj: explain the core (metrics / κ / CI threshold) out loud or in NOTES before commit.  
+4. Akshaj: write the core (metrics / κ / CI threshold) in NOTES before commit.  
 5. Update this file: Status, checkboxes, **Session log**.  
 6. Commit when a WP exit criterion is met (not every WIP).
 
-**Rule from personal plan:** you drive design and interview-critical code; AI does boilerplate, UI, YAML, plots, docs glue. Never commit what you can’t explain.
+**Rule from personal plan:** you drive design and the metric code; AI does boilerplate, UI, YAML, plots, docs glue. Never commit what you can’t explain.
 
 ---
 
@@ -199,7 +247,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Rank:** first time a chunk id appears. Hybrid list is graph ids, then vector ids that were not already in the graph list. Vector list is depth 10. Out-of-scope items are not scored.
 
-**Result to be able to say:** on suite v4, vector retrieval leads (overall recall@5 **0.82**, MRR **0.67**). Hybrid is lower (**0.67** / **0.51**) because graph chunks are placed first and often are not the gold prose chunks. Graph alone is lower still (**0.42** / **0.37**). This does not replace the generation table (hybrid **0.94** vs vector **0.89**). A good answer can come from a graph statement whose source chunk is not the gold passage.
+**Result to be able to say:** the 2026-11-05 rerun alternates vector then graph and always retrieves both lists. Hybrid recall@5 is **0.84**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.90**) and MRR (**0.67** vs **0.63**). The earlier graph-first hybrid number was recall@5 **0.67** / MRR **0.51**. Graph-only moved to **0.49** / **0.44** on this rerun because the planner is not deterministic. This does not replace the generation table (full-run hybrid **0.92** vs vector **0.89**).
 
 ### WP3 — κ split (2026-11-02)
 
@@ -223,7 +271,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 ### WP5 — recall gate (2026-11-03)
 
-**Check:** hybrid recall@10 on the 32 answerable v4 items, read from `benchmarks/results/retrieval_v4.json`. Baseline pinned at **0.8021**. Fail when the drop is **greater than 0.02**. A drop of exactly 0.02 passes. The item ids are pinned too, so deleting a question does not raise the average.
+**Check:** hybrid recall@10 on the 32 answerable v4 items, read from `benchmarks/results/retrieval_v4.json`. Baseline pinned at **0.9010** after the alternating rerun. Fail when the drop is **greater than 0.02**. A drop of exactly 0.02 passes. The item ids are pinned too, so deleting a question does not raise the average.
 
 **CI** runs `pytest test_recall_gate.py` and `python recall_gate.py`. No model, no database.
 
@@ -261,7 +309,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 Ship gate in §3 is checked. The defendable answer to “how do you know the RAG is good?”:
 
 - Generation: hybrid **0.92** vs vector-only **0.89** on the 44-question full run. The paired-bootstrap gap is **0.038**, and the 95% interval **−0.047 to 0.126** includes a negative gap. The lead is not stable on this suite. One JPM hop-2 item scored 0.375 on that run and 1.0 on a later rerun. The mean uses 0.375.
-- Retrieval is a different result. Vector recall@5 is **0.82**, hybrid **0.67**. Graph chunks are ranked first and often are not the gold prose chunk.
+- Retrieval, after the alternating rerun: hybrid recall@5 **0.84**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.90**) and MRR (**0.67** vs **0.63**). The earlier graph-first hybrid recall@5 was **0.67**.
 - The judge is not a large panel. The first hold-out pass scored every item 1.0 (κ **0.00**). Two of those labels contradicted the required facts, so Meta AI competition is now 0 and Meta AI glasses is 0.5. Corrected linear κ is **0.84** (19/20). Self-agreement is κ **0.42** (13/15). Rubric v1 was not edited.
 - The recall gate is a saved-file check. It fails when committed hybrid recall@10 drops more than 0.02. It does not re-run ingest. Green push and red break dispatch are both on Actions.
 - Five misses stay open: Meta apps refused, Meta AI competition, Meta AI glasses, NVIDIA auto hop-2, and the JPM hop-2 score that moved from 0.375 to 1.0.
