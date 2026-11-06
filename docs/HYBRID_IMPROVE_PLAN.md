@@ -139,18 +139,18 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 
 | Item | Mean | Notes |
 |------|-----:|-------|
-| `hop2_jpm_credit_vs_market` | 0.63 | Flaky historically (0.38 / 1.0 / 0.63). May be judge + pack. |
-| `hop1_aapl_products` | 0.83 | Same text; judge moved 1.0→0.5 once. Not a retrieve bug. |
-| `hop1_meta_apps` | 0.83 | Mostly fixed vs old refusal; polish only. |
-| `hop1_nflx_aws_relationship` | (0.50 on earlier file) | Dual AWS supplier + Amazon retail compete. |
+| `hop2_jpm_credit_vs_market` | 0.63 | Flaky historically; needs JPM issuer restore (~$15 est.). |
+| `hop1_aapl_products` | 0.83 | Judge flake historically; needs AAPL issuer restore. |
+| `hop1_meta_apps` | 0.83 | Mostly fixed; needs META issuer restore on this PC. |
+| `hop1_nflx_aws_relationship` | (0.50 on earlier file) | **DONE** hybrid/vector **1.0** (§22). |
 
 ### P4. This-PC corpus restore
 
 | | |
 |--|--|
 | **Why** | Full retrieve rebuild and honest full rebench need all 10 tickers. This PC had AAPL/JOBY/WDC (+ META embedded for the Meta work). |
-| **Work** | `grow_corpus.py` for missing: `AMZN GOOGL JNJ JPM MSFT NFLX NVDA XOM` (and confirm META extract/graph, not just embed). |
-| **Est. cost** | On the order of **~$15–25** extract+embed if nothing is cached (META alone was ~$2.19 extract). Run `--budget` first. |
+| **Work** | Issuers present after Docker restart: **MSFT NFLX NVDA** only. Still missing: `AAPL AMZN GOOGL JNJ JPM META XOM`. |
+| **Est. cost** | Budget 2026-11-06: META+AAPL+JPM ≈ **$26.4** (JPM alone ~$15); all 7 ≈ **$44**. Raise `MAX_EXTRACTION_BUDGET_USD` per ticker. |
 
 ### P5. Full retrieve rebuild (`retrieval_v4`)
 
@@ -193,8 +193,8 @@ Until step 4, the public headline stays **0.86 vs 0.89**.
 
 ## Suggested next session
 
-1. **P3** soft misses (`hop2_jpm_credit_vs_market`, `hop1_nflx_aws_relationship`, …) or polish.  
-2. **P4** remaining tickers (`AMZN GOOGL JNJ JPM XOM` — MSFT/NFLX/NVDA/META done on this PC) if aiming at full rebench.  
+1. **P4** restore issuers — start `META AAPL` (~$11.4), then `JPM`, then `AMZN GOOGL JNJ XOM`.  
+2. Resmoke `hop2_jpm_credit_vs_market` after JPM grow.  
 3. Do not start P6 until you say so.
 
-**Last updated:** 2026-11-06 (§20–21 glasses + MSFT hop2 + NVDA DRIVE)
+**Last updated:** 2026-11-06 (§22 NFLX AWS 1.0; P4 issuers thin after Docker restart)
