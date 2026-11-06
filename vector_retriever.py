@@ -145,6 +145,45 @@ def first_named_competitor_span(text: str) -> Optional[tuple]:
     return (match.start(), match.group(0))
 
 
+_HARDWARE_PRODUCT_ASK = re.compile(
+    r"\b("
+    r"glasses|reality labs|quest|headset|headsets|"
+    r"augmented reality|virtual reality|\bar\b|\bvr\b"
+    r")\b",
+    re.IGNORECASE,
+)
+# Prefer specific SKUs over early generic "AI glasses" boilerplate.
+_NAMED_HARDWARE_MARKERS = re.compile(
+    r"\b("
+    r"ray-?ban|oakley|quest|hololens|vision pro|drive\b"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+def is_hardware_product_ask(question: str) -> bool:
+    """True for glasses / Reality Labs / headset-style product asks."""
+    return bool(_HARDWARE_PRODUCT_ASK.search(question or ""))
+
+
+def first_named_hardware_span(text: str) -> Optional[tuple]:
+    """
+    (start, matched_text) for Ray-Ban / Oakley / Quest / … in text.
+
+    Used so hop-0 glasses asks do not window on the early generic 'AI glasses'
+    sentence while the brand names sit ~5k chars later. Prefer Ray-Ban/Oakley
+    over earlier Quest so the 1200-char window covers the AI-glasses SKUs.
+    """
+    blob = text or ""
+    preferred = re.search(r"\b(ray-?ban|oakley)\b", blob, re.IGNORECASE)
+    if preferred:
+        return (preferred.start(), preferred.group(0))
+    match = _NAMED_HARDWARE_MARKERS.search(blob)
+    if not match:
+        return None
+    return (match.start(), match.group(0))
+
+
 def competition_cooccurrence_boost(question: str, text: str) -> float:
     """
     Extra score for competition asks when the passage both talks competition

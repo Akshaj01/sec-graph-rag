@@ -25,7 +25,12 @@ from config import settings
 from graph_retriever import GraphFact
 from retrieve import HybridRetrievalResult, retrieve
 from router import RetrievalRoute
-from vector_retriever import first_named_competitor_span, is_competition_ask
+from vector_retriever import (
+    first_named_competitor_span,
+    first_named_hardware_span,
+    is_competition_ask,
+    is_hardware_product_ask,
+)
 
 
 # Human-readable templates for ontology edge types (deterministic — not LLM).
@@ -785,6 +790,18 @@ _COMPETITION_WINDOW_WEAK = {
     "ability",
 }
 
+# On glasses / Reality Labs asks, early "AI glasses" / "hardware products"
+# steal the window from Ray-Ban / Oakley / Quest later in Item 1.
+_HARDWARE_WINDOW_WEAK = {
+    "products",
+    "product",
+    "hardware",
+    "glasses",
+    "reality",
+    "labs",
+    "ai",
+}
+
 
 def _competition_marker_hit(lowered: str, question: str) -> Optional[tuple]:
     """
@@ -794,6 +811,17 @@ def _competition_marker_hit(lowered: str, question: str) -> Optional[tuple]:
     if not is_competition_ask(question):
         return None
     span = first_named_competitor_span(lowered)
+    if span is None:
+        return None
+    start, matched = span
+    return (start, -len(matched), matched)
+
+
+def _hardware_marker_hit(lowered: str, question: str) -> Optional[tuple]:
+    """For glasses/headset asks, prefer Ray-Ban / Oakley / Quest in the passage."""
+    if not is_hardware_product_ask(question):
+        return None
+    span = first_named_hardware_span(lowered)
     if span is None:
         return None
     start, matched = span
@@ -822,7 +850,8 @@ def truncate_passage_for_query(
 
     Competition asks additionally prefer a named rival marker inside the
     passage (e.g. TikTok at char ~5000) over early "products"/"pressures"
-    summary bullets.
+    summary bullets. Glasses / Reality Labs asks prefer Ray-Ban / Oakley /
+    Quest over the early generic "AI glasses" sentence.
     """
     cleaned = " ".join((text or "").split())
     if len(cleaned) <= max_chars:
@@ -842,6 +871,8 @@ def truncate_passage_for_query(
         return best
 
     hit = _competition_marker_hit(lowered, question)
+    if hit is None:
+        hit = _hardware_marker_hit(lowered, question)
 
     all_needles = query_needles(question, entity_ids=None)
     specific = [
@@ -850,6 +881,10 @@ def truncate_passage_for_query(
     if is_competition_ask(question):
         specific = [
             n for n in specific if n.lower() not in _COMPETITION_WINDOW_WEAK
+        ]
+    if is_hardware_product_ask(question):
+        specific = [
+            n for n in specific if n.lower() not in _HARDWARE_WINDOW_WEAK
         ]
 
     if hit is None:

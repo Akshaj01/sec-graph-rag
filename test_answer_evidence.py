@@ -124,6 +124,23 @@ def test_truncate_competition_ask_centers_on_named_rival():
     assert "Summary Risk Factors" not in out
 
 
+def test_truncate_glasses_ask_centers_on_ray_ban_not_early_ai_glasses():
+    q = "What AI glasses or Reality Labs hardware products does Meta describe?"
+    early = (
+        "Our products enable people to connect through VR headsets and AI glasses. "
+    )
+    mid = "x " * 900
+    brands = (
+        "We offer Ray-Ban Meta AI glasses and Oakley Meta glasses, alongside "
+        "Meta Quest headsets from Reality Labs."
+    )
+    text = early + mid + brands + (" y" * 200)
+    out = truncate_passage_for_query(text, q, 1200)
+    assert "Ray-Ban" in out
+    assert "Oakley" in out or "Quest" in out
+    assert not out.startswith("Our products enable people")
+
+
 def test_lexical_needles_keeps_short_ai_acronym():
     """AI is the topic for Meta competition asks; len<3 used to drop it entirely."""
     q = (

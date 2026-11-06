@@ -3,7 +3,7 @@
 Living log of failures hit while building SEC GraphRAG, why they happened, and what changed. Each closed item is symptom, root cause, and fix.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Last updated:** 2026-11-06 (P1 Netflix OOS 1.0; MSFT products hybrid 1.0)
+**Last updated:** 2026-11-06 (Meta AI glasses window 1.0; P1 NFLX OOS; MSFT products)
 
 ---
 
@@ -240,6 +240,19 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 
 ---
 
+### 20. Meta AI glasses windowed on early generic "AI glasses"
+
+| | |
+|--|--|
+| **Symptom** | `hop0_meta_ai_glasses` hybrid/vector three-run mean **0.50** — Reality Labs / Quest context without Ray-Ban Meta / Oakley Meta. |
+| **Root cause** | Gold brand names sit ~5k chars into Item 1; 1200-char query window centered on early boilerplate ("VR headsets and AI glasses") and skipped the SKUs. Same pattern as §17 TikTok window miss. |
+| **Fix** | `is_hardware_product_ask` + `first_named_hardware_span` (prefer Ray-Ban/Oakley over earlier Quest); `_hardware_marker_hit` + strip weak needles (`glasses`, `hardware`, …) in `truncate_passage_for_query`. |
+| **Where** | `vector_retriever.py`, `answer.py`, `test_answer_evidence.py` |
+| **Verify** | `benchmarks/results/hop0_meta_ai_glasses_resmoke.json` — hybrid **1.0**, vector_only **1.0** (Ray-Ban + Oakley Meta + Quest in summary). |
+| **Not done** | Headline table still has hybrid 0.50 for this item. |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
 
 ### A0. Meta AI competition — short-acronym needle (tried 2026-11-06, did not move recall)
@@ -393,5 +406,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | Competition window fix (named-rival center + AI in `query_needles`). Resmoke: hybrid/vector **0.875**. See §17. |
 | 2026-11-06 | P1 false-premise-for-others refuse gate. After credits: NFLX grow + resmoke hybrid/vector **1.0**. See §18. |
 | 2026-11-06 | MSFT full grow with 16k extract; `hop1_msft_products` hybrid **0.13 → 1.0** (vector still 0.125). See §19. |
+| 2026-11-06 | Hardware window (Ray-Ban/Oakley preference). `hop0_meta_ai_glasses` hybrid/vector **0.50 → 1.0**. See §20. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.
