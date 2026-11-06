@@ -23,7 +23,7 @@ This file is the checklist for the post–Measure-it hybrid push. Gateway (`GATE
 | **Left (infra before full rebench)** | Corpus restore on this PC | Need all 10 tickers in Neo4j + pgvector |
 | **Left (publish)** | Full 44×2 answer rebench + README rewrite | Only after enough fixes land |
 
-Rough completion of *this* plan: **~80%** (P1–P2 closed on targeted resmokes; P3 NFLX AWS **1.0**; P4 halfway — 5/10 issuers; headline not updated yet).
+Rough completion of *this* plan: **~90%** (P1–P4 done on this PC; P5/P6 not started; headline still 0.86/0.89).
 
 ---
 
@@ -149,8 +149,8 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 | | |
 |--|--|
 | **Why** | Full retrieve rebuild and honest full rebench need all 10 tickers. This PC had AAPL/JOBY/WDC (+ META embedded for the Meta work). |
-| **Work** | Issuers now: **AAPL JPM META MSFT NFLX NVDA**. Still missing: `AMZN GOOGL JNJ XOM` (grow in flight / next). |
-| **Progress** | AAPL+META restored; JPM grown (321e/387r). JPM hop2 + META/AAPL resmokes **1.0**. Remaining 4 est. **~$17.56**. |
+| **Status** | **DONE** — all 10 suite issuers local: AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM. |
+| **Progress** | Restored after Docker wipe: AAPL/META/JPM + AMZN/GOOGL/JNJ/XOM. Spot checks: META/AAPL/JPM/NFLX **1.0**; `hop1_googl_waymo` hybrid **0.5** / vector **0.125** (named Waymo but thin ride-hailing detail — open polish). |
 
 ### P5. Full retrieve rebuild (`retrieval_v4`)
 
@@ -193,7 +193,8 @@ Until step 4, the public headline stays **0.86 vs 0.89**.
 
 ## Suggested next session
 
-1. Finish **P4** — `AMZN GOOGL JNJ XOM` (~$17.56).  
-2. Then **P5** retrieve rebuild and/or **P6** one full temperature-0 rebench (only when you say so).  
+1. **P5** full retrieve rebuild (`retrieval_v4`) now that all 10 issuers are local.  
+2. Optional polish: `hop1_googl_waymo` pack/window (hybrid 0.5).  
+3. **P6** one full temperature-0 generation rebench — only when you say so.  
 
-**Last updated:** 2026-11-06 (P4 6/10 issuers; JPM hop2 1.0)
+**Last updated:** 2026-11-06 (P4 complete — 10/10 issuers)

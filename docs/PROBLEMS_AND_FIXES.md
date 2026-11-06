@@ -437,5 +437,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | `hop1_nflx_aws_relationship` resmoke hybrid/vector **1.0** after NFLX grow. See §22. |
 | 2026-11-06 | After Docker restart only MSFT/NFLX/NVDA issuers remained. Restored AAPL+META grow; resmoke glasses/apps/aapl products all **1.0**. Still missing AMZN GOOGL JNJ JPM XOM. |
 | 2026-11-06 | JPM grow (321e/387r/51 chunks, ~$15). `hop2_jpm_credit_vs_market` hybrid/vector **1.0**. |
+| 2026-11-06 | P4 complete: AMZN/GOOGL/JNJ/XOM grown. All 10 suite issuers present. `hop1_googl_waymo` hybrid **0.5** / vector **0.125** — open. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

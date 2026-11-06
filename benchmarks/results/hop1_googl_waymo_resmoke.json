@@ -1,0 +1,111 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "4",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop1_googl_waymo",
+        "mode": "hybrid",
+        "question": "How is Alphabet / Google involved in the automotive or autonomous driving space?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Alphabet is involved in the automotive and autonomous driving space through Waymo, its fully autonomous driving technology company subsidiary.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0001652044-26-000018:Item1:0",
+          "0001652044-26-000018:Item1:1",
+          "0001652044-26-000018:Item7:0",
+          "0001652044-26-000018:Item7:1",
+          "0001652044-26-000018:Item7:2"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "Waymo",
+          "autonomous"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 0.5,
+        "judge_fact_hits": [
+          "Names Waymo (or Alphabet Other Bets autonomous driving)"
+        ],
+        "judge_fact_misses": [
+          "Describes autonomous ride-hailing / autonomous driving technology"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer correctly identifies Waymo as Alphabet's autonomous driving company and notes it is part of Other Bets. However, it fails to cover the key required fact that Waymo provides paid autonomous ride-hailing services in multiple cities—a critical operational detail that distinguishes it from merely being a technology company.",
+        "correct_refuse": null,
+        "latency_ms": 8326.9,
+        "estimated_cost_usd": 0.005997,
+        "error": null,
+        "score": 0.5
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 0.5
+    },
+    "mean_latency_ms": 8326.9,
+    "mean_cost_usd": 0.005997,
+    "mean_score": 0.5,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop1_googl_waymo",
+        "mode": "vector_only",
+        "question": "How is Alphabet / Google involved in the automotive or autonomous driving space?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Alphabet is involved in the autonomous driving space through its Other Bets segment, which generates revenues from the sale of autonomous transportation services.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0001652044-26-000018:Item1:0",
+          "0001652044-26-000018:Item7:0",
+          "0001652044-26-000018:Item7:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "autonomous"
+        ],
+        "keyword_misses": [
+          "Waymo"
+        ],
+        "keyword_recall": 0.5,
+        "judge_correctness": 0.125,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Names Waymo (or Alphabet Other Bets autonomous driving)",
+          "Describes autonomous ride-hailing / autonomous driving technology"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer correctly identifies Alphabet's Other Bets segment as involved in autonomous transportation services, but fails to name Waymo specifically, which is a required fact. The answer also lacks specificity about autonomous ride-hailing and does not clearly describe the autonomous driving technology itself.",
+        "correct_refuse": null,
+        "latency_ms": 4817.5,
+        "estimated_cost_usd": 0.007305,
+        "error": null,
+        "score": 0.125
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 0.125
+    },
+    "mean_latency_ms": 4817.5,
+    "mean_cost_usd": 0.007305,
+    "mean_score": 0.125,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}
