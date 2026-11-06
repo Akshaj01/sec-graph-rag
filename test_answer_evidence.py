@@ -16,6 +16,7 @@ from answer import (
     filter_unmatched_produces_facts,
     format_evidence,
     has_answerable_graph_evidence,
+    looks_like_false_premise_for_others,
     looks_like_strict_quantitative_question,
     normalize_refused_draft,
     query_needles,
@@ -573,6 +574,49 @@ def test_evidence_addresses_rejects_off_topic_graph_laundry_list():
     assert "battery" in [t.lower() for t in topic_needles(pack.question)]
     # Neither battery nor supply appear — off-topic laundry list.
     assert not evidence_addresses_question(pack)
+
+
+def test_false_premise_for_others_rejects_own_product_graph():
+    q = "How is Netflix producing AI Compute for other companies in the corpus?"
+    assert looks_like_false_premise_for_others(q)
+    pack = EvidencePack(
+        question=q,
+        items=[
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement=(
+                    "Netflix produces product streaming service. "
+                    "Context: entertainment video for its members."
+                ),
+                chunk_ids=["c1"],
+            ),
+            LabeledEvidenceItem(
+                source_label="GRAPH",
+                statement="Netflix produces product content delivery network.",
+                chunk_ids=["c2"],
+            ),
+        ],
+        allowed_chunk_ids=["c1", "c2"],
+    )
+    assert not evidence_addresses_question(pack)
+
+
+def test_false_premise_for_others_accepts_external_compute_claim():
+    q = "How is Netflix producing AI Compute for other companies in the corpus?"
+    pack = EvidencePack(
+        question=q,
+        items=[
+            LabeledEvidenceItem(
+                source_label="VECTOR",
+                statement=(
+                    "Netflix sells AI compute capacity to other companies as a service."
+                ),
+                chunk_ids=["c9"],
+            )
+        ],
+        allowed_chunk_ids=["c9"],
+    )
+    assert evidence_addresses_question(pack)
 
 
 def test_evidence_addresses_any_topic_hit_enough_for_multi_aspect():

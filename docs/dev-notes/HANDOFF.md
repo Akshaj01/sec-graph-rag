@@ -61,7 +61,7 @@ Gap of the means **−0.026**. Paired gaps **−0.033**, **−0.016**, **−0.02
 
 **Post-eval fix (2026-11-06), not in the headline.** `hop1_meta_ai_competition` was 0.00 on the three runs. Retrieve: larger over-fetch + named-rival boost → item recall 1.0. Answer: competition window centers on TikTok → one-item resmoke **0.875**. See `docs/PROBLEMS_AND_FIXES.md` §16–§17. Do not rewrite the three-run table from that one item.
 
-**Next, only if asked.** More hybrid misses, full retrieval rebuild after growing missing tickers on this PC, or gateway design note. No full 44-answer rebench unless Akshaj asks.
+**Next, only if asked.** Hybrid improve checklist: [`docs/HYBRID_IMPROVE_PLAN.md`](../HYBRID_IMPROVE_PLAN.md) (~25% done; P1 = Netflix OOS refuse). Or gateway design note. No full 44-answer rebench unless Akshaj asks.
 
 ---
 

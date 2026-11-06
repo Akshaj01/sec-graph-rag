@@ -291,6 +291,67 @@ def looks_like_strict_quantitative_question(question: str) -> bool:
     return any(n in q for n in needles)
 
 
+_FALSE_PREMISE_FOR_OTHERS = re.compile(
+    r"\b(produc\w*|provid\w*|sell\w*|offer\w*|manufactur\w*)\b"
+    r".{0,100}\b(for|to)\b.{0,60}\b("
+    r"other(?:s)?(?:\s+compan\w*)?|external(?:\s+compan\w*)?|"
+    r"third[- ]part\w*|other\s+companies\s+in\s+the\s+corpus"
+    r")\b",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def looks_like_false_premise_for_others(question: str) -> bool:
+    """
+    True when the question assumes the issuer produces/provides something *for others*.
+
+    Example: "How is Netflix producing AI Compute for other companies…?"
+    Own-product GRAPH edges (streaming, CDN) must not count as on-topic, and a
+    negative prose answer with refused=false still fails the OOS judge.
+    """
+    return bool(_FALSE_PREMISE_FOR_OTHERS.search(question or ""))
+
+
+def evidence_supports_produce_for_others(evidence: EvidencePack) -> bool:
+    """Pack must claim a product/service is provided to external parties."""
+    blob = " ".join(item.statement for item in evidence.items).lower()
+    if not re.search(
+        r"\b(for other|to other|third[- ]part|external (?:compan|customer)|"
+        r"other compan|other customers|as a service to)\b",
+        blob,
+    ):
+        return False
+    # Capability / product needles from the question (e.g. compute, AI).
+    topics = [
+        t.lower()
+        for t in topic_needles(evidence.question)
+        if t.lower()
+        not in {
+            "netflix",
+            "apple",
+            "microsoft",
+            "amazon",
+            "meta",
+            "nvidia",
+            "google",
+            "alphabet",
+            "compan",
+            "companies",
+            "company",
+            "corpus",
+            "other",
+            "others",
+            "producing",
+            "produce",
+            "provides",
+            "provide",
+        }
+    ]
+    if not topics:
+        return True
+    return any(t in blob for t in topics)
+
+
 # Ask / issuer words that must not count as "topic present in evidence."
 _TOPIC_GENERIC = {
     "johnson",
@@ -440,6 +501,10 @@ def evidence_addresses_question(evidence: EvidencePack) -> bool:
     """
     if not evidence.items:
         return False
+
+    # False-premise "produces X for others" — own-product lists are not enough.
+    if looks_like_false_premise_for_others(evidence.question):
+        return evidence_supports_produce_for_others(evidence)
 
     blob = " ".join(item.statement for item in evidence.items).lower()
     blob_norm = re.sub(r"[\s\-]+", " ", blob)
@@ -1305,12 +1370,15 @@ def generate_validated_answer(
             validation = validate_citations(draft, evidence.allowed_chunk_ids)
 
     # Unjustified refuse: on-topic GRAPH evidence exists but model refused (hop-2 packs).
+    # Never rewrite a refuse on false-premise "for others" asks — own-product GRAPH
+    # laundry lists used to force refused=false and zero the OOS score.
     elif (
         settings.ANSWER_UNJUSTIFIED_REFUSE_REPAIR
         and draft.refused
         and on_topic
         and has_answerable_graph_evidence(evidence)
         and not looks_like_strict_quantitative_question(evidence.question)
+        and not looks_like_false_premise_for_others(evidence.question)
     ):
         repair = (
             "You set refused=true, but the evidence pack already contains [GRAPH] "
@@ -1362,6 +1430,13 @@ def generate_validated_answer(
         draft = normalize_refused_draft(
             evidence.question,
             allowed_chunk_ids=evidence.allowed_chunk_ids,
+            summary=(
+                "The question assumes a fact not supported by the retrieved evidence "
+                "(for example producing a product or service for other companies). "
+                "I cannot provide a grounded answer from the available filing chunks."
+                if looks_like_false_premise_for_others(evidence.question)
+                else None
+            ),
         )
         validation = validate_citations(draft, evidence.allowed_chunk_ids)
 
