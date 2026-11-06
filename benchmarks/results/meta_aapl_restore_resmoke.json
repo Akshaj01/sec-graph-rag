@@ -1,0 +1,263 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "4",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop1_aapl_products",
+        "mode": "hybrid",
+        "question": "What product lines does Apple produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces several major product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables (including Apple Watch smartwatches, AirPods wireless headphones, and spatial computers), Home and Accessories, and AppleCare (service and support products).",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-26-000026:Item1:0"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "iPad"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions iPhone",
+          "Mentions Mac",
+          "Mentions iPad"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all three required facts: iPhone, Mac, and iPad are all explicitly mentioned with detailed descriptions. The answer goes beyond the minimum requirements by providing additional product lines and specific model examples, which adds value without contradicting the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 10155.6,
+        "estimated_cost_usd": 0.009927,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_meta_apps",
+        "mode": "hybrid",
+        "question": "Which apps or product lines does Meta produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta produces a Family of Apps that includes Facebook, Instagram, WhatsApp, Messenger, and Reels. The company also develops Reality Labs products such as Meta Quest VR headsets, Meta Horizon, and AI glasses. Meta generates advertising revenue by displaying ads on Facebook, Instagram, Messenger, and third-party mobile applications.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:2",
+          "0001628280-26-003942:Item7:2"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram",
+          "WhatsApp"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Facebook",
+          "Mentions Instagram",
+          "Mentions WhatsApp"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all three required facts: it explicitly mentions Facebook, Instagram, and WhatsApp as part of Meta's product portfolio. The answer goes beyond the minimum requirements by also mentioning Messenger, Reels, Reality Labs products, and other details, but these additions are accurate and do not contradict the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 8113.5,
+        "estimated_cost_usd": 0.009336,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_meta_ai_glasses",
+        "mode": "hybrid",
+        "question": "What AI glasses or Reality Labs hardware products does Meta describe?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes several Reality Labs hardware products including VR headsets (Meta Quest devices) and AI glasses. The AI glasses lineup includes Ray-Ban Meta and Oakley Meta glasses featuring Meta AI conversational assistant, the 2025 Meta Ray-Ban Display with an integrated display in the lens, and the Orion prototype AR glasses unveiled in 2024 that overlay content on the physical world.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item7:2"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "Ray-Ban",
+          "glasses",
+          "Quest"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Names Meta AI glasses or Ray-Ban Meta / Oakley Meta glasses (or equivalent)",
+          "Mentions Reality Labs / Quest / AR-VR hardware context"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it names Ray-Ban Meta and Oakley Meta glasses (with Meta AI), and extensively discusses Reality Labs hardware context including Meta Quest VR headsets and AR glasses efforts. All key products and features are accurately described without contradicting the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 14483.3,
+        "estimated_cost_usd": 0.011694,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 1.0,
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 10917.5,
+    "mean_cost_usd": 0.010319,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop1_aapl_products",
+        "mode": "vector_only",
+        "question": "What product lines does Apple produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces five main product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables (including smartwatches, wireless headphones, and spatial computers), and Home and Accessories. The company also sells a variety of related services.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-26-000026:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "iPad"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions iPhone",
+          "Mentions Mac",
+          "Mentions iPad"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all three required facts: iPhone, Mac, and iPad are all explicitly mentioned with clear descriptions. The answer goes beyond the minimum requirements by providing additional product lines (Wearables, Home and Accessories) and services, which is appropriate context but not hallucinated—these are legitimate Apple product categories.",
+        "correct_refuse": null,
+        "latency_ms": 7484.6,
+        "estimated_cost_usd": 0.008862,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_meta_apps",
+        "mode": "vector_only",
+        "question": "Which apps or product lines does Meta produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta produces a Family of Apps that includes Facebook, Instagram, WhatsApp, Messenger, and Reels. The company also develops Reality Labs products such as Meta Quest VR headsets, Meta Horizon, and AI glasses. Meta generates advertising revenue by displaying ads on Facebook, Instagram, Messenger, and third-party mobile applications.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:2",
+          "0001628280-26-003942:Item7:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram",
+          "WhatsApp"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Facebook",
+          "Mentions Instagram",
+          "Mentions WhatsApp"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all three required facts: Facebook, Instagram, and WhatsApp are all explicitly mentioned multiple times. The answer goes beyond the minimum requirements by also detailing additional products (Messenger, Reels, Meta Quest, Meta Horizon, AI glasses) and revenue models, but these additions are accurate and do not contradict the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 5778.5,
+        "estimated_cost_usd": 0.008346,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_meta_ai_glasses",
+        "mode": "vector_only",
+        "question": "What AI glasses or Reality Labs hardware products does Meta describe?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes several Reality Labs hardware products including VR headsets (Meta Quest devices) and AI glasses. The AI glasses lineup includes Ray-Ban Meta and Oakley Meta glasses with Meta AI assistant, the Orion AR prototype unveiled in 2024, and Meta Ray-Ban Display introduced in 2025 which features an integrated display in the lens.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item7:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Ray-Ban",
+          "glasses",
+          "Quest"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Names Meta AI glasses or Ray-Ban Meta / Oakley Meta glasses (or equivalent)",
+          "Mentions Reality Labs / Quest / AR-VR hardware context"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it names Ray-Ban Meta and Oakley Meta glasses (with Meta AI), and extensively discusses Reality Labs hardware context including Meta Quest VR headsets and AR glasses efforts. All key products and details are grounded in the gold answer's scope.",
+        "correct_refuse": null,
+        "latency_ms": 10944.1,
+        "estimated_cost_usd": 0.010074,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 1.0,
+      "hop_1": 1.0
+    },
+    "mean_latency_ms": 8069.1,
+    "mean_cost_usd": 0.009094,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

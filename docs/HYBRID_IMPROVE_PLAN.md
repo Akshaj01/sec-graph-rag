@@ -23,7 +23,7 @@ This file is the checklist for the post–Measure-it hybrid push. Gateway (`GATE
 | **Left (infra before full rebench)** | Corpus restore on this PC | Need all 10 tickers in Neo4j + pgvector |
 | **Left (publish)** | Full 44×2 answer rebench + README rewrite | Only after enough fixes land |
 
-Rough completion of *this* plan: **~75%** (Meta AI compete **0.875** + glasses **1.0**; P1 NFLX OOS **1.0**; MSFT products + hop2 **1.0**; NVDA DRIVE hybrid **1.0**; headline not updated yet).
+Rough completion of *this* plan: **~80%** (P1–P2 closed on targeted resmokes; P3 NFLX AWS **1.0**; P4 halfway — 5/10 issuers; headline not updated yet).
 
 ---
 
@@ -149,8 +149,9 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 | | |
 |--|--|
 | **Why** | Full retrieve rebuild and honest full rebench need all 10 tickers. This PC had AAPL/JOBY/WDC (+ META embedded for the Meta work). |
-| **Work** | Issuers present after Docker restart: **MSFT NFLX NVDA** only. Still missing: `AAPL AMZN GOOGL JNJ JPM META XOM`. |
-| **Est. cost** | Budget 2026-11-06: META+AAPL+JPM ≈ **$26.4** (JPM alone ~$15); all 7 ≈ **$44**. Raise `MAX_EXTRACTION_BUDGET_USD` per ticker. |
+| **Work** | Issuers now: **AAPL META MSFT NFLX NVDA**. Still missing: `AMZN GOOGL JNJ JPM XOM`. |
+| **Progress** | AAPL (138e/135r) + META (177e/193r; embed reused) grown 2026-11-06. Verify: `meta_aapl_restore_resmoke.json` all **1.0**. |
+| **Est. remaining** | JPM ≈ **$15**; AMZN+GOOGL+JNJ+XOM still TBD via `--budget`. Raise `MAX_EXTRACTION_BUDGET_USD` per ticker. |
 
 ### P5. Full retrieve rebuild (`retrieval_v4`)
 
@@ -193,8 +194,8 @@ Until step 4, the public headline stays **0.86 vs 0.89**.
 
 ## Suggested next session
 
-1. **P4** restore issuers — start `META AAPL` (~$11.4), then `JPM`, then `AMZN GOOGL JNJ XOM`.  
+1. **P4** finish — `JPM` (~$15) then `AMZN GOOGL JNJ XOM`.  
 2. Resmoke `hop2_jpm_credit_vs_market` after JPM grow.  
 3. Do not start P6 until you say so.
 
-**Last updated:** 2026-11-06 (§22 NFLX AWS 1.0; P4 issuers thin after Docker restart)
+**Last updated:** 2026-11-06 (§22 NFLX AWS; P4 AAPL+META restored)

@@ -435,5 +435,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | After MSFT grow: `hop2_msft_cloud_and_geo_risk` resmoke hybrid/vector **1.0** (no code change). |
 | 2026-11-06 | NVDA full grow (190 entities / 218 rels, ~$5.57). `hop1_nvda_automotive` hybrid/vector **1.0**; `hop2_nvda_auto_competitors_risks` hybrid **1.0** / vector **0.71**. See §21. |
 | 2026-11-06 | `hop1_nflx_aws_relationship` resmoke hybrid/vector **1.0** after NFLX grow. See §22. |
+| 2026-11-06 | After Docker restart only MSFT/NFLX/NVDA issuers remained. Restored AAPL+META grow; resmoke glasses/apps/aapl products all **1.0**. Still missing AMZN GOOGL JNJ JPM XOM. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.
