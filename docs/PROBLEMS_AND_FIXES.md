@@ -3,7 +3,7 @@
 Living log of failures hit while building SEC GraphRAG, why they happened, and what changed. Each closed item is symptom, root cause, and fix.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Last updated:** 2026-11-05 (three temperature-0 answer runs)
+**Last updated:** 2026-11-06 (Meta AI window fix + resmoke 0.875)
 
 ---
 
@@ -188,7 +188,46 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 
 ---
 
+### 16. Meta AI competition gold buried past over-fetch
+
+| | |
+|--|--|
+| **Symptom** | `hop1_meta_ai_competition` gold `Item1A:0` (TikTok / AI competition) sat at dense rank **21**; top-10 never saw it. Generation answered from Item1A:2/3 (score 0.00). |
+| **Root cause** | Over-fetch capped at 15, and flat needle boost saturated on almost every META chunk. A weak “AI + competit*” extra boost also lifted already-high generic chunks, so it could not close the gap. Short-acronym `AI` needles alone (§A0) did not help. |
+| **Fix** | (1) `over_fetch_k`: floor 25, ceil 40 (`k=10` → 30). (2) `competition_cooccurrence_boost`: when the question is competition-shaped and the passage has competition language **and** a named rival marker (TikTok, YouTube, OpenAI, …), add **+0.30** outside the needle cap. |
+| **Where** | `vector_retriever.py`, `test_answer_evidence.py` |
+| **Verify** | META-targeted retrieve: `benchmarks/results/retrieval_meta_ai_overfetch_comp_boost.json`. Vector/hybrid recall@5 **0.67 → 1.0**, recall@10 **0.67 → 1.0**, MRR **0.50 → 1.0**. Gold ranks: `Item1A:0` **#1**, `Item1:0` #3, `Item1A:3` #4. |
+| **Not done** | Full 32-item retrieval_v4 rebuild (other tickers missing on this PC). |
+| **Generation follow-up** | Window miss fixed in §17. Final one-item resmoke: hybrid/vector **0.875**. |
+
+---
+
+### 17. Meta AI competition — answer window missed TikTok
+
+| | |
+|--|--|
+| **Symptom** | After §16 retrieve fix, first answer resmoke still scored hybrid **0.125** / vector **0.00**. Gold `Item1A:0` was cited, but the summary never named TikTok (`hop1_meta_ai_competition_resmoke.json`). |
+| **Root cause** | `truncate_passage_for_query` (1200 chars) centered on early “Summary Risk Factors / Product Offerings / pressures” needles. **TikTok sits at char ~5092**. `query_needles` also dropped `AI` (`len < 3`). |
+| **Fix** | (1) Keep short acronyms in `query_needles` via `_SHORT_TOPIC_KEEP`. (2) On competition asks, prefer `first_named_competitor_span` as the window center; demote weak needles `products` / `pressures` / `around` / `core`. |
+| **Where** | `answer.py`, `vector_retriever.py` (`is_competition_ask`, `first_named_competitor_span`), `test_answer_evidence.py` |
+| **Verify** | `benchmarks/results/hop1_meta_ai_competition_window_resmoke.json` — hybrid **0.875**, vector_only **0.875**. Both required facts hit; TikTok named. Judge still docks for framing some AI points as regulation rather than rival AI companies. |
+| **Not done** | Full 44-question generation rebench / hop table refresh. Overall headline still the three-run **0.86 / 0.89**. |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
+
+### A0. Meta AI competition — short-acronym needle (tried 2026-11-06, did not move recall)
+
+| | |
+|--|--|
+| **Symptom** | See §16. Retrieve-only baseline recall@5 **0.67** / MRR **0.50** before over-fetch fix. |
+| **Hypothesis** | `lexical_needles` dropped tokens with `len < 3`, so **AI** never boosted passages. |
+| **Fix shipped** | Allowlist short domain acronyms (`ai`, `aws`, `vr`, …). Kept as correctness; insufficient alone. |
+| **Result** | **No recall move** (`retrieval_meta_ai_needle_check.json`). Retrieve gap closed in §16; generation window gap closed in §17. |
+| **Where** | `vector_retriever.py`, `test_answer_evidence.py`, `benchmarks/results/retrieval_meta_ai_needle_check.json` |
+
+---
 
 ### A. Three temperature-0 answer runs (2026-11-05)
 
@@ -323,5 +362,9 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-05 | Re-ran hybrid answers on all 44. Mean **0.85**. Meta apps 0.00→0.75. Several former 1.0s dropped. One OOS item answered instead of refusing. |
 | 2026-11-05 | Re-ran vector-only answers on all 44. Mean **0.875** (previous **0.886**). One item moved: Amazon AWS and Prime 1.0→0.50. Paired gap **−0.026**, interval **−0.112 to 0.062**. |
 | 2026-11-05 | Planner, router, and judge set to temperature 0. Three full runs: hybrid **0.86** (0.856–0.862), vector-only **0.89** (0.878–0.889). Five items still moved. Apple products hybrid text was identical and the judge scored it 1.0, 1.0, 0.5. |
+| 2026-11-06 | Kept short acronym `AI` in lexical needles. META-targeted retrieve recheck: no recall/MRR move on `hop1_meta_ai_competition` (gold `Item1A:0` still dense #21 outside over-fetch 15). See §A0. |
+| 2026-11-06 | Raised over-fetch (25–40) + named-rival competition boost (+0.30). META item recall@5/10/MRR **0.67/0.67/0.50 → 1.0/1.0/1.0**. See §16. |
+| 2026-11-06 | Answer resmoke `hop1_meta_ai_competition`: hybrid 0.00→0.125, vector 0.00. Gold chunk cited but TikTok outside 1200-char window (char 5092). |
+| 2026-11-06 | Competition window fix (named-rival center + AI in `query_needles`). Resmoke: hybrid/vector **0.875**. See §17. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

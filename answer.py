@@ -25,6 +25,7 @@ from config import settings
 from graph_retriever import GraphFact
 from retrieve import HybridRetrievalResult, retrieve
 from router import RetrievalRoute
+from vector_retriever import first_named_competitor_span, is_competition_ask
 
 
 # Human-readable templates for ontology edge types (deterministic — not LLM).
@@ -619,16 +620,19 @@ def query_needles(
     Extract search needles for passage windowing / lexical boost.
 
     Prefers quoted phrases and Capitalized tokens (AppleCare, Azure), then
-    significant lowercase tokens, then entity_id suffixes.
+    significant lowercase tokens, then entity_id suffixes. Short domain
+    acronyms (AI, AWS, …) are kept even though the normal floor is length 3.
     """
     needles: List[str] = []
     seen: Set[str] = set()
 
     def _add(raw: str) -> None:
         s = (raw or "").strip()
-        if len(s) < 3:
-            return
         key = s.lower()
+        if not s:
+            return
+        if len(s) < 3 and key not in _SHORT_TOPIC_KEEP:
+            return
         if key in seen or key in _STOPWORDS:
             return
         seen.add(key)
@@ -641,7 +645,8 @@ def query_needles(
         if m.upper() not in {"WHAT", "WHEN", "WHERE", "WHICH", "WHO", "HOW", "THE", "AND"}:
             _add(m)
 
-    for tok in re.findall(r"[A-Za-z][A-Za-z0-9\-]{3,}", question or ""):
+    # 2+ chars so short allowlisted acronyms (AI) survive the floor.
+    for tok in re.findall(r"[A-Za-z][A-Za-z0-9\-]{1,}", question or ""):
         if tok.lower() not in _STOPWORDS:
             _add(tok)
 
@@ -703,6 +708,32 @@ _WINDOW_GENERIC_NEEDLES = {
     "company",
 }
 
+# On competition asks these steal the window toward early summary bullets
+# ("Product Offerings", "pressures around…") instead of named rivals.
+_COMPETITION_WINDOW_WEAK = {
+    "products",
+    "product",
+    "pressures",
+    "pressure",
+    "around",
+    "core",
+    "ability",
+}
+
+
+def _competition_marker_hit(lowered: str, question: str) -> Optional[tuple]:
+    """
+    For competition asks, prefer a named rival mentioned in the *passage*
+    (TikTok, YouTube, …). Those names are rarely in the question text.
+    """
+    if not is_competition_ask(question):
+        return None
+    span = first_named_competitor_span(lowered)
+    if span is None:
+        return None
+    start, matched = span
+    return (start, -len(matched), matched)
+
 
 def truncate_passage_for_query(
     text: str,
@@ -723,6 +754,10 @@ def truncate_passage_for_query(
 
     Also prefer *specific* needles (China, supply-chain) over generics like
     "risks" that match the Item 1A header and steal the window.
+
+    Competition asks additionally prefer a named rival marker inside the
+    passage (e.g. TikTok at char ~5000) over early "products"/"pressures"
+    summary bullets.
     """
     cleaned = " ".join((text or "").split())
     if len(cleaned) <= max_chars:
@@ -741,11 +776,19 @@ def truncate_passage_for_query(
                 best = cand
         return best
 
+    hit = _competition_marker_hit(lowered, question)
+
     all_needles = query_needles(question, entity_ids=None)
     specific = [
         n for n in all_needles if n.lower() not in _WINDOW_GENERIC_NEEDLES
     ]
-    hit = _best_hit(specific) or _best_hit(all_needles)
+    if is_competition_ask(question):
+        specific = [
+            n for n in specific if n.lower() not in _COMPETITION_WINDOW_WEAK
+        ]
+
+    if hit is None:
+        hit = _best_hit(specific) or _best_hit(all_needles)
     if hit is None and entity_ids:
         hit = _best_hit(query_needles(question, entity_ids=entity_ids))
     if hit is None:

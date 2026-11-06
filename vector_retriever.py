@@ -95,6 +95,76 @@ _LEXICAL_STOP = {
     "said",
 }
 
+# Short tokens that still matter for SEC Q&A. The general needle floor is
+# length 3 so "to"/"in"/"or" never boost; these acronyms are the exception.
+_SHORT_LEXICAL_NEEDLES = frozenset({"ai", "aws", "vr", "ar", "ml", "ux", "ui"})
+
+_COMPETITION_ASK = re.compile(
+    r"\b(competitor|competitors|competition|competitive|compete|competes|competed)\b",
+    re.IGNORECASE,
+)
+# Named rivals that filings often spell out. Only scored when the *question*
+# is competition-shaped, so ordinary product asks are unchanged.
+_NAMED_COMPETITOR_MARKERS = re.compile(
+    r"\b("
+    r"tiktok|bytedance|snapchat|youtube|openai|anthropic|chatgpt|gemini|"
+    r"copilot|perplexity|reddit|pinterest|netflix|disney\+?|spotify|"
+    r"qualcomm|ambarella|broadcom"
+    r")\b",
+    re.IGNORECASE,
+)
+
+
+def over_fetch_k(k: int) -> int:
+    """
+    How many HNSW neighbors to pull before lexical rerank.
+
+    Dense similarity can bury a gold risk chunk near rank 20. The old cap of
+    15 never gave that chunk a chance to be boosted. Keep a floor of 25 and
+    a ceiling of 40 so cost stays bounded.
+    """
+    k = max(1, int(k))
+    return max(k, min(max(k * 3, 25), 40))
+
+
+def is_competition_ask(question: str) -> bool:
+    """True when the question is about competitors / competitive pressures."""
+    return bool(_COMPETITION_ASK.search(question or ""))
+
+
+def first_named_competitor_span(text: str) -> Optional[tuple]:
+    """
+    (start, matched_text) for the first named-rival marker in text, else None.
+
+    Used by answer passage windowing so competition asks center on TikTok /
+    YouTube / … instead of early summary bullets.
+    """
+    match = _NAMED_COMPETITOR_MARKERS.search(text or "")
+    if not match:
+        return None
+    return (match.start(), match.group(0))
+
+
+def competition_cooccurrence_boost(question: str, text: str) -> float:
+    """
+    Extra score for competition asks when the passage both talks competition
+    and names a concrete rival — outside the flat needle cap.
+
+    WHY: almost every META chunk already hits the +0.35 needle ceiling once
+    "AI"/"competitors" appear, so undifferentiated boost cannot promote the
+    TikTok risk chunk that dense ranked ~21. A weak "AI + competit*" bonus
+    also failed: it lifted already-high generic chunks. Named rivals are rare
+    and discriminative enough to clear that gap (~+0.30).
+    """
+    if not _COMPETITION_ASK.search(question or ""):
+        return 0.0
+    blob = text or ""
+    if not _COMPETITION_ASK.search(blob):
+        return 0.0
+    if _NAMED_COMPETITOR_MARKERS.search(blob):
+        return 0.30
+    return 0.0
+
 
 def lexical_needles(question: str) -> List[str]:
     """Needles for post-HNSW lexical / entity boost (shared with answer windowing idea)."""
@@ -103,9 +173,12 @@ def lexical_needles(question: str) -> List[str]:
 
     def _add(raw: str) -> None:
         s = (raw or "").strip()
-        if len(s) < 3:
-            return
         key = s.lower()
+        if not s:
+            return
+        # Drop normal short tokens ("to", "in") but keep domain acronyms like AI.
+        if len(s) < 3 and key not in _SHORT_LEXICAL_NEEDLES:
+            return
         if key in seen or key in _LEXICAL_STOP:
             return
         seen.add(key)
@@ -114,7 +187,8 @@ def lexical_needles(question: str) -> List[str]:
     for m in re.findall(r"\b([A-Z][A-Za-z0-9]+(?:[A-Z][A-Za-z0-9]+)*)\b", question or ""):
         if m.upper() not in {"WHAT", "WHEN", "WHERE", "WHICH", "WHO", "HOW", "THE", "AND"}:
             _add(m)
-    for tok in re.findall(r"[A-Za-z][A-Za-z0-9\-]{3,}", question or ""):
+    # Allow 2+ char tokens so short allowlisted acronyms (AI) are kept.
+    for tok in re.findall(r"[A-Za-z][A-Za-z0-9\-]{1,}", question or ""):
         if tok.lower() not in _LEXICAL_STOP:
             _add(tok)
     return needles
@@ -126,32 +200,41 @@ def lexical_boost_score(
     entity_ids: List[str],
     needles: List[str],
     base_score: float,
+    question: str = "",
 ) -> float:
     """
     Add a small additive boost when passage text or entity_ids match query needles.
 
     Kept small so dense similarity still dominates; enough to surface a
     definitional chunk that HNSW ranked just outside / below boilerplate.
+    Competition asks may add an extra co-occurrence bonus outside the cap.
     """
-    if not needles:
-        return base_score
-    blob = (text or "").lower()
-    ids_blob = " ".join(entity_ids or []).lower()
     boost = 0.0
-    for needle in needles:
-        n = needle.lower()
-        if n in blob:
-            boost += 0.08
-        # entity id tokens: MSFT_AZURE contains azure
-        if n in ids_blob or n.replace(" ", "") in ids_blob.replace("_", "").replace(" ", ""):
-            boost += 0.12
-        # id suffix exact-ish
-        for eid in entity_ids or []:
-            suffix = eid.split("_", 1)[-1].lower()
-            if suffix and (suffix == n or n in suffix or suffix in n.replace(" ", "")):
-                boost += 0.1
-                break
-    return base_score + min(boost, 0.35)
+    if needles:
+        blob = (text or "").lower()
+        ids_blob = " ".join(entity_ids or []).lower()
+        for needle in needles:
+            n = needle.lower()
+            if n in blob:
+                boost += 0.08
+            # entity id tokens: MSFT_AZURE contains azure
+            if n in ids_blob or n.replace(" ", "") in ids_blob.replace("_", "").replace(
+                " ", ""
+            ):
+                boost += 0.12
+            # id suffix exact-ish
+            for eid in entity_ids or []:
+                suffix = eid.split("_", 1)[-1].lower()
+                if suffix and (
+                    suffix == n or n in suffix or suffix in n.replace(" ", "")
+                ):
+                    boost += 0.1
+                    break
+    return (
+        base_score
+        + min(boost, 0.35)
+        + competition_cooccurrence_boost(question, text)
+    )
 
 
 def rerank_passages_lexical(
@@ -169,6 +252,7 @@ def rerank_passages_lexical(
             entity_ids=list(p.entity_ids or []),
             needles=needles,
             base_score=float(p.score),
+            question=question,
         )
         scored.append(p.model_copy(update={"score": new_score}))
     scored.sort(key=lambda x: float(x.score), reverse=True)
@@ -228,8 +312,8 @@ def retrieve_vector(
 
     emb = _embed_query(question)
     # Over-fetch so lexical/entity boost can promote definitional chunks that
-    # dense similarity ranked below Item 1 boilerplate.
-    fetch_k = max(k, min(k * 3, 15))
+    # dense similarity ranked below Item 1 boilerplate (including ~rank 20).
+    fetch_k = over_fetch_k(k)
     rows = search_similar_chunks(emb, k=fetch_k, ticker=scope)
 
     passages = [

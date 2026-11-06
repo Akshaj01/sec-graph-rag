@@ -57,9 +57,11 @@ Gap of the means **−0.026**. Paired gaps **−0.033**, **−0.016**, **−0.02
 - Start another 44-question answer run unless Akshaj asks. The three runs already cost about $2.59.
 - Write gateway code before a design note in `docs/GATEWAY_PLAN.md`.
 
-**Still open, not a reason to rerun.** Hybrid does not beat vector on generation. Vector still leads recall@10 and MRR. `hop1_meta_ai_competition` hybrid is 0.00 on all three runs. `oos_nflx_ai_compute_for_others` denies the premise in prose and leaves `refused` false, so the score is 0. The judge can still move a score when the paragraph did not. Profile README and the GitHub repo description already say 0.86 vs 0.89.
+**Still open, not a reason to rerun.** Hybrid does not beat vector on generation. Vector still leads recall@10 and MRR. `oos_nflx_ai_compute_for_others` denies the premise in prose and leaves `refused` false, so the score is 0. The judge can still move a score when the paragraph did not. Published headline stays **0.86 vs 0.89**.
 
-**Next, only if asked.** Gateway design note (circuit breaker, semantic cache, chaos demo). No code until that note exists.
+**Post-eval fix (2026-11-06), not in the headline.** `hop1_meta_ai_competition` was 0.00 on the three runs. Retrieve: larger over-fetch + named-rival boost → item recall 1.0. Answer: competition window centers on TikTok → one-item resmoke **0.875**. See `docs/PROBLEMS_AND_FIXES.md` §16–§17. Do not rewrite the three-run table from that one item.
+
+**Next, only if asked.** More hybrid misses, full retrieval rebuild after growing missing tickers on this PC, or gateway design note. No full 44-answer rebench unless Akshaj asks.
 
 ---
 

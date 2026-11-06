@@ -1,0 +1,109 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "4",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop1_meta_ai_competition",
+        "mode": "hybrid",
+        "question": "What major competitors or competitive pressures does Meta describe around AI and its core products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes TikTok as a major competitive product that has reduced user engagement with Facebook and Instagram. The company also faces competitive pressures around AI, including regulatory scrutiny from agencies like the FTC and Congress regarding AI chatbots and AI-generated content, as well as concerns about automation, ethical issues, and consumer perceptions of AI.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:0",
+          "0001628280-26-003942:Item1A:3"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "AI",
+          "TikTok"
+        ],
+        "keyword_misses": [
+          "competition"
+        ],
+        "keyword_recall": 0.6666666666666666,
+        "judge_correctness": 0.875,
+        "judge_fact_hits": [
+          "Describes competition Meta faces for users, advertisers, and/or AI features",
+          "Names at least one competitor or competitor category (e.g. TikTok, other AI companies, or connection/sharing platforms)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers one required fact well (naming TikTok as a competitor and describing competition for users), but conflates regulatory scrutiny with competitive pressure. The gold answer requires description of competition for users/advertisers/AI features and naming competitors—the model identifies TikTok but frames most AI-related content as regulatory/reputational risk rather than competitive pressure from other AI companies.",
+        "correct_refuse": null,
+        "latency_ms": 14308.1,
+        "estimated_cost_usd": 0.011796,
+        "error": null,
+        "score": 0.875
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 0.875
+    },
+    "mean_latency_ms": 14308.1,
+    "mean_cost_usd": 0.011796,
+    "mean_score": 0.875,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop1_meta_ai_competition",
+        "mode": "vector_only",
+        "question": "What major competitors or competitive pressures does Meta describe around AI and its core products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes TikTok as a major competitive product that has reduced user engagement with Facebook and Instagram. The company also faces competitive pressures around AI, including regulatory scrutiny from agencies like the FTC and Congress regarding AI and AI chatbots, as well as broader challenges related to evolving laws on AI-generated content and intermediary liability.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:0",
+          "0001628280-26-003942:Item1A:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AI",
+          "TikTok"
+        ],
+        "keyword_misses": [
+          "competition"
+        ],
+        "keyword_recall": 0.6666666666666666,
+        "judge_correctness": 0.875,
+        "judge_fact_hits": [
+          "Describes competition Meta faces for users, advertisers, and/or AI features",
+          "Names at least one competitor or competitor category (e.g. TikTok, other AI companies, or connection/sharing platforms)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers one required fact well (names TikTok as a competitor and describes competition for users), but conflates regulatory scrutiny with competitive pressure. While regulatory challenges are mentioned, the answer does not adequately address competition from other AI companies or other competitor categories developing AI features—a key part of the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 7880.5,
+        "estimated_cost_usd": 0.011046,
+        "error": null,
+        "score": 0.875
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 0.875
+    },
+    "mean_latency_ms": 7880.5,
+    "mean_cost_usd": 0.011046,
+    "mean_score": 0.875,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

@@ -29,7 +29,10 @@ from router import RetrievalRoute, RouteDecision
 from vector_retriever import (
     VectorPassage,
     VectorRetrievalResult,
+    competition_cooccurrence_boost,
     lexical_boost_score,
+    lexical_needles,
+    over_fetch_k,
     rerank_passages_lexical,
 )
 
@@ -88,6 +91,94 @@ def test_query_needles_picks_product_names():
     assert "applecare" in needles
     needles_az = [n.lower() for n in query_needles("What is Microsoft Azure according to the filing?")]
     assert "azure" in needles_az
+
+
+def test_query_needles_keeps_short_ai_acronym():
+    q = (
+        "What major competitors or competitive pressures does Meta describe "
+        "around AI and its core products?"
+    )
+    assert "ai" in [n.lower() for n in query_needles(q)]
+
+
+def test_truncate_competition_ask_centers_on_named_rival():
+    """Early 'products' summary must not hide TikTok mid-chunk."""
+    q = (
+        "What major competitors or competitive pressures does Meta describe "
+        "around AI and its core products?"
+    )
+    early = (
+        "Summary Risk Factors include risks related to our Product Offerings "
+        "and our ability to compete effectively around core products. "
+    )
+    mid = "x " * 800
+    rival = (
+        "We face significant competition for users and advertisers, including "
+        "from platforms such as TikTok, and from other companies developing AI "
+        "features."
+    )
+    text = early + mid + rival + (" y" * 200)
+    out = truncate_passage_for_query(text, q, 1200)
+    assert "TikTok" in out
+    assert "Summary Risk Factors" not in out
+
+
+def test_lexical_needles_keeps_short_ai_acronym():
+    """AI is the topic for Meta competition asks; len<3 used to drop it entirely."""
+    q = (
+        "What major competitors or competitive pressures does Meta describe "
+        "around AI and its core products?"
+    )
+    needles = [n.lower() for n in lexical_needles(q)]
+    assert "ai" in needles
+    assert "competitors" in needles
+    # Ordinary 2-letter stop-ish tokens still stay out.
+    assert "to" not in needles
+    assert "in" not in needles
+
+
+def test_over_fetch_k_reaches_dense_rank_20():
+    assert over_fetch_k(5) == 25
+    assert over_fetch_k(10) == 30
+    assert over_fetch_k(20) == 40
+
+
+def test_competition_boost_promotes_named_rival_over_generic_ai():
+    q = (
+        "What major competitors or competitive pressures does Meta describe "
+        "around AI and its core products?"
+    )
+    generic = (
+        "The company faces regulatory scrutiny around AI from the FTC and Congress."
+    )
+    named = (
+        "Meta faces significant competition for users and advertisers, including "
+        "from platforms such as TikTok, and from other companies developing AI "
+        "features and technologies."
+    )
+    assert competition_cooccurrence_boost(q, named) == 0.30
+    assert competition_cooccurrence_boost(q, generic) == 0.0
+    # Non-competition asks must not pick up the named-rival bonus.
+    assert competition_cooccurrence_boost("What is AppleCare?", named) == 0.0
+
+    passages = [
+        VectorPassage(
+            chunk_id="generic_ai_reg",
+            text=generic,
+            section="Item1A",
+            score=0.52,
+            entity_ids=[],
+        ),
+        VectorPassage(
+            chunk_id="tiktok_competition",
+            text=named,
+            section="Item1A",
+            score=0.37,
+            entity_ids=[],
+        ),
+    ]
+    ranked = rerank_passages_lexical(passages, q, k=2)
+    assert ranked[0].chunk_id == "tiktok_competition"
 
 
 def test_truncate_passage_for_query_centers_mid_chunk_needle():

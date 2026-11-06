@@ -1,0 +1,111 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "4",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop1_meta_ai_competition",
+        "mode": "hybrid",
+        "question": "What major competitors or competitive pressures does Meta describe around AI and its core products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes competitive pressures around its ability to compete effectively, which is listed as a key risk. The company faces challenges from mobile operating system partners like Apple and Google, who have implemented changes that limit Meta's ability to target and measure advertising. For example, Apple's 2021 iOS changes reduced Meta's ability to target and measure ads, negatively impacting marketer budgets. Meta also faces regulatory scrutiny and evolving legal frameworks around AI from agencies like the FTC, Congress, state attorneys general, and international bodies like the EU, which could require resource expenditures to adapt.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:0",
+          "0001628280-26-003942:Item1A:2",
+          "0001628280-26-003942:Item1A:3"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "AI"
+        ],
+        "keyword_misses": [
+          "competition",
+          "TikTok"
+        ],
+        "keyword_recall": 0.3333333333333333,
+        "judge_correctness": 0.125,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Describes competition Meta faces for users, advertisers, and/or AI features",
+          "Names at least one competitor or competitor category (e.g. TikTok, other AI companies, or connection/sharing platforms)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer addresses regulatory and OS-level competitive pressures but fails to cover the core required facts about competition for users, advertisers, and AI features from direct competitors like TikTok or other AI companies. It focuses heavily on regulatory scrutiny and Apple/Google's data restrictions rather than direct competitive threats from other platforms or AI developers.",
+        "correct_refuse": null,
+        "latency_ms": 12410.5,
+        "estimated_cost_usd": 0.013281,
+        "error": null,
+        "score": 0.125
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 0.125
+    },
+    "mean_latency_ms": 12410.5,
+    "mean_cost_usd": 0.013281,
+    "mean_score": 0.125,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop1_meta_ai_competition",
+        "mode": "vector_only",
+        "question": "What major competitors or competitive pressures does Meta describe around AI and its core products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes competitive pressures around its ability to compete effectively, which is listed as a key risk. The company faces challenges from mobile operating system partners like Apple and Google, who have implemented changes that limit Meta's ability to target and measure advertising. For example, Apple's 2021 iOS changes reduced Meta's ability to target and measure ads, negatively impacting marketer budgets. Meta also faces regulatory scrutiny and evolving legal frameworks around AI from agencies like the FTC, Congress, state attorneys general, and international bodies like the EU, which could require resource expenditures to adapt.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:0",
+          "0001628280-26-003942:Item1A:2",
+          "0001628280-26-003942:Item1A:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AI"
+        ],
+        "keyword_misses": [
+          "competition",
+          "TikTok"
+        ],
+        "keyword_recall": 0.3333333333333333,
+        "judge_correctness": 0.0,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Describes competition Meta faces for users, advertisers, and/or AI features",
+          "Names at least one competitor or competitor category (e.g. TikTok, other AI companies, or connection/sharing platforms)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer focuses on regulatory and technical challenges (Apple/Google OS changes, FTC scrutiny) but fails to address the core required facts: it does not describe competition for users and advertisers, does not name social/content platform competitors like TikTok, and does not mention competition from other AI companies developing AI features. The answer is about regulatory and OS-level constraints, not competitive pressures in the market sense.",
+        "correct_refuse": null,
+        "latency_ms": 8671.5,
+        "estimated_cost_usd": 0.012141,
+        "error": null,
+        "score": 0.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_1": 0.0
+    },
+    "mean_latency_ms": 8671.5,
+    "mean_cost_usd": 0.012141,
+    "mean_score": 0.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

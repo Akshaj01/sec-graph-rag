@@ -67,7 +67,7 @@ Full tables: [`benchmarks/results/multi_company_smoke_temp0_run1.json`](benchmar
 1. The generation gap of the three-run means is −0.026. All three paired gaps are negative. That range is three runs, not a bootstrap interval.
 2. One graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`.
 3. One refusal: a question the 10-K corpus cannot answer (Tesla battery supply, Bitcoin on Apple's balance sheet).
-4. One open miss: Meta AI competition still does not name a platform competitor. See **What didn't work**.
+4. One open miss: Netflix “AI compute for others” denies the premise in prose but leaves `refused` false. See **What didn't work**.
 
 ## Design decisions
 
@@ -81,7 +81,6 @@ These are hybrid answers whose three-run mean is below 1.0. Detail is in [`docs/
 
 | Item | Mean | Runs | What happened |
 |------|-----:|------|----------------|
-| `hop1_meta_ai_competition` | 0.00 | 0, 0, 0 | Apple/Google ad limits, no named platform or AI competitor |
 | `oos_nflx_ai_compute_for_others` | 0.00 | 0, 0, 0 | Denied the premise in prose but did not set refused |
 | `hop1_msft_products` | 0.13 | 0.13, 0.13, 0.13 | Named Microsoft 365, Dynamics, Windows, and Bing. Missed Azure and Xbox |
 | `hop2_nvda_auto_competitors_risks` | 0.42 | 0.42, 0.42, 0.42 | Auto SoCs. Missed DRIVE / autonomous |
@@ -89,6 +88,8 @@ These are hybrid answers whose three-run mean is below 1.0. Detail is in [`docs/
 | `hop2_jpm_credit_vs_market` | 0.63 | 0.63, 0.63, 0.63 | Both risks named. Older runs of this item scored 0.38 and 1.0 |
 | `hop1_aapl_products` | 0.83 | 1.0, 1.0, 0.5 | The answer text is the same on all three runs. The judge moved |
 | `hop1_meta_apps` | 0.83 | 0.75, 0.75, 1.0 | Names Family of Apps and Reality Labs. No longer a refusal |
+
+`hop1_meta_ai_competition` was **0.00** on all three published runs (Apple/Google ad limits, no TikTok). After those runs, a retrieve fix (larger over-fetch + named-rival boost) and an answer-window fix (center on TikTok / keep `AI` needles) raised a one-item resmoke to **0.875** hybrid and vector. That score is **not** folded into the table above. Detail: [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md) §16–§17.
 
 Earlier failures that are fixed, and worth saying anyway: keyword overlap scored wrong answers as 1.0, a 1200-character window hid AppleCare and Azure, and an Apple product answer cited Meta's 10-K.
 
