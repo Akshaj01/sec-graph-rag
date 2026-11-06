@@ -139,9 +139,9 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 
 | Item | Mean | Notes |
 |------|-----:|-------|
-| `hop2_jpm_credit_vs_market` | 0.63 | Flaky historically; needs JPM issuer restore (~$15 est.). |
-| `hop1_aapl_products` | 0.83 | Judge flake historically; needs AAPL issuer restore. |
-| `hop1_meta_apps` | 0.83 | Mostly fixed; needs META issuer restore on this PC. |
+| `hop2_jpm_credit_vs_market` | 0.63 | **DONE** resmoke hybrid/vector **1.0** after JPM grow. |
+| `hop1_aapl_products` | 0.83 | Restored; resmoke **1.0** (judge flake was historical). |
+| `hop1_meta_apps` | 0.83 | Restored; resmoke **1.0**. |
 | `hop1_nflx_aws_relationship` | (0.50 on earlier file) | **DONE** hybrid/vector **1.0** (§22). |
 
 ### P4. This-PC corpus restore
@@ -149,9 +149,8 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 | | |
 |--|--|
 | **Why** | Full retrieve rebuild and honest full rebench need all 10 tickers. This PC had AAPL/JOBY/WDC (+ META embedded for the Meta work). |
-| **Work** | Issuers now: **AAPL META MSFT NFLX NVDA**. Still missing: `AMZN GOOGL JNJ JPM XOM`. |
-| **Progress** | AAPL (138e/135r) + META (177e/193r; embed reused) grown 2026-11-06. Verify: `meta_aapl_restore_resmoke.json` all **1.0**. |
-| **Est. remaining** | JPM ≈ **$15**; AMZN+GOOGL+JNJ+XOM still TBD via `--budget`. Raise `MAX_EXTRACTION_BUDGET_USD` per ticker. |
+| **Work** | Issuers now: **AAPL JPM META MSFT NFLX NVDA**. Still missing: `AMZN GOOGL JNJ XOM` (grow in flight / next). |
+| **Progress** | AAPL+META restored; JPM grown (321e/387r). JPM hop2 + META/AAPL resmokes **1.0**. Remaining 4 est. **~$17.56**. |
 
 ### P5. Full retrieve rebuild (`retrieval_v4`)
 
@@ -194,8 +193,7 @@ Until step 4, the public headline stays **0.86 vs 0.89**.
 
 ## Suggested next session
 
-1. **P4** finish — `JPM` (~$15) then `AMZN GOOGL JNJ XOM`.  
-2. Resmoke `hop2_jpm_credit_vs_market` after JPM grow.  
-3. Do not start P6 until you say so.
+1. Finish **P4** — `AMZN GOOGL JNJ XOM` (~$17.56).  
+2. Then **P5** retrieve rebuild and/or **P6** one full temperature-0 rebench (only when you say so).  
 
-**Last updated:** 2026-11-06 (§22 NFLX AWS; P4 AAPL+META restored)
+**Last updated:** 2026-11-06 (P4 6/10 issuers; JPM hop2 1.0)
