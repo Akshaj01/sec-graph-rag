@@ -107,8 +107,8 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 |------|----------------------:|--------|
 | `hop1_msft_products` | 0.13 | **DONE** hybrid resmoke **1.0** (§19). Vector still 0.125. |
 | `hop0_meta_ai_glasses` | 0.50 | **DONE** hybrid/vector resmoke **1.0** (§20). |
-| `hop2_msft_cloud_and_geo_risk` | (was 0.50 on earlier hybrid file) | **Next** — MSFT grown; quick resmoke |
-| `hop2_nvda_auto_competitors_risks` | 0.42 | Needs NVDA corpus + DRIVE in pack |
+| `hop2_msft_cloud_and_geo_risk` | (was 0.50 on earlier hybrid file) | **DONE** resmoke hybrid/vector **1.0** (MSFT grow only). |
+| `hop2_nvda_auto_competitors_risks` | 0.42 | **Next** — needs NVDA corpus + DRIVE in pack |
 | `hop1_nvda_automotive` | (was 0.50 on earlier hybrid file) | With NVDA grow |
 
 | | |
@@ -175,9 +175,8 @@ Until step 4, the public headline stays **0.86 vs 0.89**.
 
 ## Suggested next session
 
-1. **P2** — resmoke `hop2_msft_cloud_and_geo_risk` (MSFT already grown).  
-2. Grow **NVDA** for DRIVE items (`hop2_nvda_auto_competitors_risks`, `hop1_nvda_automotive`).  
-3. Or **P4** remaining tickers if aiming at full rebench soon.  
-4. Do not start P6 until you say so.
+1. Grow **NVDA** for DRIVE items (`hop2_nvda_auto_competitors_risks`, `hop1_nvda_automotive`).  
+2. Or **P4** remaining tickers if aiming at full rebench soon.  
+3. Do not start P6 until you say so.
 
-**Last updated:** 2026-11-06 (§20 Meta AI glasses 1.0)
+**Last updated:** 2026-11-06 (§20 glasses 1.0; MSFT hop2 resmoke 1.0)

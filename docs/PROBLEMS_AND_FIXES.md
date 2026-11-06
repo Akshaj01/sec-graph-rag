@@ -236,7 +236,8 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Root cause on this PC** | Dense MSFT Item 1 extract truncated when `EXTRACTION_MAX_TOKENS` was too low / unset in `.env` (defaults must be **16384**). Incomplete graph → pack without Azure/Xbox prominence. |
 | **Fix** | Confirm `EXTRACTION_MAX_TOKENS=16384` (config default + local `.env`). Grow MSFT fully (148 entities / 178 rels). `MSFT_AZURE` / `MSFT_XBOX` present. |
 | **Verify** | `benchmarks/results/hop1_msft_products_resmoke.json` — hybrid **1.0**; vector_only still **0.125** (Azure/Xbox still easy to omit from vector-only pack). |
-| **Not done** | Vector-only product-list ranking; headline table still has hybrid 0.13 for this item. |
+| **Follow-on** | Same MSFT grow unblocked `hop2_msft_cloud_and_geo_risk`: resmoke hybrid/vector **1.0** (`benchmarks/results/hop2_msft_cloud_and_geo_risk_resmoke.json`) — no extra code. |
+| **Not done** | Vector-only product-list ranking; headline table still has hybrid 0.13 / 0.50 for these items. |
 
 ---
 
@@ -407,5 +408,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | P1 false-premise-for-others refuse gate. After credits: NFLX grow + resmoke hybrid/vector **1.0**. See §18. |
 | 2026-11-06 | MSFT full grow with 16k extract; `hop1_msft_products` hybrid **0.13 → 1.0** (vector still 0.125). See §19. |
 | 2026-11-06 | Hardware window (Ray-Ban/Oakley preference). `hop0_meta_ai_glasses` hybrid/vector **0.50 → 1.0**. See §20. |
+| 2026-11-06 | After MSFT grow: `hop2_msft_cloud_and_geo_risk` resmoke hybrid/vector **1.0** (no code change). |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

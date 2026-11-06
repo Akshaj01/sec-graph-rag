@@ -1,0 +1,111 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "4",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop2_msft_cloud_and_geo_risk",
+        "mode": "hybrid",
+        "question": "What compute infrastructure does Microsoft produce, and what geopolitical risks are they exposed to?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft produces cloud services, including Azure and other cloud offerings, and invests in capital expenditures to support cloud infrastructure growth. The company is exposed to geopolitical risks including catastrophic events, supply chain disruptions, trade restrictions, tariffs, AI export controls, data flow restrictions, and increased geopolitical instabilities that impact operations and costs.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1A:0",
+          "0001193125-26-323660:Item1A:1",
+          "0001193125-26-323660:Item1A:5",
+          "0001193125-26-323660:Item1A:6",
+          "0001193125-26-323660:Item7:3"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "Azure",
+          "geopolitical"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Azure / cloud or datacenter compute infrastructure",
+          "Mentions geopolitical, trade, tariff, export-control, or international political risk affecting Microsoft"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure and cloud/datacenter infrastructure, and it thoroughly addresses geopolitical risks including tariffs, AI export controls, trade restrictions, and data flow restrictions—all aligned with the gold answer's scope.",
+        "correct_refuse": null,
+        "latency_ms": 12295.6,
+        "estimated_cost_usd": 0.012748,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_2": 1.0
+    },
+    "mean_latency_ms": 12295.6,
+    "mean_cost_usd": 0.012748,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop2_msft_cloud_and_geo_risk",
+        "mode": "vector_only",
+        "question": "What compute infrastructure does Microsoft produce, and what geopolitical risks are they exposed to?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft develops a broad portfolio of technology solutions including AI, cloud computing, productivity and collaboration, and personal computing platforms. They face geopolitical risks including U.S. import controls and supply chain restrictions, trade uncertainties from tariffs and shifting AI export controls, restrictions on data flows and outbound investment, and potential disruptions from catastrophic events or geopolitical conditions.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1A:5",
+          "0001193125-26-323660:Item1A:6"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "geopolitical"
+        ],
+        "keyword_misses": [
+          "Azure"
+        ],
+        "keyword_recall": 0.5,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Azure / cloud or datacenter compute infrastructure",
+          "Mentions geopolitical, trade, tariff, export-control, or international political risk affecting Microsoft"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure and cloud/AI datacenter infrastructure, and it thoroughly addresses geopolitical risks including tariffs, AI export controls, trade uncertainties, import controls, data flow restrictions, and operational disruptions. All claims are well-supported and aligned with the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 7488.3,
+        "estimated_cost_usd": 0.012055,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_2": 1.0
+    },
+    "mean_latency_ms": 7488.3,
+    "mean_cost_usd": 0.012055,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}
