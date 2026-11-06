@@ -6,15 +6,15 @@ Scored n=32. OOS skipped=12.
 
 | Hop | n | System | Recall@5 | Recall@10 | MRR |
 |-----|--:|--------|--------:|----------:|----:|
-| hop_0 | 8 | graph | 0.56 | 0.56 | 0.44 |
+| hop_0 | 8 | graph | 0.31 | 0.31 | 0.32 |
 | hop_0 | 8 | vector | 1.00 | 1.00 | 0.71 |
-| hop_0 | 8 | hybrid | 1.00 | 1.00 | 0.66 |
-| hop_1 | 16 | graph | 0.46 | 0.56 | 0.38 |
+| hop_0 | 8 | hybrid | 1.00 | 1.00 | 0.70 |
+| hop_1 | 16 | graph | 0.46 | 0.56 | 0.39 |
 | hop_1 | 16 | vector | 0.73 | 0.85 | 0.59 |
-| hop_1 | 16 | hybrid | 0.75 | 0.85 | 0.54 |
-| hop_2 | 8 | graph | 0.50 | 0.67 | 0.57 |
+| hop_1 | 16 | hybrid | 0.77 | 0.85 | 0.55 |
+| hop_2 | 8 | graph | 0.50 | 0.60 | 0.43 |
 | hop_2 | 8 | vector | 0.81 | 1.00 | 0.79 |
-| hop_2 | 8 | hybrid | 0.85 | 0.90 | 0.79 |
-| overall | 32 | graph | 0.49 | 0.59 | 0.44 |
+| hop_2 | 8 | hybrid | 0.79 | 0.96 | 0.77 |
+| overall | 32 | graph | 0.43 | 0.51 | 0.38 |
 | overall | 32 | vector | 0.82 | 0.93 | 0.67 |
-| overall | 32 | hybrid | 0.84 | 0.90 | 0.63 |
+| overall | 32 | hybrid | 0.83 | 0.92 | 0.64 |

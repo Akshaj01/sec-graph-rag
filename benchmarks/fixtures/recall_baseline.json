@@ -39,5 +39,5 @@
     "hop1_nvda_geopolitical_risk",
     "hop1_aapl_supply_chain_risk"
   ],
-  "recall_at_10": 0.90104375
+  "recall_at_10": 0.91666875
 }

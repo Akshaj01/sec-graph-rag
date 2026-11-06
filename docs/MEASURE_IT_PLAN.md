@@ -247,7 +247,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Rank:** first time a chunk id appears. Hybrid list is graph ids, then vector ids that were not already in the graph list. Vector list is depth 10. Out-of-scope items are not scored.
 
-**Result to be able to say:** the 2026-11-05 rerun alternates vector then graph and always retrieves both lists. Hybrid recall@5 is **0.84**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.90**) and MRR (**0.67** vs **0.63**). The earlier graph-first hybrid number was recall@5 **0.67** / MRR **0.51**. Graph-only moved to **0.49** / **0.44** on this rerun because the planner is not deterministic. This does not replace the generation table (full-run hybrid **0.92** vs vector **0.89**).
+**Result to be able to say:** hybrid retrieval alternates vector then graph. Graph edges are ordered by how many question words they hit; extraction confidence only breaks a tie. On the 2026-11-05 rerun, hybrid recall@5 is **0.83**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**). The earlier graph-first hybrid number was recall@5 **0.67**. Graph-only is **0.43** / **0.38** on this run; the planner is not deterministic, so that column is not a clean before-and-after. This does not replace the generation table (full-run hybrid **0.92** vs vector **0.89**).
 
 ### WP3 — κ split (2026-11-02)
 
@@ -271,7 +271,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 ### WP5 — recall gate (2026-11-03)
 
-**Check:** hybrid recall@10 on the 32 answerable v4 items, read from `benchmarks/results/retrieval_v4.json`. Baseline pinned at **0.9010** after the alternating rerun. Fail when the drop is **greater than 0.02**. A drop of exactly 0.02 passes. The item ids are pinned too, so deleting a question does not raise the average.
+**Check:** hybrid recall@10 on the 32 answerable v4 items, read from `benchmarks/results/retrieval_v4.json`. Baseline pinned at **0.9167**. Fail when the drop is **greater than 0.02**. A drop of exactly 0.02 passes. The item ids are pinned too, so deleting a question does not raise the average.
 
 **CI** runs `pytest test_recall_gate.py` and `python recall_gate.py`. No model, no database.
 
@@ -309,7 +309,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 Ship gate in §3 is checked. The defendable answer to “how do you know the RAG is good?”:
 
 - Generation: hybrid **0.92** vs vector-only **0.89** on the 44-question full run. The paired-bootstrap gap is **0.038**, and the 95% interval **−0.047 to 0.126** includes a negative gap. The lead is not stable on this suite. One JPM hop-2 item scored 0.375 on that run and 1.0 on a later rerun. The mean uses 0.375.
-- Retrieval, after the alternating rerun: hybrid recall@5 **0.84**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.90**) and MRR (**0.67** vs **0.63**). The earlier graph-first hybrid recall@5 was **0.67**.
+- Retrieval: hybrid recall@5 **0.83**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**). Graph edges are ranked by question-word hits, then extraction confidence. The earlier graph-first hybrid recall@5 was **0.67**.
 - The judge is not a large panel. The first hold-out pass scored every item 1.0 (κ **0.00**). Two of those labels contradicted the required facts, so Meta AI competition is now 0 and Meta AI glasses is 0.5. Corrected linear κ is **0.84** (19/20). Self-agreement is κ **0.42** (13/15). Rubric v1 was not edited.
 - The recall gate is a saved-file check. It fails when committed hybrid recall@10 drops more than 0.02. It does not re-run ingest. Green push and red break dispatch are both on Actions.
 - Five misses stay open: Meta apps refused, Meta AI competition, Meta AI glasses, NVIDIA auto hop-2, and the JPM hop-2 score that moved from 0.375 to 1.0.

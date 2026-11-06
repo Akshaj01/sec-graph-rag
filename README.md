@@ -2,7 +2,7 @@
 
 Hybrid **knowledge-graph + vector RAG** over SEC **10-K** filings. Closed ontology in Neo4j, the same chunks in pgvector, router picks graph and/or vectors, answers cite only chunks from that retrieval.
 
-10 tickers, 44 hop-stratified questions. Hybrid generation mean **0.92** vs vector-only **0.89**. That lead is **not stable**: the 95% interval on the gap includes values below zero. Hybrid recall@5 is **0.84** vs vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.90**) and MRR (**0.67** vs **0.63**).
+10 tickers, 44 hop-stratified questions. Hybrid generation mean **0.92** vs vector-only **0.89**. That lead is **not stable**: the 95% interval on the gap includes values below zero. Hybrid recall@5 is **0.83** vs vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**).
 
 ## Results
 
@@ -22,11 +22,11 @@ Retrieval is scored separately, on 32 answerable items. Out-of-scope items are s
 
 | | Recall@5 | Recall@10 | MRR |
 |--|--------:|----------:|----:|
-| Graph | 0.49 | 0.59 | 0.44 |
+| Graph | 0.43 | 0.51 | 0.38 |
 | Vector | 0.82 | **0.93** | **0.67** |
-| Hybrid | **0.84** | 0.90 | 0.63 |
+| Hybrid | **0.83** | 0.92 | 0.64 |
 
-Hybrid alternates a vector chunk, then a graph chunk. A chunk already used is skipped. Both lists are retrieved even when the router said graph. The graph-only column moved from the previous run (recall@5 **0.42**) because the graph planner does not return the same chunks every time. Vector did not move.
+Hybrid alternates a vector chunk, then a graph chunk, and skips a chunk already used. Graph edges are ordered by how many question words they hit. Extraction confidence only breaks a tie. Both lists are retrieved even when the router said graph. Graph-only recall moves between runs because the planner does not return the same edges every time.
 
 ## Example
 
@@ -63,7 +63,7 @@ Paired bootstrap, 10,000 draws, seed 0. Gap = hybrid minus vector-only.
 | Overall | 44 | 0.038 | −0.047 to 0.126 |
 | Hop 2 | 8 | 0.005 | −0.234 to 0.250 |
 
-CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.901**. It reads the saved file and does not call a model.
+CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.917**. It reads the saved file and does not call a model.
 
 Full tables: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md), [`benchmarks/results/ablation_bootstrap.md`](benchmarks/results/ablation_bootstrap.md). The means use the full-run score for `hop2_jpm_credit_vs_market` (**0.375**). A later one-item rerun scored **1.0**. That rerun is not in the table.
 

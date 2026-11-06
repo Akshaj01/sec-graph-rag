@@ -766,22 +766,34 @@ def truncate_passage_for_query(
     return out
 
 
+def _fact_needle_blob(fact) -> str:
+    """Target and context only. Issuer source_name would match every edge."""
+    blob = f"{fact.target_name} {fact.target_id} {fact.context or ''}".lower()
+    return re.sub(r"[\s\-]+", " ", blob)
+
+
+def _needle_in_blob(needle: str, blob: str) -> bool:
+    nl = needle.lower()
+    if nl in blob:
+        return True
+    spaced = re.sub(r"[\s\-]+", " ", nl)
+    return spaced in blob
+
+
 def _graph_fact_matches_needles(fact, needles: List[str]) -> bool:
     """True if any needle appears in target name/id or context (not issuer source_name)."""
     if not needles:
         return True
-    # Exclude source_name: issuer tokens ("Netflix") otherwise make every edge "match"
-    # and ranking collapses to confidence → risk laundry lists crowd out AWS.
-    blob = f"{fact.target_name} {fact.target_id} {fact.context or ''}".lower()
-    blob_norm = re.sub(r"[\s\-]+", " ", blob)
-    for n in needles:
-        nl = n.lower()
-        if nl in blob or nl in blob_norm:
-            return True
-        spaced = re.sub(r"[\s\-]+", " ", nl)
-        if spaced in blob_norm:
-            return True
-    return False
+    blob = _fact_needle_blob(fact)
+    return any(_needle_in_blob(n, blob) for n in needles)
+
+
+def _needle_hit_count(fact, needles: List[str]) -> int:
+    """How many question needles hit this edge. Zero when none do."""
+    if not needles:
+        return 0
+    blob = _fact_needle_blob(fact)
+    return sum(1 for n in needles if _needle_in_blob(n, blob))
 
 
 def filter_unmatched_produces_facts(facts: List, question: str) -> List:
@@ -863,14 +875,18 @@ def filter_unmatched_produces_facts(facts: List, question: str) -> List:
 
 
 def _rank_graph_facts_for_question(facts: List, question: str) -> List:
-    """Prefer facts whose endpoints match question needles (e.g. Meta)."""
+    """Rank by how many question words hit the edge, then extraction confidence.
+
+    Confidence is how sure the extractor was that the edge is real. It is only
+    the tie-break. A higher-confidence edge about the wrong product stays behind
+    an edge that hits more of the question.
+    """
     needles = query_needles(question)
     if not needles:
         return list(facts)
 
     def _key(f) -> tuple:
-        matched = 1 if _graph_fact_matches_needles(f, needles) else 0
-        return (matched, float(f.confidence or 0.0))
+        return (_needle_hit_count(f, needles), float(f.confidence or 0.0))
 
     return sorted(facts, key=_key, reverse=True)
 
@@ -918,8 +934,8 @@ def build_evidence_items(
     Deduplicate + cap GRAPH/VECTOR items for the answer prompt.
 
     WHY cap: hop-2 graph templates can return dozens of long-context edges; the
-    answer model then hits max_tokens or falsely refuses. Keep top-confidence
-    graph facts and a few truncated vector passages.
+    answer model then hits max_tokens or falsely refuses. Keep the graph facts
+    that hit the most question words, then a few truncated vector passages.
     """
     max_graph = (
         settings.ANSWER_MAX_GRAPH_ITEMS if max_graph is None else max_graph
@@ -935,7 +951,7 @@ def build_evidence_items(
 
     seen_graph: Set[tuple] = set()
     seen_vector: Set[str] = set()
-    graph_candidates: List[tuple] = []  # (confidence, item)
+    graph_items: List[LabeledEvidenceItem] = []
 
     question = retrieval.question or ""
     if retrieval.vector and retrieval.vector.question:
@@ -957,10 +973,9 @@ def build_evidence_items(
                 chunk_ids=chunk_ids,
                 score=fact.confidence,
             )
-            graph_candidates.append((float(fact.confidence or 0.0), item))
-
-    graph_candidates.sort(key=lambda t: t[0], reverse=True)
-    graph_items = [item for _, item in graph_candidates[:max_graph]]
+            graph_items.append(item)
+            if len(graph_items) >= max_graph:
+                break
 
     vector_items: List[LabeledEvidenceItem] = []
     if retrieval.vector:

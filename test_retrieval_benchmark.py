@@ -31,6 +31,14 @@ def test_graph_chunk_ids_follow_first_occurrence_after_rank():
     ]
 
 
+def test_more_question_hits_outrank_higher_confidence():
+    facts = [
+        _fact("EXPOSED_TO_RISK", ["wrong"], "China supply", confidence=0.95),
+        _fact("EXPOSED_TO_RISK", ["right"], "Ray-Ban Meta", confidence=0.4),
+    ]
+    assert graph_chunk_ids(facts, "What are Ray-Ban Meta glasses?")[0] == "right"
+
+
 def test_hybrid_alternates_vector_then_graph_and_skips_duplicates():
     graph = [f"g{i}" for i in range(11)]
     vector = ["gold", "g0", "v2"]

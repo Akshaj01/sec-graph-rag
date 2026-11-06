@@ -201,6 +201,38 @@ def test_evidence_pack_alternates_vector_then_graph():
     assert [item.source_label for item in items] == ["VECTOR", "GRAPH", "VECTOR"]
 
 
+def test_evidence_pack_keeps_question_hit_order_over_confidence():
+    retrieval = HybridRetrievalResult(
+        question="What are Ray-Ban Meta glasses?",
+        routing=_route(),
+        graph=_graph_result(
+            [
+                GraphFact(
+                    source_id="APPLE",
+                    source_name="Apple Inc.",
+                    rel_type="EXPOSED_TO_RISK",
+                    target_id="CHINA",
+                    target_name="China supply",
+                    source_chunk_ids=["wrong"],
+                    confidence=0.95,
+                ),
+                GraphFact(
+                    source_id="APPLE",
+                    source_name="Apple Inc.",
+                    rel_type="EXPOSED_TO_RISK",
+                    target_id="RAYBAN",
+                    target_name="Ray-Ban Meta",
+                    source_chunk_ids=["right"],
+                    confidence=0.4,
+                ),
+            ]
+        ),
+        vector=None,
+    )
+    items = build_evidence_items(retrieval, max_graph=5, max_vector=5)
+    assert [item.chunk_ids[0] for item in items] == ["right", "wrong"]
+
+
 def test_build_evidence_items_caps_graph_by_confidence():
     facts = [_fact(f"P{i}", confidence=i / 10, chunk=f"c{i}") for i in range(20)]
     retrieval = HybridRetrievalResult(
