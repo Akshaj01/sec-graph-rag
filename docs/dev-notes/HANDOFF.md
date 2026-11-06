@@ -1,7 +1,7 @@
 # SEC GraphRAG — Handoff
 
 **Last updated:** 2026-11-05  
-**Repo:** https://github.com/Akshaj01/sec-graph-rag (`main` at `e32f498`)  
+**Repo:** https://github.com/Akshaj01/sec-graph-rag (`main`)  
 **Primary living plan:** [`docs/MEASURE_IT_PLAN.md`](../MEASURE_IT_PLAN.md) (closed). Next stub: [`docs/GATEWAY_PLAN.md`](../GATEWAY_PLAN.md).
 
 Use this file + `docs/dev-notes/AGENTS.md` + **`docs/MEASURE_IT_PLAN.md`** to continue in a **new Cursor chat** on the PC. Chat history will not transfer. `git pull` first. The published numbers are already in the repo. Do not start another paid answer run to recreate them.
@@ -34,7 +34,7 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 
 ## Resume on the PC (2026-11-05)
 
-`git pull` on `main`. HEAD is `e32f498`. The PC needs its own `.env` (never committed) and Docker (`neo4j_graphrag`, `pgvector_graphrag`). The corpus under `data/` is gitignored, so a fresh PC does not have the graph until ingest is run there. The score files below are in git. Reading them does not need Docker or an API key.
+`git pull` on `main`. The PC needs its own `.env` (never committed) and Docker (`neo4j_graphrag`, `pgvector_graphrag`). The corpus under `data/` is gitignored, so a fresh PC does not have the graph until ingest is run there. The score files below are in git. Reading them does not need Docker or an API key.
 
 **Generation headline.** Three runs, planner + router + answer + judge at temperature 0. Files: `benchmarks/results/multi_company_smoke_temp0_run1.json`, `run2`, `run3`. Suite `benchmarks/multi_company_smoke.json` (v4, n=44).
 
@@ -324,7 +324,7 @@ You are continuing SEC GraphRAG (Akshaj) on the PC. git pull first. Read complet
 4) docs/GATEWAY_PLAN.md — next phase stub (no code yet)
 5) docs/dev-notes/AGENTS.md
 
-main is e32f498. Build phases 1–5 are DONE. Measure it is DONE.
+Pull latest main. Build phases 1–5 are DONE. Measure it is DONE.
 Generation: three temperature-0 runs, hybrid 0.86 (0.856–0.862) vs vector 0.89 (0.878–0.889). Gap of the means −0.026. Do not quote 0.92 vs 0.89.
 Retrieval: hybrid recall@5 0.83 vs vector 0.82. Vector leads recall@10 and MRR.
 Do not rerun the paid suite unless asked. Do not start gateway code before a design note.
