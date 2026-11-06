@@ -3,7 +3,7 @@
 Living log of failures hit while building SEC GraphRAG, why they happened, and what changed. Each closed item is symptom, root cause, and fix.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Last updated:** 2026-11-06 (P1 false-premise refuse; resmoke blocked on Anthropic credits)
+**Last updated:** 2026-11-06 (P1 Netflix OOS 1.0; MSFT products hybrid 1.0)
 
 ---
 
@@ -215,19 +215,32 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 
 ---
 
-## Open / known weaknesses (not fully fixed)
-
-### A2. Netflix OOS false-premise refuse (code landed 2026-11-06; live resmoke blocked)
+### 18. Netflix OOS false-premise answered with refused=false
 
 | | |
 |--|--|
-| **Symptom** | `oos_nflx_ai_compute_for_others` hybrid **0.00** on all three temp-0 runs: summary denies the premise but `refused=false`, so OOS score is 0. Vector already **1.0**. |
+| **Symptom** | `oos_nflx_ai_compute_for_others` hybrid **0.00** on all three temp-0 runs: summary denies the premise but `refused=false`. Vector already **1.0**. |
 | **Root cause** | Own-product GRAPH edges (streaming / CDN) counted as on-topic; unjustified-refuse repair / laundry-list answers left `refused=false`. |
-| **Fix shipped** | `looks_like_false_premise_for_others` + `evidence_supports_produce_for_others`; topic gate returns false for own-product packs; skip unjustified-refuse repair on these asks; final safety forces `refused=true`. Unit tests in `test_answer_evidence.py`. |
-| **Verify** | **Blocked:** Anthropic credit balance too low (extract + answer). NFLX chunks are embedded (`embedder.py NFLX --all`). After credits: `grow_corpus.py NFLX --confirm` (graph) then `benchmark_runner.py --ids oos_nflx_ai_compute_for_others --modes hybrid,vector_only`. |
-| **Where** | `answer.py`; plan [`docs/HYBRID_IMPROVE_PLAN.md`](HYBRID_IMPROVE_PLAN.md) P1 |
+| **Fix** | `looks_like_false_premise_for_others` + `evidence_supports_produce_for_others`; topic gate false for own-product packs; skip unjustified-refuse repair on these asks; final safety forces `refused=true`. |
+| **Where** | `answer.py`, `test_answer_evidence.py` |
+| **Verify** | NFLX grown; `benchmarks/results/oos_nflx_ai_compute_for_others_resmoke.json` — hybrid **1.0** (`refuse=True`, route graph), vector_only **1.0**. |
+| **Not done** | Headline table still uses the three-run means (this item was 0.00 there). |
 
 ---
+
+### 19. MSFT products missed Azure/Xbox (corpus / extract headroom)
+
+| | |
+|--|--|
+| **Symptom** | `hop1_msft_products` hybrid three-run mean **0.13** — named M365/Dynamics/Windows/Bing, missed Azure and Xbox. |
+| **Root cause on this PC** | Dense MSFT Item 1 extract truncated when `EXTRACTION_MAX_TOKENS` was too low / unset in `.env` (defaults must be **16384**). Incomplete graph → pack without Azure/Xbox prominence. |
+| **Fix** | Confirm `EXTRACTION_MAX_TOKENS=16384` (config default + local `.env`). Grow MSFT fully (148 entities / 178 rels). `MSFT_AZURE` / `MSFT_XBOX` present. |
+| **Verify** | `benchmarks/results/hop1_msft_products_resmoke.json` — hybrid **1.0**; vector_only still **0.125** (Azure/Xbox still easy to omit from vector-only pack). |
+| **Not done** | Vector-only product-list ranking; headline table still has hybrid 0.13 for this item. |
+
+---
+
+## Open / known weaknesses (not fully fixed)
 
 ### A0. Meta AI competition — short-acronym needle (tried 2026-11-06, did not move recall)
 
@@ -378,6 +391,7 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | Raised over-fetch (25–40) + named-rival competition boost (+0.30). META item recall@5/10/MRR **0.67/0.67/0.50 → 1.0/1.0/1.0**. See §16. |
 | 2026-11-06 | Answer resmoke `hop1_meta_ai_competition`: hybrid 0.00→0.125, vector 0.00. Gold chunk cited but TikTok outside 1200-char window (char 5092). |
 | 2026-11-06 | Competition window fix (named-rival center + AI in `query_needles`). Resmoke: hybrid/vector **0.875**. See §17. |
-| 2026-11-06 | P1 false-premise-for-others refuse gate in `answer.py`. Unit tests green. Live NFLX extract/resmoke blocked on Anthropic credits. See §A2. |
+| 2026-11-06 | P1 false-premise-for-others refuse gate. After credits: NFLX grow + resmoke hybrid/vector **1.0**. See §18. |
+| 2026-11-06 | MSFT full grow with 16k extract; `hop1_msft_products` hybrid **0.13 → 1.0** (vector still 0.125). See §19. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

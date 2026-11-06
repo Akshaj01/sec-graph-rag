@@ -23,7 +23,7 @@ This file is the checklist for the post–Measure-it hybrid push. Gateway (`GATE
 | **Left (infra before full rebench)** | Corpus restore on this PC | Need all 10 tickers in Neo4j + pgvector |
 | **Left (publish)** | Full 44×2 answer rebench + README rewrite | Only after enough fixes land |
 
-Rough completion of *this* plan: **~35%** (Meta AI end-to-end; P1 refuse code landed, live resmoke waiting on Anthropic credits; headline not updated yet).
+Rough completion of *this* plan: **~55%** (Meta AI; P1 Netflix OOS **1.0**; MSFT products hybrid **1.0**; headline not updated yet).
 
 ---
 
@@ -47,7 +47,25 @@ Rough completion of *this* plan: **~35%** (Meta AI end-to-end; P1 refuse code la
 | **Result** | One-item resmoke hybrid/vector **0.00/0.125 → 0.875**. |
 | **Artifacts** | `benchmarks/results/hop1_meta_ai_competition_window_resmoke.json` |
 
-### D3. Docs / publish hygiene (partial)
+### D3. Netflix OOS false-premise refuse (§18)
+
+| | |
+|--|--|
+| **Problem** | Hybrid denied premise with `refused=false` → OOS score 0. |
+| **Fix** | False-premise-for-others topic gate + force refuse. |
+| **Result** | One-item resmoke hybrid/vector **1.0**. |
+| **Artifacts** | `benchmarks/results/oos_nflx_ai_compute_for_others_resmoke.json` |
+
+### D4. MSFT products hybrid (§19)
+
+| | |
+|--|--|
+| **Problem** | Three-run hybrid **0.13** — missed Azure/Xbox. |
+| **Fix** | Full MSFT extract/write with `EXTRACTION_MAX_TOKENS=16384`; Azure/Xbox edges present. |
+| **Result** | One-item resmoke hybrid **1.0** (vector_only still **0.125**). |
+| **Artifacts** | `benchmarks/results/hop1_msft_products_resmoke.json` |
+
+### D5. Docs / publish hygiene (partial)
 
 | | |
 |--|--|
@@ -70,28 +88,25 @@ Work one step at a time: fix → targeted retrieve and/or answer resmoke → log
 
 | | |
 |--|--|
-| **Why** | Hard **0.00** on all three hybrid runs. Denies the premise in prose but leaves `refused=false`, so the judge zeros it. |
-| **Code** | **DONE 2026-11-06** — `looks_like_false_premise_for_others` + topic gate + skip unjustified-refuse repair + final force-refuse. Tests green. Logged §A2. |
-| **Verify** | **BLOCKED** — Anthropic API: credit balance too low. NFLX text is embedded; graph extract still needed after credits. Then one-item hybrid+vector resmoke. |
-| **Est. cost** | ~$0.97 NFLX extract + ~$0.05–0.15 answer/judge. |
+| **Status** | **DONE** (code + verify 2026-11-06). See §18 / D3. |
 
 ### P2. Named product / brand misses (pack or window)
 
 Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 
-| Item | Three-run hybrid mean | Missing |
-|------|----------------------:|---------|
-| `hop1_msft_products` | 0.13 | Azure, Xbox |
-| `hop2_nvda_auto_competitors_risks` | 0.42 | DRIVE / autonomous |
-| `hop0_meta_ai_glasses` | 0.50 | Ray-Ban Meta / Oakley Meta |
-| `hop1_nvda_automotive` | (was 0.50 on earlier hybrid file) | DRIVE |
-| `hop2_msft_cloud_and_geo_risk` | (was 0.50 on earlier hybrid file) | Azure |
+| Item | Three-run hybrid mean | Status |
+|------|----------------------:|--------|
+| `hop1_msft_products` | 0.13 | **DONE** hybrid resmoke **1.0** (§19). Vector still 0.125. |
+| `hop2_nvda_auto_competitors_risks` | 0.42 | **Next** — needs NVDA corpus + DRIVE in pack |
+| `hop0_meta_ai_glasses` | 0.50 | META already local — Ray-Ban / Oakley Meta window |
+| `hop1_nvda_automotive` | (was 0.50 on earlier hybrid file) | With NVDA grow |
+| `hop2_msft_cloud_and_geo_risk` | (was 0.50 on earlier hybrid file) | MSFT grown — quick resmoke candidate |
 
 | | |
 |--|--|
 | **Likely work** | Prefer VECTOR (or named-needle windows) when the question names a product brand; stop unmatched `PRODUCES_PRODUCT` from crowding the pack. |
 | **Verify** | Targeted resmokes per item after each change. |
-| **Est. cost** | ~$0.10–0.25 per item × both modes. |
+| **Est. cost** | ~$0.10–0.25 per item × both modes (+ NVDA grow ~$1–2). |
 
 ### P3. Remaining soft misses (lower priority)
 
@@ -151,9 +166,9 @@ Until step 4, the public headline stays **0.86 vs 0.89**.
 
 ## Suggested next session
 
-1. Top up Anthropic credits.  
-2. Finish **P1 verify**: `grow_corpus.py NFLX --confirm` then one-item resmoke.  
-3. Then **P2** (MSFT Azure/Xbox or NVDA DRIVE) or **P4** corpus grow.  
+1. **P2** — `hop0_meta_ai_glasses` (META local) or grow **NVDA** for DRIVE items.  
+2. Optional: resmoke `hop2_msft_cloud_and_geo_risk` now that MSFT is grown.  
+3. Or **P4** remaining tickers if aiming at full rebench soon.  
 4. Do not start P6 until you say so.
 
-**Last updated:** 2026-11-06 (P1 code in; credits blocked)
+**Last updated:** 2026-11-06 (P1 + MSFT products hybrid verified)

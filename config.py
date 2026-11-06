@@ -26,7 +26,8 @@ class Settings(BaseSettings):
     # Step D: Claude structured extraction
     CLAUDE_MODEL: str = "claude-sonnet-4-5"
     EXTRACTION_MAX_RETRIES: int = 3
-    EXTRACTION_MAX_TOKENS: int = 4096
+    # Dense Item 1 chunks need headroom; 4096 truncates mid-JSON (see PROBLEMS §1).
+    EXTRACTION_MAX_TOKENS: int = 16384
     EXTRACTION_CACHE_PATH: str = "./data/extraction_cache.db"
 
     # Cost guardrails (USD). Run `python budget.py TICKER` before full corpus.

@@ -1,0 +1,92 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "4",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "oos_nflx_ai_compute_for_others",
+        "mode": "hybrid",
+        "question": "How is Netflix producing AI Compute for other companies in the corpus?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Netflix is not producing AI compute for other companies. The evidence describes Netflix as an entertainment service provider that uses third-party cloud computing and technology services for its own streaming operations, but does not indicate that Netflix provides AI compute infrastructure or services to external companies.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001065280-26-000034:Item1:0",
+          "0001065280-26-000034:Item1A:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 11764.5,
+        "estimated_cost_usd": 0.008739,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "oos": 1.0
+    },
+    "mean_latency_ms": 11764.5,
+    "mean_cost_usd": 0.008739,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "oos_nflx_ai_compute_for_others",
+        "mode": "vector_only",
+        "question": "How is Netflix producing AI Compute for other companies in the corpus?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence does not show that Netflix is producing AI compute for other companies. The provided passages describe Netflix's own business as a streaming entertainment service and its use of third-party cloud computing and AI technologies for its own operations, but contain no information about Netflix providing AI compute services to external companies.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0001065280-26-000034:Item1A:1"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 6633.4,
+        "estimated_cost_usd": 0.008622,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "oos": 1.0
+    },
+    "mean_latency_ms": 6633.4,
+    "mean_cost_usd": 0.008622,
+    "mean_score": 1.0,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}
