@@ -3,7 +3,7 @@
 Living log of failures hit while building SEC GraphRAG, why they happened, and what changed. Each closed item is symptom, root cause, and fix.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Last updated:** 2026-11-03
+**Last updated:** 2026-11-05 (three temperature-0 answer runs)
 
 ---
 
@@ -151,26 +151,82 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 
 ---
 
+### 13. Hybrid retrieval buried the gold passage
+
+| | |
+|--|--|
+| **Symptom** | Hybrid recall@5 was **0.67** while vector-only was **0.82**. On Exxon commodity risk the gold chunk was vector rank 1 and hybrid rank 12. Meta apps and NVIDIA products never retrieved a vector chunk at all. |
+| **Root cause** | The hybrid list put every graph chunk first, then every vector chunk. A graph-only route never fetched the vector list, so there was nothing to place beside the graph chunks. |
+| **Fix** | Alternate vector chunk, graph chunk, vector chunk, graph chunk. Skip a chunk already used. A normal ask retrieves both lists even when the router said graph. The vector-only benchmark still forces vector only. |
+| **Where** | `retrieve.py`, `retrieval_metrics.py` (`interleave_ids`), `retrieval_benchmark.py`, `answer.py` (`_interleave_evidence`) |
+| **Result** | Retrieve-only rerun, 32 answerable items. Hybrid recall@5 **0.84**, recall@10 **0.90**, MRR **0.63**. Vector stayed **0.82** / **0.93** / **0.67**. The four old top-5 misses now land inside the top 5. A later hybrid answer rerun, after this pack change, scored **0.85** overall. See §A. |
+
+---
+
+### 14. Extraction confidence was used as question relevance
+
+| | |
+|--|--|
+| **Symptom** | A high-confidence edge about the wrong product could outrank a lower-confidence edge that named what the question asked. The evidence pack then sorted graph statements by confidence alone and dropped the name check the recall list still used. |
+| **Root cause** | Confidence is stored at ingest. It means the extractor was sure the edge was real. It cannot mean the edge answers a question that did not exist yet. |
+| **Fix** | Rank graph edges by how many question words hit the target and context. Confidence only breaks a tie. The evidence pack keeps that order. |
+| **Not shipped** | Reciprocal rank fusion (`1/(60+rank)` from each list) was scored on the saved lists. Recall@5 fell to **0.75** from **0.84**, because a chunk that appears in both lists is often a general passage, not the gold one. Alternation stayed. |
+| **Where** | `answer.py` (`_needle_hit_count`, `_rank_graph_facts_for_question`, `build_evidence_items`) |
+| **Result** | Another retrieve-only rerun. Hybrid recall@5 **0.83**, recall@10 **0.92**, MRR **0.64**. Vector did not move. Graph-only recall@5 was **0.43** on this run; the planner does not return the same edges every time, so that column is not a clean before-and-after. |
+
+---
+
+### 15. Answer scores moved because three model calls were still sampling
+
+| | |
+|--|--|
+| **Symptom** | The same suite scored differently on different nights. JPM hop-2 had already landed at 0.38, 1.0, and 0.63. |
+| **Root cause** | The answer call was already at temperature 0. The graph planner, the router, and the judge were not, so they used the API default and sampled. |
+| **Fix** | `temperature=0` on `plan_graph_query`, `classify_question`, and `judge_answer`. |
+| **Where** | `graph_retriever.py`, `router.py`, `benchmark_judge.py` |
+| **Result** | Three full runs. Hybrid means **0.862, 0.862, 0.856** (mean **0.86**). Vector-only means **0.889, 0.878, 0.889** (mean **0.89**). Five items still changed score. On Apple products the hybrid text was identical and the judge scored it 1.0, 1.0, and 0.5. Temperature 0 shrank the swing. It did not make the judge repeat itself. |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
 
-### A. Five remaining misses on the published hybrid run
+### A. Three temperature-0 answer runs (2026-11-05)
 
-Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). These are the items that are not a clean 1.0.
+Source: `benchmarks/results/multi_company_smoke_temp0_run1.json`, `run2`, and `run3`. Hybrid mean of means **0.860**. Vector-only mean of means **0.885**. Gap **−0.026**. The three paired gaps are **−0.033**, **−0.016**, and **−0.027**.
 
-| Item | Score | What happened |
-|------|------:|----------------|
-| `hop1_meta_apps` | 0.00 | Graph route refused "Which apps or product lines does Meta produce?" The summary says the retrieved evidence does not address the question. |
-| `hop1_meta_ai_competition` | 0.125 | Answer covers Apple/Google ad-targeting limits and AI regulators. It misses competition for users or advertisers from other platforms, and it does not name a competitor such as TikTok. |
-| `hop0_meta_ai_glasses` | 0.50 | Names AI glasses, Reality Labs, and Quest. Misses Ray-Ban Meta / Oakley Meta. |
-| `hop2_nvda_auto_competitors_risks` | 0.667 | Names automotive SoCs plus Ambarella and Broadcom. Misses DRIVE / autonomous by name. |
-| `hop2_jpm_credit_vs_market` | 0.375 on the full run, **1.0** on a targeted resmoke | The headline uses **0.375**. The rerun shows the score moves. It is not in the mean. |
+Items that moved inside these three runs:
+
+| Item | Mode | Runs | What happened |
+|------|------|------|----------------|
+| `hop1_aapl_products` | hybrid | 1.0, 1.0, 0.5 | Same summary. The judge flagged a hallucination only on run 3, which caps the score at 0.5. |
+| `hop1_meta_apps` | hybrid | 0.75, 0.75, 1.0 | The summary differs by a comma. WhatsApp was a miss, then a hit. |
+| `hop1_msft_products` | vector | 0.50, 0.13, 0.50 | "devices" vs "various devices". Xbox was a hit, then a miss. |
+| `hop1_meta_ai_competition` | vector | 0.50, 0.00, 0.50 | A sentence of regulatory wording changed. |
+| `hop1_googl_waymo` | vector | 0.13, 0.50, 0.13 | One extra sentence on run 2. Waymo is still not named. |
+
+The single rerun from earlier the same night, before this temperature pin, was hybrid **0.849** and vector-only **0.875** (`multi_company_smoke_hybrid_rerun.json`, `multi_company_smoke_vector_rerun.json`). On that hybrid file, Meta apps went from a refusal at **0.00** to **0.75**. Scores below 1.0 on that earlier hybrid file:
+
+| Item | This run | Previous hybrid | What happened |
+|------|------:|------:|----------------|
+| `hop1_meta_ai_competition` | 0.00 | 0.125 | Apple/Google ad limits. No named platform or AI competitor. |
+| `oos_nflx_ai_compute_for_others` | 0.00 | 1.0 | Denied the premise in the summary, but `refused` stayed false, so the score is 0. |
+| `hop1_msft_products` | 0.125 | 1.0 | Named Microsoft 365, Dynamics, Windows, and Bing. Missed Azure and Xbox. |
+| `hop2_nvda_auto_competitors_risks` | 0.418 | 0.667 | Auto SoCs. Missed DRIVE / autonomous. |
+| `hop0_meta_ai_glasses` | 0.50 | 0.50 | Reality Labs and Quest. No Ray-Ban Meta / Oakley Meta. |
+| `hop1_aapl_products` | 0.50 | 1.0 | Names iPhone, Mac, and iPad. The judge still scored 0.50. |
+| `hop1_nflx_aws_relationship` | 0.50 | 1.0 | Says Netflix relies on AWS. Does not say Amazon's retail business competes with Netflix. |
+| `hop1_nvda_automotive` | 0.50 | 1.0 | Partnerships and a computing platform. Does not name DRIVE. |
+| `hop2_msft_cloud_and_geo_risk` | 0.50 | 1.0 | Says cloud computing and generic geopolitical risk. Does not name Azure. |
+| `hop2_jpm_credit_vs_market` | 0.625 | 0.375 | Both risks named. The one-item rerun that scored 1.0 is not this run. |
+| `hop1_meta_apps` | 0.75 | 0.00 | No longer a refusal. Family of Apps and Reality Labs. |
+| `hop1_googl_waymo` | 0.938 | 1.0 | Waymo is covered. A small fact is still short. |
 
 ### B. Labeled set growth (v3 smoke, not yet headline)
 
 | | |
 |--|--|
 | **Symptom** | The suite outgrew the first n=24 sync. |
-| **Status** | Headline is the n=44 full run: hybrid **0.92** / vector **0.89**. The JPM hop-2 item stays at its full-run **0.375**. A later rerun scored 1.0 and is not in the mean. v4 adds gold chunk ids on the same questions. Retrieval is a separate table. |
+| **Status** | Three temperature-0 answer runs on 2026-11-05. Hybrid **0.86** (0.856–0.862), vector-only **0.89** (0.878–0.889). Retrieval is separate: hybrid recall@5 **0.83** vs vector **0.82**; vector still leads recall@10 and MRR. |
 | **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; v3 items are already single-ticker. |
 
 ---
@@ -222,7 +278,7 @@ Source: `benchmarks/results/multi_company_smoke_judged.json` (headline table). T
 ## Short versions
 
 **Card 1 — Metric lied**  
-Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge. Current headline is hybrid **0.92** vs vector **0.89** on the n=44 full run, and the bootstrap interval on that gap crosses zero. Hold-out κ is **0.84** after two mistaken 1.0 labels were corrected.
+Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge. Three temperature-0 runs: hybrid **0.86** (0.856–0.862), vector-only **0.89** (0.878–0.889). Hold-out κ is **0.84** after two mistaken 1.0 labels were corrected.
 
 **Card 2 — Eval → systems fix**  
 Apple products cited Meta accession → global Company + Meta-written `PRODUCES_PRODUCT` → issuer write gate + chunk ticker filter + Neo4j cleanup. Same filter then erased Meta-stamped `COMPETES_WITH` → exempt cross-company rels.
@@ -238,6 +294,9 @@ AppleCare/Azure “not in evidence” while sitting mid-chunk past a 1200-char h
 
 **Card 6 — Hop-1 MedTech / compete**  
 No MedTech node + drug laundry list → force `both` + drop unmatched products; compete-with-Meta edge lived in Meta’s filing → don’t strip foreign provenance on `COMPETES_WITH`.
+
+**Card 7 — Hybrid list order**  
+Graph chunks sat in front of the gold passage, and a graph-only route never fetched vectors. Alternating vector then graph, and always retrieving both lists, moved hybrid recall@5 from **0.67** to **0.84**. Ranking edges by question-word hits, with confidence only as a tie-break, left the next rerun at **0.83** / recall@10 **0.92** / MRR **0.64**. Vector still leads recall@10 and MRR.
 
 ---
 
@@ -259,5 +318,10 @@ No MedTech node + drug laundry list → force `both` + drop unmatched products; 
 | 2026-10-28 | JPM hop-2 resmoke (full-run flake 0.375→1.0); headline patched to hybrid **0.94** / hop-2 **0.96** (no full rebench). |
 | 2026-11-03 | Recorded the five remaining hybrid misses and replaced the 24/24 calibration claim with hold-out κ. |
 | 2026-11-04 | Corrected hold-out labels for Meta AI competition (0) and Meta AI glasses (0.5). Reported κ is 0.84, not the first-pass 0.00. |
+| 2026-11-05 | Hybrid retrieval alternates vector then graph and always fetches both lists. Recall@5 **0.67 → 0.84**. Vector still leads recall@10 and MRR. |
+| 2026-11-05 | Graph edges ranked by question-word hits; confidence is only the tie-break. Next rerun: hybrid recall@5 **0.83**, recall@10 **0.92**, MRR **0.64**. Rank fusion was not shipped (recall@5 would have fallen to 0.75). |
+| 2026-11-05 | Re-ran hybrid answers on all 44. Mean **0.85**. Meta apps 0.00→0.75. Several former 1.0s dropped. One OOS item answered instead of refusing. |
+| 2026-11-05 | Re-ran vector-only answers on all 44. Mean **0.875** (previous **0.886**). One item moved: Amazon AWS and Prime 1.0→0.50. Paired gap **−0.026**, interval **−0.112 to 0.062**. |
+| 2026-11-05 | Planner, router, and judge set to temperature 0. Three full runs: hybrid **0.86** (0.856–0.862), vector-only **0.89** (0.878–0.889). Five items still moved. Apple products hybrid text was identical and the judge scored it 1.0, 1.0, 0.5. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

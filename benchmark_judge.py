@@ -142,6 +142,7 @@ def judge_answer(
     verdict = cli.messages.create(
         model=settings.ROUTER_MODEL,
         max_tokens=min(1024, settings.ROUTER_MAX_TOKENS * 2),
+        temperature=0.0,
         system=JUDGE_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user}],
         response_model=JudgeVerdict,

@@ -406,6 +406,7 @@ def plan_graph_query(
             model=settings.ROUTER_MODEL,
             max_tokens=settings.ROUTER_MAX_TOKENS,
             max_retries=settings.ROUTER_MAX_RETRIES,
+            temperature=0.0,
             system=PLAN_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": question}],
             response_model=GraphQueryPlan,

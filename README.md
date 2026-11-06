@@ -2,21 +2,21 @@
 
 Hybrid **knowledge-graph + vector RAG** over SEC **10-K** filings. Closed ontology in Neo4j, the same chunks in pgvector, router picks graph and/or vectors, answers cite only chunks from that retrieval.
 
-10 tickers, 44 hop-stratified questions. Hybrid generation mean **0.92** vs vector-only **0.89**. That lead is **not stable**: the 95% interval on the gap includes values below zero. Hybrid recall@5 is **0.83** vs vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**).
+10 tickers, 44 hop-stratified questions. Three answer runs, with the planner, router, answer, and judge at temperature 0. Hybrid mean **0.86** (runs 0.856, 0.862, 0.862). Vector-only mean **0.89** (runs 0.878, 0.889, 0.889). The gap of those means is **−0.026**. The three paired gaps are **−0.033**, **−0.016**, and **−0.027**. Hybrid recall@5 is **0.83** vs vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**).
 
 ## Results
 
-44 questions. The score is an LLM judge against required facts. Out of scope means a correct refuse.
+44 questions. The score is an LLM judge against required facts. Out of scope means a correct refuse. Each cell is the mean of three runs. The range is the lowest and highest run.
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
-| Hop 0 (definitions) | **0.94** | 0.92 | 8 |
-| Hop 1 (single edge) | **0.88** | 0.79 | 16 |
-| Hop 2 (compare / multi-rel) | 0.88 | 0.88 | 8 |
-| OOS (must refuse) | **1.00** | **1.00** | 12 |
-| **Overall mean** | **0.92** | 0.89 | 44 |
+| Hop 0 (definitions) | **0.94** (0.94–0.94) | 0.88 (0.88–0.88) | 8 |
+| Hop 1 (single edge) | 0.80 (0.79–0.80) | **0.81** (0.79–0.82) | 16 |
+| Hop 2 (compare / multi-rel) | 0.82 (0.82–0.82) | **0.88** (0.88–0.88) | 8 |
+| OOS (must refuse) | 0.92 (0.92–0.92) | **1.00** (1.00–1.00) | 12 |
+| **Overall mean** | 0.86 (0.856–0.862) | **0.89** (0.878–0.889) | 44 |
 
-**Recommendation:** Hybrid scores higher on average (0.038 overall, 0.005 on hop 2), and neither 95% interval sits entirely above zero, so the lead is not stable on this suite.
+Five items changed score across the three runs. On Apple products the hybrid answer text was identical, and the judge still scored it **1.0**, **1.0**, and **0.5**.
 
 Retrieval is scored separately, on 32 answerable items. Out-of-scope items are skipped.
 
@@ -52,45 +52,43 @@ Cites include `0001045810-26-000021:Item1:0`, `…:Item1A:3`, …
 
 ## How the numbers were measured
 
-Suite `multi_company_smoke` v4. Generation numbers are the judged run on the same questions.
+Suite `multi_company_smoke` v4. The three answer runs are `benchmarks/results/multi_company_smoke_temp0_run1.json`, `run2`, and `run3`. The planner, router, answer, and judge were called at temperature 0.
 
 **Judge calibration (rubric v1):** held-out linear weighted κ **0.84** (raw agreement 19/20). Two first-pass scores of 1.0 were wrong and were corrected: Meta AI competition is a 0, Meta AI glasses is a 0.5. Self-agreement on a later re-label is κ **0.42** (13/15). The older 24/24 sheet is history. [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
 
-Paired bootstrap, 10,000 draws, seed 0. Gap = hybrid minus vector-only.
-
-| Slice | n | Gap | 95% CI |
-|-------|--:|----:|--------|
-| Overall | 44 | 0.038 | −0.047 to 0.126 |
-| Hop 2 | 8 | 0.005 | −0.234 to 0.250 |
+The published gap is the difference of the two three-run means. The three paired gaps, hybrid minus vector-only on the same run, are −0.033, −0.016, and −0.027. `ablation_bootstrap.md` is an older pair and is not this gap.
 
 CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.917**. It reads the saved file and does not call a model.
 
-Full tables: [`benchmarks/results/multi_company_smoke_judged.json`](benchmarks/results/multi_company_smoke_judged.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md), [`benchmarks/results/ablation_bootstrap.md`](benchmarks/results/ablation_bootstrap.md). The means use the full-run score for `hop2_jpm_credit_vs_market` (**0.375**). A later one-item rerun scored **1.0**. That rerun is not in the table.
+Full tables: [`benchmarks/results/multi_company_smoke_temp0_run1.json`](benchmarks/results/multi_company_smoke_temp0_run1.json), [`run2`](benchmarks/results/multi_company_smoke_temp0_run2.json), [`run3`](benchmarks/results/multi_company_smoke_temp0_run3.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md).
 
 ### 60-second pass
 
-1. The generation gap is 0.038, and the interval crosses zero.
+1. The generation gap of the three-run means is −0.026. All three paired gaps are negative. That range is three runs, not a bootstrap interval.
 2. One graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`.
 3. One refusal: a question the 10-K corpus cannot answer (Tesla battery supply, Bitcoin on Apple's balance sheet).
-4. One open miss: Meta apps refused. See **What didn't work**.
+4. One open miss: Meta AI competition still does not name a platform competitor. See **What didn't work**.
 
 ## Design decisions
 
-Locked during the eval phase. Retrieval and generation are separate scores. A high answer with the wrong gold chunk is still a retrieval miss. The judge grades required facts, not a paragraph match to the gold line. Reported κ is the hold-out, not the 24/24 debug sheet. The ablation is hybrid versus vector-only, and the interval is part of the claim.
+Locked during the eval phase. Retrieval and generation are separate scores. A high answer with the wrong gold chunk is still a retrieval miss. The judge grades required facts, not a paragraph match to the gold line. Reported κ is the hold-out, not the 24/24 debug sheet. The ablation is hybrid versus vector-only, and the range across the three runs is part of the claim.
 
 The system constraints that came first: six entity types and eight relationship types, Cypher only from allowlisted templates, and a citation must be in this retrieval's chunk allowlist.
 
 ## What didn't work
 
-These five are still the weak spots on the published hybrid run. Detail is in [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md).
+These are hybrid answers whose three-run mean is below 1.0. Detail is in [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md).
 
-| Item | Score | What happened |
-|------|------:|----------------|
-| `hop1_meta_apps` | 0.00 | Graph route refused "which apps does Meta produce?" |
-| `hop1_meta_ai_competition` | 0.13 | Answered with Apple/Google ad limits, not platform or AI competitors |
-| `hop0_meta_ai_glasses` | 0.50 | Said AI glasses and Quest, missed Ray-Ban Meta / Oakley Meta |
-| `hop2_nvda_auto_competitors_risks` | 0.67 | Named auto SoCs and Ambarella, missed DRIVE / autonomous |
-| `hop2_jpm_credit_vs_market` | 0.38, then 1.0 | Full run scored 0.375. A later rerun of this item alone scored 1.0. The table uses 0.375. |
+| Item | Mean | Runs | What happened |
+|------|-----:|------|----------------|
+| `hop1_meta_ai_competition` | 0.00 | 0, 0, 0 | Apple/Google ad limits, no named platform or AI competitor |
+| `oos_nflx_ai_compute_for_others` | 0.00 | 0, 0, 0 | Denied the premise in prose but did not set refused |
+| `hop1_msft_products` | 0.13 | 0.13, 0.13, 0.13 | Named Microsoft 365, Dynamics, Windows, and Bing. Missed Azure and Xbox |
+| `hop2_nvda_auto_competitors_risks` | 0.42 | 0.42, 0.42, 0.42 | Auto SoCs. Missed DRIVE / autonomous |
+| `hop0_meta_ai_glasses` | 0.50 | 0.50, 0.50, 0.50 | Reality Labs and Quest. No Ray-Ban Meta / Oakley Meta |
+| `hop2_jpm_credit_vs_market` | 0.63 | 0.63, 0.63, 0.63 | Both risks named. Older runs of this item scored 0.38 and 1.0 |
+| `hop1_aapl_products` | 0.83 | 1.0, 1.0, 0.5 | The answer text is the same on all three runs. The judge moved |
+| `hop1_meta_apps` | 0.83 | 0.75, 0.75, 1.0 | Names Family of Apps and Reality Labs. No longer a refusal |
 
 Earlier failures that are fixed, and worth saying anyway: keyword overlap scored wrong answers as 1.0, a 1200-character window hid AppleCare and Azure, and an Apple product answer cited Meta's 10-K.
 

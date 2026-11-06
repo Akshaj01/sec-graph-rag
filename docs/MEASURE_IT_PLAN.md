@@ -83,7 +83,7 @@ Track so we don’t thrash.
 | Hybrid vs vector-only runner | Done | `benchmark_runner.py` |
 | Suite v3, n=44, hop 0/1/2 + OOS | Done | `benchmarks/multi_company_smoke.json` |
 | LLM-as-judge vs `required_facts` | Done | `benchmark_judge.py` |
-| Headline table (full run: hybrid **0.92** / vector **0.89**; hop-2 **0.88** / **0.88**) | Done | README + `…_judged.json` |
+| Headline table (three temperature-0 runs: hybrid **0.86** (0.856–0.862) / vector **0.89** (0.878–0.889)) | Done | README + `multi_company_smoke_temp0_run{1,2,3}.json` |
 | Human ↔ judge agree **24/24** on older hybrid set | Done (agreement, not κ) | `benchmarks/judge_calibration_hybrid.md` |
 | Failure → fix loop (false refuse, NFLX AWS, planner coerce, Apple supply…) | Done | `docs/PROBLEMS_AND_FIXES.md` |
 | HANDOFF / agents notes out of root | Done | `docs/dev-notes/` |
@@ -247,7 +247,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 **Rank:** first time a chunk id appears. Hybrid list is graph ids, then vector ids that were not already in the graph list. Vector list is depth 10. Out-of-scope items are not scored.
 
-**Result to be able to say:** hybrid retrieval alternates vector then graph. Graph edges are ordered by how many question words they hit; extraction confidence only breaks a tie. On the 2026-11-05 rerun, hybrid recall@5 is **0.83**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**). The earlier graph-first hybrid number was recall@5 **0.67**. Graph-only is **0.43** / **0.38** on this run; the planner is not deterministic, so that column is not a clean before-and-after. This does not replace the generation table (full-run hybrid **0.92** vs vector **0.89**).
+**Result to be able to say:** hybrid retrieval alternates vector then graph. Graph edges are ordered by how many question words they hit; extraction confidence only breaks a tie. On the 2026-11-05 rerun, hybrid recall@5 is **0.83**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**). The earlier graph-first hybrid number was recall@5 **0.67**. Graph-only is **0.43** / **0.38** on this run; the planner is not deterministic, so that column is not a clean before-and-after. This does not replace the generation table. The generation headline is three temperature-0 runs: hybrid **0.86** (0.856–0.862) vs vector **0.89** (0.878–0.889).
 
 ### WP3 — κ split (2026-11-02)
 
@@ -308,7 +308,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 Ship gate in §3 is checked. The defendable answer to “how do you know the RAG is good?”:
 
-- Generation: hybrid **0.92** vs vector-only **0.89** on the 44-question full run. The paired-bootstrap gap is **0.038**, and the 95% interval **−0.047 to 0.126** includes a negative gap. The lead is not stable on this suite. One JPM hop-2 item scored 0.375 on that run and 1.0 on a later rerun. The mean uses 0.375.
+- Generation, as of this 2026-11-03 close: hybrid **0.92** vs vector-only **0.89** on the 44-question full run. The paired-bootstrap gap is **0.038**, and the 95% interval **−0.047 to 0.126** includes a negative gap. One JPM hop-2 item scored 0.375 on that run and 1.0 on a later rerun. The mean uses 0.375. Later answer runs replaced this headline. The current README number is three temperature-0 runs on 2026-11-05: hybrid **0.86** (0.856–0.862) vs vector **0.89** (0.878–0.889).
 - Retrieval: hybrid recall@5 **0.83**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**). Graph edges are ranked by question-word hits, then extraction confidence. The earlier graph-first hybrid recall@5 was **0.67**.
 - The judge is not a large panel. The first hold-out pass scored every item 1.0 (κ **0.00**). Two of those labels contradicted the required facts, so Meta AI competition is now 0 and Meta AI glasses is 0.5. Corrected linear κ is **0.84** (19/20). Self-agreement is κ **0.42** (13/15). Rubric v1 was not edited.
 - The recall gate is a saved-file check. It fails when committed hybrid recall@10 drops more than 0.02. It does not re-run ingest. Green push and red break dispatch are both on Actions.

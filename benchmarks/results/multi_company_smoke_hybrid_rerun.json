@@ -1,0 +1,1604 @@
+{
+  "suite_name": "multi_company_smoke",
+  "suite_version": "4",
+  "hybrid": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop0_aapl_applecare",
+        "mode": "hybrid",
+        "question": "What is AppleCare?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "AppleCare is Apple's portfolio of fee-based service and support products that provide priority access to Apple technical support, access to the global Apple authorized service network for repair and replacement services, and in many cases additional coverage for accidental damage, theft, and loss, depending on the country and type of product.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AppleCare",
+          "support",
+          "service"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Names AppleCare as an Apple offering",
+          "Describes it as a service, support, or warranty-related program"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It clearly names AppleCare as an Apple offering and describes it extensively as a service and support program, including specific details about technical support, repair services, and coverage options. All claims are well-supported by the gold answer and go beyond minimum requirements without inventing unsupported material.",
+        "correct_refuse": null,
+        "latency_ms": 10206.4,
+        "estimated_cost_usd": 0.008973,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_msft_azure",
+        "mode": "hybrid",
+        "question": "What is Microsoft Azure according to the filing?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to the filing, Microsoft Azure is a public, private, and hybrid cloud service that is part of Microsoft's Intelligent Cloud segment. Azure comprises cloud and AI consumption-based services, GitHub cloud services, Health and Life Sciences cloud services, virtual desktop offerings, and other cloud services. It is described as one of the server products and cloud services that power modern business and developers.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item7:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Azure",
+          "cloud"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Identifies Azure as a Microsoft cloud offering",
+          "Ties Azure to cloud computing / cloud services"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it clearly identifies Azure as a Microsoft cloud offering (explicitly calling it \"Microsoft's cloud computing platform\" and \"part of Microsoft's Intelligent Cloud segment\") and ties it to cloud computing and cloud services (mentioning \"cloud and AI consumption-based services,\" \"cloud services,\" \"virtual desktop offerings,\" etc.). The answer goes beyond minimum requirements with appropriate detail from the filing.",
+        "correct_refuse": null,
+        "latency_ms": 9190.0,
+        "estimated_cost_usd": 0.009519,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_meta_instagram",
+        "mode": "hybrid",
+        "question": "What is Instagram as described in Meta's filing?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Instagram is described in Meta's filing as a product that brings people closer to the people and things they love. It is a platform where people and creators can connect and express themselves through photos, video, and private messaging via features including Instagram Feed, Stories, Reels, Live, and messaging. Users can also discover and shop from their favorite businesses on Instagram.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:1",
+          "0001628280-26-003942:Item1:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Instagram",
+          "photo",
+          "video"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Identifies Instagram as a Meta app/product/brand",
+          "Mentions social / sharing / photo or video use, or Family of Apps context"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It clearly identifies Instagram as a Meta product and thoroughly describes its social and content-sharing functions (photos, videos, messaging, Reels, Stories, etc.). While it doesn't explicitly mention \"Family of Apps,\" this is not a material omission since the answer fully satisfies the alternative requirements about social/sharing use.",
+        "correct_refuse": null,
+        "latency_ms": 8304.0,
+        "estimated_cost_usd": 0.008913,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_nvda_datacenter",
+        "mode": "hybrid",
+        "question": "What does NVIDIA say about its Data Center or compute products?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA describes itself as a data center scale AI infrastructure company that pioneered accelerated computing. The company produces Data Center products including the Blackwell architecture, which represented the majority of Data Center revenue. NVIDIA's offerings feature extreme co-design of chips, networking, systems, software, and algorithms optimized for AI, data analytics, scientific computing, and other computationally intensive workloads.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1A:1",
+          "0001045810-26-000021:Item7:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "Data Center"
+        ],
+        "keyword_misses": [
+          "GPU"
+        ],
+        "keyword_recall": 0.5,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Data Center products or platforms",
+          "Mentions GPUs or accelerated compute / AI infrastructure"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It explicitly mentions NVIDIA's Data Center products (Blackwell architecture) and clearly discusses GPUs and accelerated computing/AI infrastructure as core to their offerings.",
+        "correct_refuse": null,
+        "latency_ms": 10615.4,
+        "estimated_cost_usd": 0.010227,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_amzn_aws",
+        "mode": "hybrid",
+        "question": "What is AWS according to Amazon's 10-K?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "According to Amazon's 10-K, AWS stands for Amazon Web Services, which is one of Amazon's three operating segments alongside North America and International. AWS serves developers and enterprises as primary customer sets, and its costs include those necessary to run the service.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001018724-26-000004:Item1:0",
+          "0001018724-26-000004:Item7:0",
+          "0001018724-26-000004:Item7:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AWS"
+        ],
+        "keyword_misses": [
+          "cloud"
+        ],
+        "keyword_recall": 0.5,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Expands or identifies AWS as Amazon Web Services",
+          "Describes AWS as cloud / technology services or an Amazon segment"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it expands AWS as Amazon Web Services and clearly identifies it as Amazon's cloud computing/technology services business segment (explicitly stated as one of three operating segments). The additional details about customer sets and costs are accurate supporting information that does not contradict the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 9594.2,
+        "estimated_cost_usd": 0.008805,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_jpm_credit_risk",
+        "mode": "hybrid",
+        "question": "How does JPMorgan describe credit risk?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "JPMorgan describes credit risk as a key risk that it monitors and measures throughout the Firm. Credit Risk Management defines credit risk policies, procedures, and limits, and employs several methodologies to estimate the likelihood of obligor or counterparty default. The Firm uses credit derivatives as an end-user to manage credit risk associated with traditional lending activities, derivatives counterparty exposure, and other exposures. Credit risk is also reflected in the allowance for loan losses, which increased due to loan growth, macroeconomic changes, and credit quality updates.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-008131:Item7:19",
+          "0001628280-26-008131:Item7:24",
+          "0001628280-26-008131:Item7:3"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "credit",
+          "risk"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Defines or describes credit risk (borrower/obligor default or credit loss)",
+          "Attributes the description to JPMorgan / the Firm"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer thoroughly covers both required facts: it defines credit risk in terms of obligor/counterparty default (stated multiple times: \"likelihood of obligor or counterparty default,\" \"credit risk associated with traditional lending activities, derivatives counterparty exposure\"), and clearly attributes this description to JPMorgan/the Firm throughout (e.g., \"JPMorgan describes,\" \"Credit Risk Management,\" \"The Firm employs\"). The answer provides detailed context on how JPMorgan manages and measures credit risk, all supported by the gold answer's framing.",
+        "correct_refuse": null,
+        "latency_ms": 10363.5,
+        "estimated_cost_usd": 0.012291,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_products",
+        "mode": "hybrid",
+        "question": "What product lines does Apple produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces several major product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables (including Apple Watch smartwatches, AirPods wireless headphones, and spatial computers), Home and Accessories, and services. The company also offers Apple University programs.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "iPad"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 0.5,
+        "judge_fact_hits": [
+          "Mentions iPhone",
+          "Mentions Mac",
+          "Mentions iPad"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": true,
+        "judge_rationale": "The model answer covers all three required facts (iPhone, Mac, iPad) adequately with detailed specifications. However, it contains major hallucinations regarding iPhone model names (iPhone 17 Pro, iPhone Air, iPhone 17, iPhone 16e do not exist as of the knowledge cutoff) and Apple University (not a product line produced by Apple). These invented details contradict known facts about Apple's actual product offerings.",
+        "correct_refuse": null,
+        "latency_ms": 10170.2,
+        "estimated_cost_usd": 0.010785,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "hop1_msft_products",
+        "mode": "hybrid",
+        "question": "What product lines or segments does Microsoft produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft produces several product lines and segments, including Microsoft 365 Commercial (cloud-based productivity and collaboration tools), Dynamics (business solutions for financial management, ERP, CRM, and supply chain management), Windows (operating system), and Bing (search and advertising services).",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2",
+          "0001193125-26-323660:Item1A:0",
+          "0001193125-26-323660:Item7:0",
+          "0001193125-26-323660:Item7:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [],
+        "keyword_misses": [
+          "Azure",
+          "Xbox"
+        ],
+        "keyword_recall": 0.0,
+        "judge_correctness": 0.125,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)",
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers several Microsoft product lines (Microsoft 365, Dynamics, Windows, Bing) with accurate detail, but critically omits mentions of Azure and Xbox—the two required facts. The omission is significant because both are major Microsoft business segments that the gold answer explicitly requires.",
+        "correct_refuse": null,
+        "latency_ms": 10278.1,
+        "estimated_cost_usd": 0.00948,
+        "error": null,
+        "score": 0.125
+      },
+      {
+        "item_id": "hop1_meta_apps",
+        "mode": "hybrid",
+        "question": "Which apps or product lines does Meta produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta produces several product lines, including the Family of Apps (Facebook, Instagram, and Messenger), Reality Labs (which includes Meta Quest VR headsets and consumer hardware products), and AI glasses.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:1",
+          "0001628280-26-003942:Item1:2",
+          "0001628280-26-003942:Item1A:8",
+          "0001628280-26-003942:Item7:2",
+          "0001628280-26-003942:Item7:4"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram"
+        ],
+        "keyword_misses": [
+          "WhatsApp"
+        ],
+        "keyword_recall": 0.6666666666666666,
+        "judge_correctness": 0.75,
+        "judge_fact_hits": [
+          "Mentions Facebook",
+          "Mentions Instagram"
+        ],
+        "judge_fact_misses": [
+          "Mentions WhatsApp"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all three required facts. Facebook, Instagram, and WhatsApp are all clearly mentioned. The answer goes beyond the minimum by including additional details about Reality Labs, Meta Quest, Messenger, and AI glasses, which represent accurate extensions of the base information but are not required facts.",
+        "correct_refuse": null,
+        "latency_ms": 8455.2,
+        "estimated_cost_usd": 0.008574,
+        "error": null,
+        "score": 0.75
+      },
+      {
+        "item_id": "hop1_nvda_products",
+        "mode": "hybrid",
+        "question": "What products does NVIDIA produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA produces a range of products centered around GPUs (graphics processing units) and accelerated computing platforms. Key hardware products include the L4, A100, and H200 chips. The company also offers software products, notably NVIDIA AI Enterprise, a comprehensive suite of enterprise-grade AI software, as well as NVIDIA vGPU software for graphics-rich virtual desktops and workstations. Their platform integrates hardware, systems, software, algorithms, libraries, AI models, and services.",
+        "claim_count": 8,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1:3",
+          "0001045810-26-000021:Item1A:0",
+          "0001045810-26-000021:Item1A:6",
+          "0001045810-26-000021:Item1A:7",
+          "0001045810-26-000021:Item7:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "A100"
+        ],
+        "keyword_misses": [
+          "Automotive"
+        ],
+        "keyword_recall": 0.5,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions a data-center / compute GPU product (e.g. A100 or similar)",
+          "Mentions automotive offerings or another distinct NVIDIA product line"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions data-center/compute GPU products (L4, A100, H200), and includes distinct product lines such as NVIDIA AI Enterprise software, vGPU software, and automotive-adjacent ecosystem elements. The answer goes beyond the gold answer while remaining accurate and well-supported.",
+        "correct_refuse": null,
+        "latency_ms": 12247.8,
+        "estimated_cost_usd": 0.011148,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_googl_products",
+        "mode": "hybrid",
+        "question": "What product lines does Alphabet / Google produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Alphabet/Google produces several major product lines: Google Services (including Google Search, YouTube, Google Play, and Pixel devices), Google Cloud (including Google Cloud Platform and Google Workspace), and AI Products and Technologies. Google Services generates revenues from advertising, consumer subscriptions (YouTube TV, YouTube Music and Premium, NFL Sunday Ticket, Google One), platforms (Google Play app sales), and devices (Pixel family). Google Cloud generates revenues from consumption-based fees and subscriptions for infrastructure, platform, applications, and other cloud services.",
+        "claim_count": 8,
+        "cited_chunk_ids": [
+          "0001652044-26-000018:Item1:0",
+          "0001652044-26-000018:Item1:1",
+          "0001652044-26-000018:Item1A:0",
+          "0001652044-26-000018:Item1A:1",
+          "0001652044-26-000018:Item1A:4",
+          "0001652044-26-000018:Item7:1",
+          "0001652044-26-000018:Item7:3"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Google Cloud",
+          "Google Services"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Google Cloud (or cloud offerings)",
+          "Mentions Google Services (or consumer/ads/services segment)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: Google Services (with detailed breakdown of components like Search, YouTube, subscriptions, platforms, and devices) and Google Cloud (including GCP and Google Workspace). The answer exceeds the minimum requirements with appropriate detail and no contradictions to the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 14384.2,
+        "estimated_cost_usd": 0.013059,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_xom_commodity_risk",
+        "mode": "hybrid",
+        "question": "What commodity price risks is ExxonMobil exposed to?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "ExxonMobil is exposed to commodity price risks related to oil, natural gas, petrochemicals, and feedstocks. The company's operations and earnings are significantly affected by changes in oil, gas, and petrochemical prices, as well as margins on refined products. These prices depend on local, regional, and global supply and demand conditions. Material declines in oil or natural gas prices could adversely affect the company's operations, results, financial condition, and proved reserves, particularly in the Upstream segment.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000034088-26-000045:Item1A:0",
+          "0000034088-26-000045:Item1A:2",
+          "0000034088-26-000045:Item7:0",
+          "0000034088-26-000045:Item7:3",
+          "0000034088-26-000045:Item7:8",
+          "0000034088-26-000045:Item7:9"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "commodity",
+          "price"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States ExxonMobil is exposed to commodity price risk",
+          "Links the risk to oil/gas/energy commodity prices or price volatility"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It clearly states that ExxonMobil is exposed to commodity price risk and explicitly links this risk to oil, natural gas, petrochemicals, and other energy-related commodities and their price volatility. The answer substantially exceeds the minimum requirements by providing additional context on the sources of volatility and impacts on the company.",
+        "correct_refuse": null,
+        "latency_ms": 10452.2,
+        "estimated_cost_usd": 0.01302,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_jnj_medtech",
+        "mode": "hybrid",
+        "question": "Does Johnson & Johnson produce MedTech products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Yes, Johnson & Johnson produces MedTech products. The company is organized into two business segments: Innovative Medicine and MedTech.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0000200406-26-000016:Item1:0",
+          "0000200406-26-000016:Item7:2"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "MedTech"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Answers yes / affirms that J&J produces MedTech",
+          "Names MedTech as a product line or segment"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer fully covers both required facts: it explicitly affirms that Johnson & Johnson produces MedTech products (\"Yes, Johnson & Johnson produces MedTech products\") and clearly identifies MedTech as a business segment (\"organized into two business segments: Innovative Medicine and MedTech\"). The additional detail about R&D spending is accurate and supportive but not required.",
+        "correct_refuse": null,
+        "latency_ms": 6962.4,
+        "estimated_cost_usd": 0.008106,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_competes_meta",
+        "mode": "hybrid",
+        "question": "Does Apple compete with Meta according to the knowledge graph?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Yes, according to the knowledge graph, Apple competes with Meta. The evidence specifically notes that Apple released changes to iOS that limit Meta's ability to target and measure ads effectively, while expanding Apple's own advertising business.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:2"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Meta"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
+          "Frames it as competition / competitive relationship"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer directly affirms that Apple competes with Meta and frames it as a competitive relationship. It goes beyond the gold answer by providing concrete evidence (iOS changes limiting Meta's ad targeting/measurement while expanding Apple's own ad business), which supports and contextualizes the competitive relationship without contradicting any required facts.",
+        "correct_refuse": null,
+        "latency_ms": 6172.1,
+        "estimated_cost_usd": 0.007686,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_aapl_hardware_services",
+        "mode": "hybrid",
+        "question": "What hardware devices and services does Apple produce?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces several hardware device lines including iPhone smartphones, Mac personal computers, iPad tablets, and Wearables, Home and Accessories (which includes smartwatches like Apple Watch, wireless headphones like AirPods, spatial computers, home devices, and accessories). Apple also sells a variety of related services.",
+        "claim_count": 7,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item7:0"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "iPhone",
+          "Mac"
+        ],
+        "keyword_misses": [
+          "AppleCare"
+        ],
+        "keyword_recall": 0.6666666666666666,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions at least two hardware devices (e.g. iPhone, Mac, iPad)",
+          "Mentions a service offering (e.g. AppleCare or Services)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer thoroughly covers both required facts: it mentions multiple hardware devices (iPhone, Mac, iPad, Apple Watch, AirPods, and other wearables) well beyond the minimum of two, and it clearly mentions services (\"Apple also sells a variety of related services\"). The answer is comprehensive and accurate.",
+        "correct_refuse": null,
+        "latency_ms": 12193.1,
+        "estimated_cost_usd": 0.010824,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_msft_cloud_vs_personal",
+        "mode": "hybrid",
+        "question": "Compare Microsoft's Intelligent Cloud offerings such as Azure with its More Personal Computing products like Xbox.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft's Intelligent Cloud offerings include Azure, a comprehensive set of cloud services, while its More Personal Computing products include Xbox, which enables online gaming experiences across consoles, Windows devices, and other platforms. Azure is part of Microsoft's cloud computing and AI infrastructure, whereas Xbox focuses on gaming subscriptions, content sales, and advertising, with revenue driven by the active user base and availability of exclusive game content.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2",
+          "0001193125-26-323660:Item1A:0",
+          "0001193125-26-323660:Item1A:1",
+          "0001193125-26-323660:Item7:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Azure",
+          "Xbox"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Azure / Intelligent Cloud offerings",
+          "Mentions Xbox / More Personal Computing",
+          "Draws a contrast or comparison between the two"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer clearly covers all three required facts: it explicitly mentions Azure as an Intelligent Cloud offering, Xbox as a More Personal Computing product, and draws a meaningful contrast between them (Azure as cloud/enterprise infrastructure vs. Xbox as gaming/consumer devices). The answer goes beyond the minimum by providing additional context about revenue drivers and business models for each segment, which strengthens the comparison.",
+        "correct_refuse": null,
+        "latency_ms": 11209.6,
+        "estimated_cost_usd": 0.011119,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_meta_apps_vs_reality",
+        "mode": "hybrid",
+        "question": "How do Meta's Family of Apps products like Facebook and Instagram relate to Reality Labs?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta's Family of Apps products (including Facebook and Instagram) and Reality Labs are both product lines produced by Meta Platforms, Inc. The Family of Apps focuses on 2D social connection experiences across mobile devices and computers, while Reality Labs develops immersive hardware and experiences for virtual reality, augmented reality, and AI glasses as part of Meta's vision to build the next computing platform beyond 2D screens.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:1",
+          "0001628280-26-003942:Item1:2",
+          "0001628280-26-003942:Item7:4"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "Facebook",
+          "Instagram",
+          "Reality Labs"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions Facebook and/or Instagram as Family of Apps products",
+          "Mentions Reality Labs as a separate Meta segment/area",
+          "States they are distinct segments or differently focused businesses"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers all required facts: it explicitly names Facebook and Instagram as Family of Apps products, clearly identifies Reality Labs as a separate Meta segment, and articulates the distinct focus of each (2D social experiences vs. immersive AR/VR hardware and experiences). The answer exceeds minimum requirements with well-supported detail about their different technological domains.",
+        "correct_refuse": null,
+        "latency_ms": 9993.3,
+        "estimated_cost_usd": 0.010452,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_amzn_aws_and_prime",
+        "mode": "hybrid",
+        "question": "What does Amazon say about AWS and Amazon Prime as product lines?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Amazon describes AWS and Amazon Prime as product lines it produces. AWS is a cloud services offering organized as one of Amazon's three operating segments (alongside North America and International). Amazon Prime is a membership program that Amazon views as an effective marketing tool, with associated benefits including fulfillment network services.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001018724-26-000004:Item1:0",
+          "0001018724-26-000004:Item1A:4",
+          "0001018724-26-000004:Item7:1",
+          "0001018724-26-000004:Item7:2",
+          "0001018724-26-000004:Item7:3"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "AWS",
+          "Prime"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Describes AWS as cloud / technology services",
+          "Describes Amazon Prime as a membership/subscription or store-related offering"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers both required facts comprehensively. It explicitly describes AWS as a cloud services offering/business and identifies Amazon Prime as a membership program with retail/fulfillment-related benefits. All core claims align with the gold answer and required facts.",
+        "correct_refuse": null,
+        "latency_ms": 10439.5,
+        "estimated_cost_usd": 0.009495,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_jpm_credit_vs_market",
+        "mode": "hybrid",
+        "question": "Briefly compare JPMorgan's credit risk and market risk as named risk factors.",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": true,
+        "summary": "JPMorgan Chase identifies both credit risk and market risk as named risk factors in its 10-K filing. Credit risk includes collateral risk, where the firm could suffer losses if collateral value declines or fails to realize estimated value during market stress or illiquidity. Market risk is inherent in the firm's investment securities portfolio, as noted in the Market Risk Management discussion related to Treasury and CIO holdings.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-008131:Item1A:3",
+          "0001628280-26-008131:Item1A:4",
+          "0001628280-26-008131:Item7:25",
+          "0001628280-26-008131:Item7:3"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "Credit",
+          "Market"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 0.625,
+        "judge_fact_hits": [
+          "Mentions credit risk as a named risk",
+          "Mentions market risk as a named risk"
+        ],
+        "judge_fact_misses": [
+          "Distinguishes them (credit = default/credit loss vs market = market-price/market movements) or treats them as separate factors"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer mentions both credit risk and market risk as named risk factors, satisfying the first two required facts. However, it fails to clearly distinguish between them conceptually. While it notes credit risk relates to collateral value and market risk to Treasury/CIO portfolios, it does not explicitly contrast credit risk (counterparty/borrower default) with market risk (adverse market price movements), which is the core distinction required.",
+        "correct_refuse": null,
+        "latency_ms": 17597.0,
+        "estimated_cost_usd": 0.015771,
+        "error": null,
+        "score": 0.625
+      },
+      {
+        "item_id": "hop2_nvda_products_and_geo_risk",
+        "mode": "hybrid",
+        "question": "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA produces a range of compute products including GPUs for data centers (such as A100, H100, H200, and B200 series), AI software platforms (NVIDIA AI Enterprise, CUDA), networking components (NVLink switch, DPU, NIC), and gaming products like GeForce NOW. The company faces significant geopolitical risks including export controls and licensing requirements for advanced chips to China and other countries, regulatory scrutiny from competition authorities worldwide (EU, US, UK, South Korea, Japan, China), international trade restrictions, cyber-attacks from nation-states, and corporate sustainability scrutiny from shareholders and regulators.",
+        "claim_count": 10,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1:3",
+          "0001045810-26-000021:Item1A:3",
+          "0001045810-26-000021:Item1A:6",
+          "0001045810-26-000021:Item1A:7",
+          "0001045810-26-000021:Item1A:8"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "A100",
+          "Geopolitical"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Names compute products (e.g. data-center GPUs such as A100/H100 or GeForce)",
+          "Mentions geopolitical / export-control / China-related risk exposure"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly names multiple compute products (A100, H100, H200, B200, GeForce NOW, NVIDIA AI Enterprise, CUDA, networking components) and thoroughly details geopolitical/export-control risks including China-related restrictions, export licensing requirements, and regulatory scrutiny. All claims align with gold answer and required facts.",
+        "correct_refuse": null,
+        "latency_ms": 19134.8,
+        "estimated_cost_usd": 0.015426,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_tesla_battery",
+        "mode": "hybrid",
+        "question": "What battery supply risks does Tesla face in its latest 10-K?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain information about Tesla's battery supply risks. The evidence comes from Apple Inc.'s 10-K filing (filing number 0000320193-25-000079), not Tesla's, and discusses Apple's general business risks including competition, intellectual property, IT systems, and regulatory compliance, but does not address battery supply chain issues.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "both",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 7553.8,
+        "estimated_cost_usd": 0.008592,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_aapl_bitcoin",
+        "mode": "hybrid",
+        "question": "How many Bitcoin does Apple hold on its balance sheet?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence does not contain any information about Apple holding Bitcoin on its balance sheet. The provided passages discuss Apple's cash, marketable securities, debt obligations, and other financial matters, but do not mention Bitcoin or cryptocurrency holdings.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 7128.7,
+        "estimated_cost_usd": 0.006942,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_cook_comp",
+        "mode": "hybrid",
+        "question": "What was Tim Cook's exact total compensation last year?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain information about Tim Cook's exact total compensation. The available passages discuss Apple's products, business operations, accounting standards, and general management discussion, but do not include executive compensation details.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 7324.5,
+        "estimated_cost_usd": 0.00798,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_wmt_revenue",
+        "mode": "hybrid",
+        "question": "What percentage of Walmart's revenue comes from Sam's Club?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain information about Walmart or Sam's Club revenue. All evidence relates to Microsoft's business operations, products, and financial results.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 7107.4,
+        "estimated_cost_usd": 0.007308,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_meta_ai_competition",
+        "mode": "hybrid",
+        "question": "What major competitors or competitive pressures does Meta describe around AI and its core products?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes competitive pressures from mobile operating system and browser providers, particularly Apple and Google, who have implemented changes that limit Meta's ability to target and measure advertising. Apple's 2021 iOS changes reduced Meta's ability to target and measure ads, negatively impacting advertiser budgets. Meta also faces regulatory scrutiny and evolving legal frameworks around AI from government agencies including the FTC, Congress, state attorneys general, and international regulators applying various laws to AI technologies.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:2",
+          "0001628280-26-003942:Item1A:3"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "AI"
+        ],
+        "keyword_misses": [
+          "competition",
+          "TikTok"
+        ],
+        "keyword_recall": 0.3333333333333333,
+        "judge_correctness": 0.0,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Describes competition Meta faces for users, advertisers, and/or AI features",
+          "Names at least one competitor or competitor category (e.g. TikTok, other AI companies, or connection/sharing platforms)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer focuses on regulatory pressures from government agencies and platform restrictions from Apple/Google, but fails to cover the two required facts. It does not describe competition for users/advertisers from social platforms or name AI-focused competitors. While the information provided may be factually correct from a 10-K, it does not answer the question about competitive pressures around AI and core products.",
+        "correct_refuse": null,
+        "latency_ms": 10652.8,
+        "estimated_cost_usd": 0.012636,
+        "error": null,
+        "score": 0.0
+      },
+      {
+        "item_id": "hop1_meta_china_international_risk",
+        "mode": "hybrid",
+        "question": "What major international or China-related risk factors does Meta describe?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes several major international and China-related risk factors. The company faces international operations risks due to political and social challenges in countries where it operates. Specifically, user access to Facebook and certain Meta products is currently restricted in whole or in part in China, Iran, and North Korea. Additionally, Hong Kong adopted a National Security Law in 2020 that gives authorities the ability to obtain information, remove and block access to content, and suspend user services, with potential penalties for violations. Meta also faces foreign currency exchange risk from its international operations.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:11",
+          "0001628280-26-003942:Item1A:8",
+          "0001628280-26-003942:Item7:4"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "China",
+          "international"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions international / foreign operations or access restrictions as a risk",
+          "Mentions China (or other restricted countries) in that risk context"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It clearly identifies international operations risks and explicitly addresses China-related restrictions (Facebook and certain products restricted in China), plus additional context about Iran, North Korea, and Hong Kong's National Security Law, all of which are consistent with Meta's 10-K disclosures.",
+        "correct_refuse": null,
+        "latency_ms": 10732.2,
+        "estimated_cost_usd": 0.013176,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_china_supply_risk",
+        "mode": "hybrid",
+        "question": "What China-related or international supply-chain risks does Apple describe?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple describes several China-related and international supply-chain risks in its 10-K filing. The company relies heavily on outsourcing partners located primarily in China mainland, India, Japan, South Korea, Taiwan, and Vietnam for component manufacturing and product assembly, which reduces its direct control over production and distribution. A majority of Apple's supplier facilities, including manufacturing and assembly sites, are located outside the U.S. Additionally, Apple faces exposure to new U.S. tariffs announced in 2025 on imports from China, India, Japan, South Korea, Taiwan, Vietnam, and the EU. The company's operations depend significantly on global and regional economic conditions, with sales outside the U.S. representing a majority of total net sales.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item7:0"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "China",
+          "supply"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States Apple relies on manufacturing/suppliers outside the U.S., including China",
+          "Links that concentration / international footprint to operational or supply risk"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts. It clearly states that Apple relies on manufacturing and suppliers outside the U.S., including China mainland and other Asian locations, and explicitly links this concentration to operational and supply risks including reduced direct control, tariff exposure, and dependence on global/regional economic conditions.",
+        "correct_refuse": null,
+        "latency_ms": 12795.9,
+        "estimated_cost_usd": 0.013467,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop0_meta_ai_glasses",
+        "mode": "hybrid",
+        "question": "What AI glasses or Reality Labs hardware products does Meta describe?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Meta describes several AI glasses and Reality Labs hardware products. Their products include virtual reality (VR) headsets, AI glasses, and Meta Quest. The company produces consumer hardware products under Reality Labs and is moving beyond 2D screens toward immersive experiences like augmented and virtual reality to build the next computing platform.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0",
+          "0001628280-26-003942:Item1:2",
+          "0001628280-26-003942:Item1A:8",
+          "0001628280-26-003942:Item7:4"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "glasses",
+          "Quest"
+        ],
+        "keyword_misses": [
+          "Ray-Ban"
+        ],
+        "keyword_recall": 0.6666666666666666,
+        "judge_correctness": 0.5,
+        "judge_fact_hits": [
+          "Mentions Reality Labs / Quest / AR-VR hardware context"
+        ],
+        "judge_fact_misses": [
+          "Names Meta AI glasses or Ray-Ban Meta / Oakley Meta glasses (or equivalent)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer correctly identifies Reality Labs and Meta Quest as key hardware contexts, and mentions AI glasses generally. However, it fails to name specific AI glasses products (Ray-Ban Meta, Oakley Meta) that are explicitly required facts. The answer is incomplete on the first required fact while adequately covering the second.",
+        "correct_refuse": null,
+        "latency_ms": 9954.2,
+        "estimated_cost_usd": 0.009174,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "oos_meta_glasses_competitor",
+        "mode": "hybrid",
+        "question": "What is a possible competitor to Meta Glasses that exists among the major tech companies?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence does not contain information about specific competitors to Meta Glasses among major tech companies. While the evidence confirms that Meta produces AI glasses and VR headsets, it does not identify any competing products or companies.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1:0"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 6818.4,
+        "estimated_cost_usd": 0.008316,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_nvda_automotive",
+        "mode": "hybrid",
+        "question": "How is NVIDIA involved in the automotive space?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": true,
+        "summary": "NVIDIA is involved in the automotive space through partnerships to accelerate AI adoption and by offering its accelerated computing platform, which includes GPUs, software, and AI solutions that support automotive applications.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "automotive"
+        ],
+        "keyword_misses": [
+          "DRIVE"
+        ],
+        "keyword_recall": 0.5,
+        "judge_correctness": 0.5,
+        "judge_fact_hits": [
+          "States NVIDIA has automotive products, platforms, or partnerships"
+        ],
+        "judge_fact_misses": [
+          "Mentions automotive / autonomous / DRIVE (or similar) offerings"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer addresses automotive partnerships and mentions that NVIDIA's platform supports automotive applications, but it fails to mention NVIDIA's specific automotive offerings like \"NVIDIA DRIVE\" or explicit autonomous/autonomous driving products, which are key required facts. The answer is partially correct but incomplete.",
+        "correct_refuse": null,
+        "latency_ms": 14721.1,
+        "estimated_cost_usd": 0.011184,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "hop1_googl_waymo",
+        "mode": "hybrid",
+        "question": "How is Alphabet / Google involved in the automotive or autonomous driving space?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Alphabet is involved in the autonomous driving space through Waymo, its fully autonomous driving technology company, which is part of Alphabet's \"Other Bets\" segment.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0001652044-26-000018:Item1:0",
+          "0001652044-26-000018:Item1:1",
+          "0001652044-26-000018:Item7:1"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "Waymo",
+          "autonomous"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 0.9375,
+        "judge_fact_hits": [
+          "Names Waymo (or Alphabet Other Bets autonomous driving)",
+          "Describes autonomous ride-hailing / autonomous driving technology"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model covers both required facts but with partial depth. It correctly identifies Waymo and its placement in Other Bets, and describes it as an autonomous driving technology company. However, it omits the important detail from the gold answer about Waymo providing \"paid autonomous ride-hailing in multiple cities,\" which is a key application of the technology. The answer is accurate but incomplete.",
+        "correct_refuse": null,
+        "latency_ms": 7525.2,
+        "estimated_cost_usd": 0.006366,
+        "error": null,
+        "score": 0.9375
+      },
+      {
+        "item_id": "oos_msft_xbox_named_rival",
+        "mode": "hybrid",
+        "question": "What is Microsoft’s major competition to Xbox?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not specify Microsoft's major competitors to Xbox. While the documents describe Xbox's business model, revenue drivers, and growth strategy, they do not identify specific competing gaming platforms or companies.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:2"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 8644.9,
+        "estimated_cost_usd": 0.008514,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_cross_company_executives",
+        "mode": "hybrid",
+        "question": "What executives are known to have connections to multiple big tech companies?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain information about executives or their connections to multiple big tech companies. The evidence consists of risk factors, product descriptions, and operational details from Apple's 10-K filing, but does not include biographical information about executives or their employment history.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "graph",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 7010.9,
+        "estimated_cost_usd": 0.008343,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_aapl_battery_supply",
+        "mode": "hybrid",
+        "question": "What battery supply risks does Apple face in its latest 10-K?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": true,
+        "summary": "The evidence does not contain specific information about battery supply risks for Apple. While the 10-K discusses general component supply and pricing risks, including that certain components come from single or limited sources and are subject to shortages and pricing fluctuations, there is no explicit mention of batteries or battery-specific supply chain risks in the provided evidence.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "both",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 12713.7,
+        "estimated_cost_usd": 0.009849,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_msft_cloud_and_geo_risk",
+        "mode": "hybrid",
+        "question": "What compute infrastructure does Microsoft produce, and what geopolitical risks are they exposed to?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Microsoft develops and supports a broad portfolio of technology solutions including AI, cloud computing, productivity and collaboration, and personal computing platforms. The company is exposed to geopolitical risks including catastrophic events or geopolitical conditions that could disrupt operations and supply chains, as well as macroeconomic and geopolitical factors that affect aggregate demand for their products and services.",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1A:6",
+          "0001193125-26-323660:Item7:0"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "geopolitical"
+        ],
+        "keyword_misses": [
+          "Azure"
+        ],
+        "keyword_recall": 0.5,
+        "judge_correctness": 0.5,
+        "judge_fact_hits": [
+          "Mentions geopolitical, trade, tariff, export-control, or international political risk affecting Microsoft"
+        ],
+        "judge_fact_misses": [
+          "Mentions Azure / cloud or datacenter compute infrastructure"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer addresses geopolitical risks but fails to mention Azure or cloud/datacenter compute infrastructure by name, which is a core requirement. It discusses AI and cloud computing generically but does not specifically identify the compute products Microsoft produces.",
+        "correct_refuse": null,
+        "latency_ms": 9887.3,
+        "estimated_cost_usd": 0.012211,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "hop1_nflx_aws_relationship",
+        "mode": "hybrid",
+        "question": "What is Netflix’s relationship to Amazon and AWS?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Netflix relies on Amazon Web Services (AWS) to operate certain aspects of its streaming service. AWS is a supplier to Netflix, providing critical infrastructure for Netflix's operations.",
+        "claim_count": 2,
+        "cited_chunk_ids": [
+          "0001065280-26-000034:Item1A:3",
+          "0001065280-26-000034:Item1A:4"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "AWS",
+          "Amazon"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 0.5,
+        "judge_fact_hits": [
+          "States Netflix relies on / uses Amazon Web Services (AWS)"
+        ],
+        "judge_fact_misses": [
+          "Notes Amazon's retail side competes with Netflix and/or that AWS is part of Amazon"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers Netflix's reliance on AWS and notes AWS as a supplier, satisfying the first required fact. However, it entirely omits the second required fact about Amazon's retail business competing with Netflix and the relationship between AWS and Amazon's retail side. This is a significant gap from the gold answer.",
+        "correct_refuse": null,
+        "latency_ms": 6864.7,
+        "estimated_cost_usd": 0.006507,
+        "error": null,
+        "score": 0.5
+      },
+      {
+        "item_id": "hop0_nflx_advertising",
+        "mode": "hybrid",
+        "question": "What does Netflix say about advertising?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Netflix offers an ad-supported subscription plan as part of its strategy to provide a range of pricing options to meet various consumer needs. However, the company acknowledges that its advertising offering is subject to various risks and uncertainties due to limited experience and operating history. Forecasting advertising revenue is inherently difficult given the lack of operating history with this offering, and actual results may differ significantly from expectations.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001065280-26-000034:Item1:0",
+          "0001065280-26-000034:Item1A:0",
+          "0001065280-26-000034:Item1A:2",
+          "0001065280-26-000034:Item1A:6"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "advertis",
+          "ad-supported"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions an ad-supported plan or advertising offering/revenue",
+          "Mentions advertising-related opportunity and/or risk/uncertainty"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Netflix's ad-supported subscription plan as an offering, and it thoroughly discusses advertising as a revenue stream along with associated risks and uncertainties (limited experience, forecasting difficulties, unpredictable results). The answer provides substantial detail aligned with the gold answer's key themes.",
+        "correct_refuse": null,
+        "latency_ms": 9495.9,
+        "estimated_cost_usd": 0.01071,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop2_nvda_auto_competitors_risks",
+        "mode": "hybrid",
+        "question": "How is Nvidia involved in the automotive space and what competitors and risks are they exposed to in that space?",
+        "hop": 2,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "NVIDIA is involved in the automotive space through partnerships to accelerate AI adoption and by offering SoC products embedded into automobiles and autonomous machines. In this space, NVIDIA competes with companies like Ambarella, Inc., which supplies hardware and software for SoC products used in automobiles, autonomous machines, servers, and gaming devices. NVIDIA is also exposed to corporate sustainability scrutiny risk from shareholders and regulators.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1:2",
+          "0001045810-26-000021:Item1A:8"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "automotive"
+        ],
+        "keyword_misses": [
+          "DRIVE",
+          "Qualcomm"
+        ],
+        "keyword_recall": 0.3333333333333333,
+        "judge_correctness": 0.4175,
+        "judge_fact_hits": [
+          "Names at least one competitor relevant to automotive/SoC/accelerated computing (e.g. Qualcomm, Ambarella, Intel, Tesla designing SoCs)"
+        ],
+        "judge_fact_misses": [
+          "Describes NVIDIA automotive / DRIVE / autonomous vehicle involvement",
+          "Mentions a business or geopolitical/supply risk NVIDIA faces (general or auto-related)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers NVIDIA's automotive involvement and names Ambarella as a competitor, satisfying 2 of 3 required facts. However, it fails to mention a business or geopolitical/supply risk—corporate sustainability scrutiny is an operational/ESG risk, not a supply chain, geopolitical, or execution risk as described in the gold answer and Item 1A. The answer mentions partnerships and SoC products but omits the specific DRIVE platform reference.",
+        "correct_refuse": null,
+        "latency_ms": 9466.5,
+        "estimated_cost_usd": 0.010996,
+        "error": null,
+        "score": 0.4175
+      },
+      {
+        "item_id": "oos_tesla_competitors_risks",
+        "mode": "hybrid",
+        "question": "What are Tesla’s major international competitors and what major risks come with their competitors?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided is from Apple Inc.'s 10-K filing, not Tesla's. Therefore, I cannot answer questions about Tesla's international competitors or competitor-related risks using this evidence pack.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "graph",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 6506.2,
+        "estimated_cost_usd": 0.008187,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_nvda_geopolitical_risk",
+        "mode": "hybrid",
+        "question": "What geopolitical risks is Nvidia exposed to?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Nvidia faces several geopolitical risks, including heightened cybersecurity threats during geopolitical conflicts and wars, export control restrictions on AI and GPU products (particularly affecting China), tariffs on products imported into the United States, and supply chain vulnerabilities in geopolitically tense regions. The company is effectively foreclosed from China's data center computing market due to export controls and has been unable to create products that receive approval from both the U.S. and Chinese governments.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0001045810-26-000021:Item1:3",
+          "0001045810-26-000021:Item1A:1",
+          "0001045810-26-000021:Item1A:3",
+          "0001045810-26-000021:Item1A:6",
+          "0001045810-26-000021:Item1A:7"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "geopolitical",
+          "export",
+          "China"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "Mentions geopolitical risk and/or export-control restrictions",
+          "Links the risk to China or ability to sell advanced products in restricted markets"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions export-control restrictions affecting Nvidia's ability to sell advanced products in China and other restricted markets, and directly links these geopolitical risks to China. The answer provides extensive supporting detail about U.S. export controls, inability to create competitive products for China's data center market, foreclosure from China's market, tariffs, cyber threats, and supply chain vulnerabilities—all well-supported by the gold answer content.",
+        "correct_refuse": null,
+        "latency_ms": 14382.8,
+        "estimated_cost_usd": 0.015522,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_aapl_supply_chain_risk",
+        "mode": "hybrid",
+        "question": "What major supply-chain risks does Apple describe?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple describes several major supply-chain risks in its 10-K filing. The company depends heavily on outsourcing partners located primarily outside the U.S. (in China, India, Japan, South Korea, Taiwan, and Vietnam) for component manufacturing, product assembly, and logistics. This reliance on single-source suppliers and geographically concentrated manufacturing reduces Apple's direct control over production and distribution. Additionally, Apple's global supply chain is vulnerable to information technology system failures and network disruptions caused by natural disasters, cyberattacks, or other events. The company also faces risks from new U.S. tariffs on imports from multiple countries where its suppliers are located.",
+        "claim_count": 6,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item1A:2",
+          "0000320193-25-000079:Item7:0"
+        ],
+        "route_effective": "both",
+        "keyword_hits": [
+          "supply chain",
+          "supplier"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "judge_correctness": 1.0,
+        "judge_fact_hits": [
+          "States Apple's supply chain is global/complex and/or largely outside the U.S.",
+          "Describes risk from suppliers, manufacturing concentration, or related disruptions"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly states Apple's supply chain is \"large and complex\" with \"a majority of supplier facilities\" located \"outside the U.S.\", and it describes multiple substantive supply-chain risks including supplier concentration, outsourcing-related loss of control, IT vulnerabilities, and tariff exposure. The answer goes beyond minimum requirements with specific geographic details and nuanced risk categories, all grounded in the gold answer's core claims.",
+        "correct_refuse": null,
+        "latency_ms": 12032.1,
+        "estimated_cost_usd": 0.014427,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_googl_blockchain_investments",
+        "mode": "hybrid",
+        "question": "What material investments has Google made in Blockchain or Cryptocurrency focused entities?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence provided does not contain any information about Google or Alphabet making material investments in blockchain or cryptocurrency-focused entities. The available evidence discusses Google's business segments, AI investments, Other Bets portfolio, advertising revenues, and general investment accounting practices, but does not mention blockchain or cryptocurrency investments.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "both",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 7109.1,
+        "estimated_cost_usd": 0.007995,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_jpm_robotics_spend",
+        "mode": "hybrid",
+        "question": "How much money has JP Morgan invested into their robotics program?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": true,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "The evidence does not contain any information about JP Morgan's investments in a robotics program. The provided passages discuss employee recruitment, regulatory matters, credit metrics, and financial ratios, but do not mention robotics investments.",
+        "claim_count": 1,
+        "cited_chunk_ids": [],
+        "route_effective": "vector",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": true,
+        "latency_ms": 6618.5,
+        "estimated_cost_usd": 0.007527,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "oos_nflx_ai_compute_for_others",
+        "mode": "hybrid",
+        "question": "How is Netflix producing AI Compute for other companies in the corpus?",
+        "hop": 0,
+        "must_refuse": true,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": true,
+        "summary": "Netflix is not producing AI compute for other companies. The evidence shows Netflix produces a streaming service and a content delivery network for its own entertainment video business, which is focused on delivering content to its members through monthly subscriptions.",
+        "claim_count": 3,
+        "cited_chunk_ids": [
+          "0001065280-26-000034:Item1:0",
+          "0001065280-26-000034:Item1A:3",
+          "0001065280-26-000034:Item7:0"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [],
+        "keyword_misses": [],
+        "keyword_recall": null,
+        "judge_correctness": null,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "",
+        "correct_refuse": false,
+        "latency_ms": 11927.8,
+        "estimated_cost_usd": 0.0114,
+        "error": null,
+        "score": 0.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 0.9375,
+      "hop_1": 0.7695,
+      "hop_2": 0.8178,
+      "oos": 0.9167
+    },
+    "mean_latency_ms": 10066.8,
+    "mean_cost_usd": 0.01025,
+    "mean_score": 0.849,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "multi_company_smoke",
+    "suite_version": "4",
+    "mode": "vector_only",
+    "results": [],
+    "accuracy_by_hop": {},
+    "mean_latency_ms": null,
+    "mean_cost_usd": null,
+    "mean_score": null,
+    "notes": "score=LLM-judge correctness vs required_facts (or refuse accuracy for OOS); keyword_recall is secondary; null hop = no items run"
+  },
+  "notes": "score_mode=judge; primary score is LLM-judge correctness vs required_facts (keyword_recall secondary)."
+}

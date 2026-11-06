@@ -38,7 +38,7 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 |------|--------|
 | Corpus | **10 tickers** full Item 1/1A/7 (`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`) |
 | Suite | `multi_company_smoke` **v4**, **n=44**, hop 0/1/2 + OOS; **gold_chunk_ids on 32/32 answerable** (12 OOS empty) |
-| Headline (generation) | Full run: hybrid **0.92** / vector **0.89**; hop-2 **0.88** / **0.88**. JPM hop-2 stays at full-run **0.375** (a later rerun scored 1.0 and is not in the mean). |
+| Headline (generation) | Three temperature-0 runs, 2026-11-05: hybrid **0.86** (0.856–0.862) / vector **0.89** (0.878–0.889). Gap of the means **−0.026**. Five items still moved. |
 | Judge | LLM-as-judge vs `required_facts`; old human agree **24/24** (history, not κ) |
 | **WP0** (design) | **DONE** — see MEASURE_IT_PLAN §8 |
 | **WP1** (gold chunks) | **DONE** — spot-check accepted |
@@ -292,7 +292,7 @@ You are continuing SEC GraphRAG (Akshaj). Read completely:
 3) docs/dev-notes/HANDOFF.md
 4) docs/dev-notes/AGENTS.md
 
-BASWE build Phases 1–5 are DONE. Measure it is DONE (full-run hybrid 0.92 vs vector 0.89; gap CI crosses zero; corrected hold-out κ 0.84).
+BASWE build Phases 1–5 are DONE. Measure it is DONE (three temperature-0 runs: hybrid 0.86 vs vector 0.89; corrected hold-out κ 0.84).
 Next: Plan P2 design note (circuit breaker, semantic cache, chaos demo) before any gateway code.
 Do NOT invent architecture. Do NOT emit model-written Cypher. Do NOT commit .env or My Resume/.
 ```
