@@ -23,7 +23,7 @@ This file is the checklist for the post–Measure-it hybrid push. Gateway (`GATE
 | **Left (infra before full rebench)** | Corpus restore on this PC | Need all 10 tickers in Neo4j + pgvector |
 | **Left (publish)** | Full 44×2 answer rebench + README rewrite | Only after enough fixes land |
 
-Rough completion of *this* plan: **~65%** (Meta AI compete **0.875** + glasses **1.0**; P1 NFLX OOS **1.0**; MSFT products hybrid **1.0**; headline not updated yet).
+Rough completion of *this* plan: **~75%** (Meta AI compete **0.875** + glasses **1.0**; P1 NFLX OOS **1.0**; MSFT products + hop2 **1.0**; NVDA DRIVE hybrid **1.0**; headline not updated yet).
 
 ---
 
@@ -74,7 +74,25 @@ Rough completion of *this* plan: **~65%** (Meta AI compete **0.875** + glasses *
 | **Result** | One-item resmoke hybrid/vector **0.50 → 1.0**. |
 | **Artifacts** | `benchmarks/results/hop0_meta_ai_glasses_resmoke.json` |
 
-### D6. Docs / publish hygiene (partial)
+### D6. MSFT hop2 cloud + geo (corpus)
+
+| | |
+|--|--|
+| **Problem** | Earlier hybrid **0.50** — generic cloud/geo without Azure. |
+| **Fix** | Same MSFT grow as D4; no code change. |
+| **Result** | One-item resmoke hybrid/vector **1.0**. |
+| **Artifacts** | `benchmarks/results/hop2_msft_cloud_and_geo_risk_resmoke.json` |
+
+### D7. NVDA automotive / DRIVE (§21)
+
+| | |
+|--|--|
+| **Problem** | NVDA missing on this PC; hop2 mean **0.42**, hop1 automotive weak. |
+| **Fix** | Full NVDA grow (~$5.57; raise `MAX_EXTRACTION_BUDGET_USD` above default $5). |
+| **Result** | `hop1_nvda_automotive` hybrid/vector **1.0**; `hop2_nvda_auto_competitors_risks` hybrid **1.0** / vector **0.71**. |
+| **Artifacts** | `benchmarks/results/nvda_drive_resmoke.json` |
+
+### D8. Docs / publish hygiene (partial)
 
 | | |
 |--|--|
@@ -108,8 +126,8 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 | `hop1_msft_products` | 0.13 | **DONE** hybrid resmoke **1.0** (§19). Vector still 0.125. |
 | `hop0_meta_ai_glasses` | 0.50 | **DONE** hybrid/vector resmoke **1.0** (§20). |
 | `hop2_msft_cloud_and_geo_risk` | (was 0.50 on earlier hybrid file) | **DONE** resmoke hybrid/vector **1.0** (MSFT grow only). |
-| `hop2_nvda_auto_competitors_risks` | 0.42 | **Next** — needs NVDA corpus + DRIVE in pack |
-| `hop1_nvda_automotive` | (was 0.50 on earlier hybrid file) | With NVDA grow |
+| `hop2_nvda_auto_competitors_risks` | 0.42 | **DONE** hybrid **1.0** / vector **0.71** after NVDA grow (§21). |
+| `hop1_nvda_automotive` | (was 0.50 on earlier hybrid file) | **DONE** hybrid/vector **1.0** (§21). |
 
 | | |
 |--|--|
@@ -175,8 +193,8 @@ Until step 4, the public headline stays **0.86 vs 0.89**.
 
 ## Suggested next session
 
-1. Grow **NVDA** for DRIVE items (`hop2_nvda_auto_competitors_risks`, `hop1_nvda_automotive`).  
-2. Or **P4** remaining tickers if aiming at full rebench soon.  
+1. **P3** soft misses (`hop2_jpm_credit_vs_market`, `hop1_nflx_aws_relationship`, …) or polish.  
+2. **P4** remaining tickers (`AMZN GOOGL JNJ JPM XOM` — MSFT/NFLX/NVDA/META done on this PC) if aiming at full rebench.  
 3. Do not start P6 until you say so.
 
-**Last updated:** 2026-11-06 (§20 glasses 1.0; MSFT hop2 resmoke 1.0)
+**Last updated:** 2026-11-06 (§20–21 glasses + MSFT hop2 + NVDA DRIVE)

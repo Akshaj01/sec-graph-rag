@@ -3,7 +3,7 @@
 Living log of failures hit while building SEC GraphRAG, why they happened, and what changed. Each closed item is symptom, root cause, and fix.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Last updated:** 2026-11-06 (Meta AI glasses window 1.0; P1 NFLX OOS; MSFT products)
+**Last updated:** 2026-11-06 (NVDA DRIVE grow; glasses/MSFT hop2; P1 NFLX)
 
 ---
 
@@ -254,6 +254,18 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 
 ---
 
+### 21. NVDA automotive / DRIVE misses (corpus absent on this PC)
+
+| | |
+|--|--|
+| **Symptom** | `hop2_nvda_auto_competitors_risks` three-run hybrid mean **0.42**; `hop1_nvda_automotive` earlier hybrid **0.50** — partnerships without naming DRIVE / auto competitors. |
+| **Root cause on this PC** | NVDA not in local Neo4j + pgvector (corpus restore gap). |
+| **Fix** | Full `grow_corpus.py NVDA --confirm` with `MAX_EXTRACTION_BUDGET_USD=8` (est. **$5.57**; default per-ticker cap is **$5.0**). 190 entities / 218 rels / 19 chunks embedded. |
+| **Verify** | `benchmarks/results/nvda_drive_resmoke.json` — `hop1_nvda_automotive` hybrid/vector **1.0**; `hop2_nvda_auto_competitors_risks` hybrid **1.0**, vector_only **0.7125**. |
+| **Not done** | Headline table still has the old means; vector hop-2 still soft on competitor naming. |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
 
 ### A0. Meta AI competition — short-acronym needle (tried 2026-11-06, did not move recall)
@@ -409,5 +421,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | MSFT full grow with 16k extract; `hop1_msft_products` hybrid **0.13 → 1.0** (vector still 0.125). See §19. |
 | 2026-11-06 | Hardware window (Ray-Ban/Oakley preference). `hop0_meta_ai_glasses` hybrid/vector **0.50 → 1.0**. See §20. |
 | 2026-11-06 | After MSFT grow: `hop2_msft_cloud_and_geo_risk` resmoke hybrid/vector **1.0** (no code change). |
+| 2026-11-06 | NVDA full grow (190 entities / 218 rels, ~$5.57). `hop1_nvda_automotive` hybrid/vector **1.0**; `hop2_nvda_auto_competitors_risks` hybrid **1.0** / vector **0.71**. See §21. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.
