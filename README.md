@@ -2,7 +2,7 @@
 
 Hybrid **knowledge-graph + vector RAG** over SEC **10-K** filings. Closed ontology in Neo4j, the same chunks in pgvector, router picks graph and/or vectors, answers cite only chunks from that retrieval.
 
-10 tickers, 44 hop-stratified questions. Three answer runs, with the planner, router, answer, and judge at temperature 0. Hybrid mean **0.86** (runs 0.856, 0.862, 0.862). Vector-only mean **0.89** (runs 0.878, 0.889, 0.889). The gap of those means is **−0.026**. The three paired gaps are **−0.033**, **−0.016**, and **−0.027**. Hybrid recall@5 is **0.83** vs vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**).
+10 tickers, 44 hop-stratified questions. Three answer runs, with the planner, router, answer, and judge at temperature 0. Hybrid mean **0.86** (runs 0.856, 0.862, 0.862). Vector-only mean **0.89** (runs 0.878, 0.889, 0.889). The gap of those means is **−0.026**. The three paired gaps are **−0.033**, **−0.016**, and **−0.027**. Hybrid and vector both hit recall@5 **0.84** and MRR **0.70**. Vector still leads recall@10 (**0.94** vs **0.91**). Answer headline below is still the 2026-11-05 three-run table (full rebench not run yet).
 
 ## Results
 
@@ -22,9 +22,9 @@ Retrieval is scored separately, on 32 answerable items. Out-of-scope items are s
 
 | | Recall@5 | Recall@10 | MRR |
 |--|--------:|----------:|----:|
-| Graph | 0.43 | 0.51 | 0.38 |
-| Vector | 0.82 | **0.93** | **0.67** |
-| Hybrid | **0.83** | 0.92 | 0.64 |
+| Graph | 0.41 | 0.46 | 0.40 |
+| Vector | **0.84** | **0.94** | **0.70** |
+| Hybrid | **0.84** | 0.91 | **0.70** |
 
 Hybrid alternates a vector chunk, then a graph chunk, and skips a chunk already used. Graph edges are ordered by how many question words they hit. Extraction confidence only breaks a tie. Both lists are retrieved even when the router said graph. Graph-only recall moves between runs because the planner does not return the same edges every time.
 

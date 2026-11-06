@@ -197,7 +197,7 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Fix** | (1) `over_fetch_k`: floor 25, ceil 40 (`k=10` → 30). (2) `competition_cooccurrence_boost`: when the question is competition-shaped and the passage has competition language **and** a named rival marker (TikTok, YouTube, OpenAI, …), add **+0.30** outside the needle cap. |
 | **Where** | `vector_retriever.py`, `test_answer_evidence.py` |
 | **Verify** | META-targeted retrieve: `benchmarks/results/retrieval_meta_ai_overfetch_comp_boost.json`. Vector/hybrid recall@5 **0.67 → 1.0**, recall@10 **0.67 → 1.0**, MRR **0.50 → 1.0**. Gold ranks: `Item1A:0` **#1**, `Item1:0` #3, `Item1A:3` #4. |
-| **Not done** | Full 32-item retrieval_v4 rebuild (other tickers missing on this PC). |
+| **Follow-on** | Full 32-item `retrieval_v4` rebuild after P4 (2026-11-06): hybrid **0.84 / 0.91 / 0.70**, vector **0.84 / 0.94 / 0.70**. |
 | **Generation follow-up** | Window miss fixed in §17. Final one-item resmoke: hybrid/vector **0.875**. |
 
 ---
@@ -438,5 +438,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | After Docker restart only MSFT/NFLX/NVDA issuers remained. Restored AAPL+META grow; resmoke glasses/apps/aapl products all **1.0**. Still missing AMZN GOOGL JNJ JPM XOM. |
 | 2026-11-06 | JPM grow (321e/387r/51 chunks, ~$15). `hop2_jpm_credit_vs_market` hybrid/vector **1.0**. |
 | 2026-11-06 | P4 complete: AMZN/GOOGL/JNJ/XOM grown. All 10 suite issuers present. `hop1_googl_waymo` hybrid **0.5** / vector **0.125** — open. |
+| 2026-11-06 | P5 `retrieval_v4` rebuild (n=32). Hybrid **0.84 / 0.91 / 0.70** (was 0.83 / 0.92 / 0.64). Vector **0.84 / 0.94 / 0.70** (was 0.82 / 0.93 / 0.67). |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

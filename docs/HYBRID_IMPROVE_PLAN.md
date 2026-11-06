@@ -6,7 +6,7 @@
 | | |
 |--|--|
 | **Baseline headline** | Three temperature-0 runs: hybrid **0.86** vs vector **0.89** (gap **−0.026**) |
-| **Retrieval baseline** | Hybrid recall@5 **0.83** / @10 **0.92** / MRR **0.64** · Vector **0.82 / 0.93 / 0.67** |
+| **Retrieval (P5 rebuild)** | Hybrid recall@5 **0.84** / @10 **0.91** / MRR **0.70** · Vector **0.84 / 0.94 / 0.70** |
 | **Living failure log** | [`PROBLEMS_AND_FIXES.md`](PROBLEMS_AND_FIXES.md) |
 | **Published tables** | README · `benchmarks/results/multi_company_smoke_temp0_run{1,2,3}.json` · `retrieval_v4.md` |
 
@@ -20,10 +20,10 @@ This file is the checklist for the post–Measure-it hybrid push. Gateway (`GATE
 |--|--:|--|
 | **Done** | Meta AI compete + glasses; NFLX OOS; MSFT products | One-item resmokes; headline unchanged |
 | **Left (generation misses)** | ~5–6 items still &lt; 1.0 on the three-run hybrid mean | See queue below |
-| **Left (infra before full rebench)** | Corpus restore on this PC | Need all 10 tickers in Neo4j + pgvector |
-| **Left (publish)** | Full 44×2 answer rebench + README rewrite | Only after enough fixes land |
+| **Left (infra before full rebench)** | — | P4 corpus + P5 retrieve done |
+| **Left (publish)** | Full 44×2 answer rebench + README rewrite | P6 — only when you say so |
 
-Rough completion of *this* plan: **~90%** (P1–P4 done on this PC; P5/P6 not started; headline still 0.86/0.89).
+Rough completion of *this* plan: **~95%** (P1–P5 done; P6 headline rebench not started; answer headline still 0.86/0.89).
 
 ---
 
@@ -156,9 +156,9 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 
 | | |
 |--|--|
-| **When** | After P4 (and any retrieve-side fixes from P1–P2). |
-| **Work** | `retrieval_benchmark.py --suite benchmarks/multi_company_smoke.json --confirm` |
-| **Est. cost** | Embeddings already paid; still pays router/planner/embed-query calls — cheaper than full answers. |
+| **Status** | **DONE** 2026-11-06. |
+| **Result** | Hybrid **0.84 / 0.91 / 0.70** (was 0.83 / 0.92 / 0.64). Vector **0.84 / 0.94 / 0.70** (was 0.82 / 0.93 / 0.67). Ties vector on @5 and MRR; vector still leads @10. |
+| **Artifacts** | `benchmarks/results/retrieval_v4.json` · `retrieval_v4.md` |
 
 ### P6. Full generation rebench → new headline
 
@@ -193,8 +193,7 @@ Until step 4, the public headline stays **0.86 vs 0.89**.
 
 ## Suggested next session
 
-1. **P5** full retrieve rebuild (`retrieval_v4`) now that all 10 issuers are local.  
-2. Optional polish: `hop1_googl_waymo` pack/window (hybrid 0.5).  
-3. **P6** one full temperature-0 generation rebench — only when you say so.  
+1. **P6** one full temperature-0 generation rebench — only when you say so (~$0.80–1.00).  
+2. Optional polish first: `hop1_googl_waymo` pack/window (hybrid 0.5).  
 
-**Last updated:** 2026-11-06 (P4 complete — 10/10 issuers)
+**Last updated:** 2026-11-06 (P5 retrieval_v4 rebuilt)
