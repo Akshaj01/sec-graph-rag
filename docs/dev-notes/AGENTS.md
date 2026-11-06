@@ -61,10 +61,10 @@ PC verification (2026-08-23): AAPL 5-chunk run → 60 nodes, 59 relationships in
 
 **Phase 5 COMPLETE** (build). Corpus is now multi-company; suite v4 n=44 with gold chunk ids.
 
-## Current phase (2026-11-05) — resume from the three-run table
-Measure it is closed. Published generation is three temperature-0 runs: hybrid **0.86** (0.856–0.862) vs vector-only **0.89** (0.878–0.889). Retrieval recall@5 is hybrid **0.83** vs vector **0.82**. Do not quote the older **0.92** vs **0.89** pair.
+## Current phase (2026-11-06) — hybrid-improve P6 done
+Measure it is closed. Hybrid-improve P1–P6 is done. Published generation is one temperature-0 run: hybrid **0.90** vs vector-only **0.87** (paired gap **+0.026**). Retrieval: hybrid/vector recall@5 **0.84**, MRR **0.70**; vector leads @10 (**0.94** vs **0.91**). Do not quote **0.86/0.89** or the older **0.92/0.89**.
 Personal plan **Project 2 · Run it** is a stub only: `docs/GATEWAY_PLAN.md`.  
-**Status:** write the gateway design note before any code. Do not start plan P3. Do not rerun the paid answer suite unless asked.  
+**Status:** optional hop-1 polish, or write the gateway design note before any gateway code. Do not rerun the paid answer suite unless asked.  
 Read `docs/dev-notes/HANDOFF.md` section **Resume on the PC** before doing anything else.
 
 Do not skip Learning Protocol.

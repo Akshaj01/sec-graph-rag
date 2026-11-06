@@ -1,10 +1,10 @@
 # SEC GraphRAG — Handoff
 
-**Last updated:** 2026-11-05  
+**Last updated:** 2026-11-06  
 **Repo:** https://github.com/Akshaj01/sec-graph-rag (`main`)  
-**Primary living plan:** [`docs/MEASURE_IT_PLAN.md`](../MEASURE_IT_PLAN.md) (closed). Next stub: [`docs/GATEWAY_PLAN.md`](../GATEWAY_PLAN.md).
+**Primary living plan:** [`docs/HYBRID_IMPROVE_PLAN.md`](../HYBRID_IMPROVE_PLAN.md) (P6 done). Measure-it closed: [`docs/MEASURE_IT_PLAN.md`](../MEASURE_IT_PLAN.md). Next stub: [`docs/GATEWAY_PLAN.md`](../GATEWAY_PLAN.md).
 
-Use this file + `docs/dev-notes/AGENTS.md` + **`docs/MEASURE_IT_PLAN.md`** to continue in a **new Cursor chat** on the PC. Chat history will not transfer. `git pull` first. The published numbers are already in the repo. Do not start another paid answer run to recreate them.
+Use this file + `docs/dev-notes/AGENTS.md` to continue in a **new Cursor chat** on the PC. Chat history will not transfer. `git pull` first. The published numbers are already in the repo. Do not start another paid answer run to recreate them.
 
 ---
 
@@ -32,56 +32,51 @@ Hybrid **Knowledge Graph + Vector RAG** over SEC **10-K** filings.
 
 ---
 
-## Resume on the PC (2026-11-05)
+## Resume on the PC (2026-11-06)
 
 `git pull` on `main`. The PC needs its own `.env` (never committed) and Docker (`neo4j_graphrag`, `pgvector_graphrag`). The corpus under `data/` is gitignored, so a fresh PC does not have the graph until ingest is run there. The score files below are in git. Reading them does not need Docker or an API key.
 
-**Generation headline.** Three runs, planner + router + answer + judge at temperature 0. Files: `benchmarks/results/multi_company_smoke_temp0_run1.json`, `run2`, `run3`. Suite `benchmarks/multi_company_smoke.json` (v4, n=44).
+**Generation headline.** One temperature-0 run after hybrid-improve P1–P5. File: `benchmarks/results/multi_company_smoke_temp0_p6.json`. Suite `benchmarks/multi_company_smoke.json` (v4, n=44).
 
 | | Hybrid | Vector-only |
 |--|--:|--:|
-| Runs | 0.862, 0.862, 0.856 | 0.889, 0.878, 0.889 |
-| Mean | **0.86** | **0.89** |
+| Mean | **0.90** | **0.87** |
+| Hop-2 | **1.00** | 0.78 |
+| OOS | **1.00** | **1.00** |
 
-Gap of the means **−0.026**. Paired gaps **−0.033**, **−0.016**, **−0.027**. Hop table is in the README. Five items still moved. `hop1_aapl_products` hybrid text was identical and the judge scored it 1.0, 1.0, 0.5.
+Paired gap **+0.026** (hybrid wins 5 / vector 3 / ties 36). Older three-run package (`temp0_run1`–`run3`, **0.86 / 0.89**) is history only.
 
-**Retrieval headline** (retrieve-only, not re-run after the temperature pin): hybrid recall@5 **0.83**, recall@10 **0.92**, MRR **0.64**. Vector **0.82 / 0.93 / 0.67**. Graph-only on that run **0.43 / 0.51 / 0.38**. Recall gate baseline is hybrid recall@10 **0.9167**.
+**Retrieval headline** (`retrieval_v4` rebuilt 2026-11-06): hybrid recall@5 **0.84**, recall@10 **0.91**, MRR **0.70**. Vector **0.84 / 0.94 / 0.70**. Graph-only **0.41 / 0.46 / 0.40**. Recall gate baseline is still hybrid recall@10 **0.9167**.
 
-**Code that produced this.** Unforced retrieve fetches graph and vector. The scored list and the evidence pack alternate vector, graph, vector, graph, and skip a chunk already used. Graph edges are ranked by question-word hits. Extraction confidence only breaks a tie. `force_route=VECTOR` stays vector-only. Reciprocal rank fusion was simulated and not shipped (recall@5 would have fallen to about 0.75).
+**Code that produced this.** Unforced retrieve fetches graph and vector. Pack alternates vector/graph. Competition and hardware windows center on named rivals / Ray-Ban-Oakley. False-premise-for-others forces refuse. Over-fetch 25–40 + named-rival boost on competition asks.
 
 **Do not**
 
-- Quote hybrid **0.92** vs vector **0.89**, or the bootstrap gap **0.038**. That pair is older. `benchmarks/results/ablation_bootstrap.md` is that older pair.
-- Run `bootstrap_ci.py` on the new files and call the output the current gap. `FULL_RUN_HYBRID_SCORE` forces `hop2_jpm_credit_vs_market` back to **0.375**. The three-run files score that item **0.625** on every run.
-- Run `benchmark_runner.py` without `--suite benchmarks/multi_company_smoke.json`. The default suite is `benchmarks/aapl_smoke.json`.
-- Start another 44-question answer run unless Akshaj asks. The three runs already cost about $2.59.
+- Quote hybrid **0.86** vs **0.89**, or the older **0.92** vs **0.89** / bootstrap **0.038**. Headline is **0.90 vs 0.87**.
+- Run `bootstrap_ci.py` on old files and call that the current gap.
+- Run `benchmark_runner.py` without `--suite benchmarks/multi_company_smoke.json`.
+- Start another 44-question answer run unless Akshaj asks (~$0.87 this P6 run).
 - Write gateway code before a design note in `docs/GATEWAY_PLAN.md`.
 
-**Still open, not a reason to rerun.** Hybrid does not beat vector on generation. Vector still leads recall@10 and MRR. `oos_nflx_ai_compute_for_others` denies the premise in prose and leaves `refused` false, so the score is 0. The judge can still move a score when the paragraph did not. Published headline stays **0.86 vs 0.89**.
+**Still open.** Hop-1 product-list softness (`msft_products` 0.13 again, `aapl_products` / `nvda_products` 0.50); `hop1_aapl_competes_meta` 0.00; Waymo 0.50; Meta AI competition hybrid 0.50 vs vector 0.875. Vector still leads recall@10.
 
-**Post-eval fix (2026-11-06), not in the headline.** `hop1_meta_ai_competition` was 0.00 on the three runs. Retrieve: larger over-fetch + named-rival boost → item recall 1.0. Answer: competition window centers on TikTok → one-item resmoke **0.875**. See `docs/PROBLEMS_AND_FIXES.md` §16–§17. Do not rewrite the three-run table from that one item.
-
-**Next, only if asked.** Hybrid improve checklist: [`docs/HYBRID_IMPROVE_PLAN.md`](../HYBRID_IMPROVE_PLAN.md) (~25% done; P1 = Netflix OOS refuse). Or gateway design note. No full 44-answer rebench unless Akshaj asks.
+**Next, only if asked.** Polish hop-1 misses, or gateway design note in `docs/GATEWAY_PLAN.md`.
 
 ---
 
-## Where we are now (2026-11-05)
+## Where we are now (2026-11-06)
 
 | Item | Status |
 |------|--------|
 | Corpus | **10 tickers** full Item 1/1A/7 (`AAPL AMZN GOOGL JNJ JPM META MSFT NFLX NVDA XOM`) |
 | Suite | `multi_company_smoke` **v4**, **n=44**, hop 0/1/2 + OOS; **gold_chunk_ids on 32/32 answerable** (12 OOS empty) |
-| Headline (generation) | Three temperature-0 runs, 2026-11-05: hybrid **0.86** (0.856–0.862) / vector **0.89** (0.878–0.889). Gap of the means **−0.026**. Five items still moved. |
-| Judge | LLM-as-judge vs `required_facts`; old human agree **24/24** (history, not κ) |
-| **WP0** (design) | **DONE** — see MEASURE_IT_PLAN §8 |
-| **WP1** (gold chunks) | **DONE** — spot-check accepted |
-| **WP2** (retrieval) | **DONE** — hybrid recall@5 **0.83** / MRR **0.64**; vector **0.82** / **0.67**; graph **0.43** / **0.38**. Edges ranked by question-word hits, confidence breaks ties (`benchmarks/results/retrieval_v4.md`) |
-| **WP3** (κ) | **DONE** — corrected hold-out linear κ **0.84** (19/20). First pass was all 1.0s (κ 0.00). Self-agreement κ **0.42**. Rubric v1 unchanged. |
-| **WP4** (bootstrap) | **DONE** on the older pair only — gap **0.038** [−0.047, 0.126]. Not the current headline. Current gap is the three-run mean, **−0.026**. |
-| **WP5** (CI gate) | **DONE** — green [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304), red break [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624). Baseline hybrid recall@10 **0.9167**. |
-| **WP6** (README) | **DONE** — three-run generation table, retrieval table, 60-second pass. Demo recording still optional. |
-| **WP7** (close) | **DONE** — retrospective in `docs/MEASURE_IT_PLAN.md` §10. Gateway stub only. |
-| **Next** | Plan P2 design note in `docs/GATEWAY_PLAN.md`. No gateway code until that note exists. |
+| Headline (generation) | One temperature-0 run, 2026-11-06: hybrid **0.90** / vector **0.87**. Paired gap **+0.026**. File `multi_company_smoke_temp0_p6.json`. |
+| Judge | LLM-as-judge vs `required_facts`; hold-out κ **0.84** |
+| **WP0–WP7** (Measure it) | **DONE** — see MEASURE_IT_PLAN |
+| **Hybrid improve P1–P6** | **DONE** — see HYBRID_IMPROVE_PLAN |
+| **WP2 retrieval (rebuilt)** | hybrid **0.84 / 0.91 / 0.70**; vector **0.84 / 0.94 / 0.70** |
+| **WP5** (CI gate) | Baseline hybrid recall@10 **0.9167** (unchanged gate) |
+| **Next** | Optional hop-1 polish, or Plan P2 design note in `docs/GATEWAY_PLAN.md`. |
 
 **WP0 locked decisions:** “good” = retrieve supporting evidence (quality > volume) + accurate cited answers + refuse OOS; retrieval headline = recall@5 + MRR (@10 supporting); generation = hop judge hybrid vs vector; κ on ~15–20 held-out v3; ablation = hybrid vs vector + bootstrap CI.
 

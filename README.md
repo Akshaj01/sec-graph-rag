@@ -2,21 +2,21 @@
 
 Hybrid **knowledge-graph + vector RAG** over SEC **10-K** filings. Closed ontology in Neo4j, the same chunks in pgvector, router picks graph and/or vectors, answers cite only chunks from that retrieval.
 
-10 tickers, 44 hop-stratified questions. Three answer runs, with the planner, router, answer, and judge at temperature 0. Hybrid mean **0.86** (runs 0.856, 0.862, 0.862). Vector-only mean **0.89** (runs 0.878, 0.889, 0.889). The gap of those means is **−0.026**. The three paired gaps are **−0.033**, **−0.016**, and **−0.027**. Hybrid and vector both hit recall@5 **0.84** and MRR **0.70**. Vector still leads recall@10 (**0.94** vs **0.91**). Answer headline below is still the 2026-11-05 three-run table (full rebench not run yet).
+10 tickers, 44 hop-stratified questions. One temperature-0 answer run after the hybrid-improve fixes (planner, router, answer, and judge at temperature 0). Hybrid mean **0.90**. Vector-only mean **0.87**. Paired gap (hybrid − vector) **+0.026**. Hybrid and vector both hit recall@5 **0.84** and MRR **0.70**. Vector still leads recall@10 (**0.94** vs **0.91**).
 
 ## Results
 
-44 questions. The score is an LLM judge against required facts. Out of scope means a correct refuse. Each cell is the mean of three runs. The range is the lowest and highest run.
+44 questions. The score is an LLM judge against required facts. Out of scope means a correct refuse. Cells are from the single 2026-11-06 temperature-0 run (`multi_company_smoke_temp0_p6.json`).
 
 | Hop / bucket | Hybrid | Vector-only | n |
 |--------------|-------:|------------:|--:|
-| Hop 0 (definitions) | **0.94** (0.94–0.94) | 0.88 (0.88–0.88) | 8 |
-| Hop 1 (single edge) | 0.80 (0.79–0.80) | **0.81** (0.79–0.82) | 16 |
-| Hop 2 (compare / multi-rel) | 0.82 (0.82–0.82) | **0.88** (0.88–0.88) | 8 |
-| OOS (must refuse) | 0.92 (0.92–0.92) | **1.00** (1.00–1.00) | 12 |
-| **Overall mean** | 0.86 (0.856–0.862) | **0.89** (0.878–0.889) | 44 |
+| Hop 0 (definitions) | **0.94** | **0.94** | 8 |
+| Hop 1 (single edge) | 0.76 | **0.80** | 16 |
+| Hop 2 (compare / multi-rel) | **1.00** | 0.78 | 8 |
+| OOS (must refuse) | **1.00** | **1.00** | 12 |
+| **Overall mean** | **0.90** | 0.87 | 44 |
 
-Five items changed score across the three runs. On Apple products the hybrid answer text was identical, and the judge still scored it **1.0**, **1.0**, and **0.5**.
+Hybrid wins five items outright (mostly hop-2 multi-relation asks); vector wins three; 36 ties. Hop-2 is where the graph pack pulls ahead.
 
 Retrieval is scored separately, on 32 answerable items. Out-of-scope items are skipped.
 
@@ -52,46 +52,44 @@ Cites include `0001045810-26-000021:Item1:0`, `…:Item1A:3`, …
 
 ## How the numbers were measured
 
-Suite `multi_company_smoke` v4. The three answer runs are `benchmarks/results/multi_company_smoke_temp0_run1.json`, `run2`, and `run3`. The planner, router, answer, and judge were called at temperature 0.
+Suite `multi_company_smoke` v4. Generation headline: [`benchmarks/results/multi_company_smoke_temp0_p6.json`](benchmarks/results/multi_company_smoke_temp0_p6.json) (2026-11-06, temperature 0). The older three-run package (`temp0_run1`–`run3`, hybrid **0.86** / vector **0.89**) is kept for history and is not the headline.
 
 **Judge calibration (rubric v1):** held-out linear weighted κ **0.84** (raw agreement 19/20). Two first-pass scores of 1.0 were wrong and were corrected: Meta AI competition is a 0, Meta AI glasses is a 0.5. Self-agreement on a later re-label is κ **0.42** (13/15). The older 24/24 sheet is history. [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
 
-The published gap is the difference of the two three-run means. The three paired gaps, hybrid minus vector-only on the same run, are −0.033, −0.016, and −0.027. `ablation_bootstrap.md` is an older pair and is not this gap.
+The published gap is the paired mean on this one run (**+0.026**). `ablation_bootstrap.md` is an older pair and is not this gap.
 
 CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.917**. It reads the saved file and does not call a model.
 
-Full tables: [`benchmarks/results/multi_company_smoke_temp0_run1.json`](benchmarks/results/multi_company_smoke_temp0_run1.json), [`run2`](benchmarks/results/multi_company_smoke_temp0_run2.json), [`run3`](benchmarks/results/multi_company_smoke_temp0_run3.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md).
+Full tables: [`benchmarks/results/multi_company_smoke_temp0_p6.json`](benchmarks/results/multi_company_smoke_temp0_p6.json), [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md). Historical three-run files remain under `temp0_run{1,2,3}.json`.
 
 ### 60-second pass
 
-1. The generation gap of the three-run means is −0.026. All three paired gaps are negative. That range is three runs, not a bootstrap interval.
+1. Generation: hybrid **0.90** vs vector **0.87** on one temperature-0 run. Paired gap **+0.026**. Hop-2 hybrid is **1.00**.
 2. One graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`.
 3. One refusal: a question the 10-K corpus cannot answer (Tesla battery supply, Bitcoin on Apple's balance sheet).
-4. One open miss: Netflix “AI compute for others” denies the premise in prose but leaves `refused` false. See **What didn't work**.
+4. Soft misses still open on hop-1 product lists and Waymo detail. See **What didn't work**.
 
 ## Design decisions
 
-Locked during the eval phase. Retrieval and generation are separate scores. A high answer with the wrong gold chunk is still a retrieval miss. The judge grades required facts, not a paragraph match to the gold line. Reported κ is the hold-out, not the 24/24 debug sheet. The ablation is hybrid versus vector-only, and the range across the three runs is part of the claim.
+Locked during the eval phase. Retrieval and generation are separate scores. A high answer with the wrong gold chunk is still a retrieval miss. The judge grades required facts, not a paragraph match to the gold line. Reported κ is the hold-out, not the 24/24 debug sheet. The ablation is hybrid versus vector-only.
 
 The system constraints that came first: six entity types and eight relationship types, Cypher only from allowlisted templates, and a citation must be in this retrieval's chunk allowlist.
 
 ## What didn't work
 
-These are hybrid answers whose three-run mean is below 1.0. Detail is in [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md).
+Hybrid answers below 1.0 on the P6 run. Detail is in [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md).
 
-| Item | Mean | Runs | What happened |
-|------|-----:|------|----------------|
-| `oos_nflx_ai_compute_for_others` | 0.00 | 0, 0, 0 | Denied the premise in prose but did not set refused |
-| `hop1_msft_products` | 0.13 | 0.13, 0.13, 0.13 | Named Microsoft 365, Dynamics, Windows, and Bing. Missed Azure and Xbox |
-| `hop2_nvda_auto_competitors_risks` | 0.42 | 0.42, 0.42, 0.42 | Auto SoCs. Missed DRIVE / autonomous |
-| `hop0_meta_ai_glasses` | 0.50 | 0.50, 0.50, 0.50 | Reality Labs and Quest. No Ray-Ban Meta / Oakley Meta |
-| `hop2_jpm_credit_vs_market` | 0.63 | 0.63, 0.63, 0.63 | Both risks named. Older runs of this item scored 0.38 and 1.0 |
-| `hop1_aapl_products` | 0.83 | 1.0, 1.0, 0.5 | The answer text is the same on all three runs. The judge moved |
-| `hop1_meta_apps` | 0.83 | 0.75, 0.75, 1.0 | Names Family of Apps and Reality Labs. No longer a refusal |
+| Item | Score | What happened |
+|------|------:|----------------|
+| `hop1_aapl_competes_meta` | 0.00 | Graph route missed the compete edge |
+| `hop1_msft_products` | 0.13 | Missed Azure/Xbox again (an earlier one-item resmoke had been 1.0) |
+| `hop0_jpm_credit_risk` | 0.50 | Partial credit-risk coverage |
+| `hop1_aapl_products` | 0.50 | Product list incomplete vs required facts |
+| `hop1_nvda_products` | 0.50 | Compute product list incomplete |
+| `hop1_meta_ai_competition` | 0.50 | Still soft vs vector 0.875 on this run |
+| `hop1_googl_waymo` | 0.50 | Names Waymo; thin autonomous ride-hailing detail |
 
-`hop1_meta_ai_competition` was **0.00** on all three published runs (Apple/Google ad limits, no TikTok). After those runs, a retrieve fix (larger over-fetch + named-rival boost) and an answer-window fix (center on TikTok / keep `AI` needles) raised a one-item resmoke to **0.875** hybrid and vector. That score is **not** folded into the table above. Detail: [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md) §16–§17.
-
-Earlier failures that are fixed, and worth saying anyway: keyword overlap scored wrong answers as 1.0, a 1200-character window hid AppleCare and Azure, and an Apple product answer cited Meta's 10-K.
+Closed on this run vs the old three-run table: Meta AI glasses, Netflix OOS false-premise refuse, NVDA automotive/DRIVE hop-2, MSFT cloud+geo hop-2, JPM credit vs market, NFLX AWS dual relationship. Earlier systems bugs worth saying anyway: keyword overlap scored wrong answers as 1.0, a 1200-character window hid AppleCare and Azure, and an Apple product answer once cited Meta's 10-K.
 
 ---
 

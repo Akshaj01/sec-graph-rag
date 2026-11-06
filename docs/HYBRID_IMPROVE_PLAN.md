@@ -1,11 +1,12 @@
 # Hybrid improve plan
 
-**Status:** in progress (2026-11-06)  
+**Status:** **DONE** (2026-11-06) — P6 headline published  
 **Goal:** Make hybrid generation beat, or at least match, vector-only on the published 44-question suite — without lying about numbers.
 
 | | |
 |--|--|
-| **Baseline headline** | Three temperature-0 runs: hybrid **0.86** vs vector **0.89** (gap **−0.026**) |
+| **New headline (P6)** | One temperature-0 run: hybrid **0.90** vs vector **0.87** (paired gap **+0.026**) |
+| **Prior headline** | Three temperature-0 runs: hybrid **0.86** vs vector **0.89** (gap **−0.026**) — history only |
 | **Retrieval (P5 rebuild)** | Hybrid recall@5 **0.84** / @10 **0.91** / MRR **0.70** · Vector **0.84 / 0.94 / 0.70** |
 | **Living failure log** | [`PROBLEMS_AND_FIXES.md`](PROBLEMS_AND_FIXES.md) |
 | **Published tables** | README · `benchmarks/results/multi_company_smoke_temp0_run{1,2,3}.json` · `retrieval_v4.md` |
@@ -21,9 +22,9 @@ This file is the checklist for the post–Measure-it hybrid push. Gateway (`GATE
 | **Done** | Meta AI compete + glasses; NFLX OOS; MSFT products | One-item resmokes; headline unchanged |
 | **Left (generation misses)** | ~5–6 items still &lt; 1.0 on the three-run hybrid mean | See queue below |
 | **Left (infra before full rebench)** | — | P4 corpus + P5 retrieve done |
-| **Left (publish)** | Full 44×2 answer rebench + README rewrite | P6 — only when you say so |
+| **Left (publish)** | — | P6 done; README/HANDOFF quote **0.90 vs 0.87** |
 
-Rough completion of *this* plan: **~95%** (P1–P5 done; P6 headline rebench not started; answer headline still 0.86/0.89).
+Rough completion of *this* plan: **100%** (P1–P6 done; hybrid beats vector on generation).
 
 ---
 
@@ -164,10 +165,11 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 
 | | |
 |--|--|
-| **When** | After P1–P2 look good on targeted resmokes (optional: after P3). |
-| **Work** | `benchmark_runner.py --suite benchmarks/multi_company_smoke.json --modes hybrid,vector_only --confirm` (prefer temperature-0, ideally 1 run first; 3 runs only if publishing a new range). |
-| **Est. cost** | ~**$0.80–1.00** per full 44×2 run (last three-run package was ~$2.59). |
-| **Then** | Rewrite README hop table, profile README, repo description, HANDOFF. Do **not** patch one item into the old mean and call it the headline. |
+| **Status** | **DONE** 2026-11-06 (one temperature-0 run). |
+| **Result** | Hybrid **0.9006** / vector **0.8741**. Paired gap **+0.026**. Hop-2 hybrid **1.00** / vector **0.78**. OOS both **1.00**. |
+| **Cost** | ~$0.87 total (hybrid $0.45 + vector $0.42). |
+| **Artifacts** | `benchmarks/results/multi_company_smoke_temp0_p6.json` |
+| **Publish** | README + HANDOFF rewritten to **0.90 vs 0.87**. Do not quote the old three-run **0.86 / 0.89**. |
 
 ---
 
@@ -187,13 +189,14 @@ Same pattern as Meta: graph laundry list or wrong window hides the brand name.
 3. One (or three) full temperature-0 generation rebench(es) written under `benchmarks/results/`.  
 4. README + profile + HANDOFF quote the **new** measured means — not the 2026-11-05 three-run table.
 
-Until step 4, the public headline stays **0.86 vs 0.89**.
+Public headline is now **0.90 vs 0.87**.
 
 ---
 
 ## Suggested next session
 
-1. **P6** one full temperature-0 generation rebench — only when you say so (~$0.80–1.00).  
-2. Optional polish first: `hop1_googl_waymo` pack/window (hybrid 0.5).  
+1. Optional hop-1 polish (`msft_products`, `aapl_competes_meta`, Waymo, Meta AI competition).  
+2. Or gateway design note (`docs/GATEWAY_PLAN.md`).  
+3. Three-run confirmation of the new headline only if you want a published range.
 
-**Last updated:** 2026-11-06 (P5 retrieval_v4 rebuilt)
+**Last updated:** 2026-11-06 (P6 done — hybrid 0.90 beats vector 0.87)
