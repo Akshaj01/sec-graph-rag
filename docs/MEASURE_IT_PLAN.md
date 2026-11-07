@@ -9,7 +9,7 @@ Akshaj + Cursor both use this file as the source of truth while we work through 
 | **Not this phase** | LLM gateway (plan P2), research agent / red-team (plan P3). |
 | **Goal** | Defendable answer to *“How do you know your RAG is good?”* — numbers, κ, CI gate, honest failures — then move to gateway. |
 | **Working style** | Learn by doing: Akshaj writes a short design note for each step; Cursor implements; Akshaj explains the non-trivial bits before commit. |
-| **Status** | Closed 2026-11-03. Generation headline was replaced 2026-11-05 by three temperature-0 runs (README). A new chat should read `docs/dev-notes/HANDOFF.md` section **Resume on the PC** and should not start another paid answer run unless asked. |
+| **Status** | **DONE** 2026-11-06. Project 1 ship gate met. Published: three-run generation hybrid **0.93** / vector **0.90**; hop-2 is the real finding (CI above zero); overall gap CI includes zero; retrieval_v4; κ 0.84 with post-hoc caveat; recall gate green. Next phase is gateway ([`GATEWAY_PLAN.md`](GATEWAY_PLAN.md)). |
 
 ## Words this file uses
 
@@ -51,7 +51,7 @@ Akshaj + Cursor both use this file as the source of truth while we work through 
 
 **Paired.** A redrawn question brings its hybrid score and its vector score together. JPM's hybrid score stays with JPM's vector score.
 
-**Confidence interval.** That middle 95%. The rule used on the older pair: the lead is stable only when the whole interval sits above zero. That older pair is `ablation_bootstrap.md`, gap 0.038, interval −0.047 to 0.126. The published generation number is the mean of three temperature-0 runs: hybrid 0.86 (0.856–0.862) vs vector 0.89 (0.878–0.889). Do not cite the older interval as that gap.
+**Confidence interval.** That middle 95%. The lead is stable only when the whole interval sits entirely above zero. Published numbers use the post-fix three-run package: mean of runs hybrid **0.93** / vector **0.90**; pooled-item bootstrap overall gap CI includes zero; hop-2 gap CI stays above zero (`ablation_bootstrap_three_run.md`). Older single-file / pre-fix intervals are history.
 
 **Seed.** The redraws start from a fixed number (0), so running the script again prints the same interval.
 
@@ -64,13 +64,13 @@ Akshaj + Cursor both use this file as the source of truth while we work through 
 ## 1. Big picture
 
 ```
-SEC GraphRAG (built) ──► Measure it (THIS PHASE) ──► Gateway ──► Agent + red-team
+SEC GraphRAG (built) ──► Measure it (DONE) ──► Gateway (NEXT) ──► Agent + red-team
          ▲                        │
          └──── CI gate blocks regressions on this repo
 ```
 
-**Ship story when done:**  
-*Hybrid graph+vector RAG over 10-Ks; N hop-stratified questions; judge calibrated to humans at κ=X; retrieval and generation reported separately; CI fails PRs that tank recall; hybrid leads multi-hop vs vector-only.*
+**Ship story (met):**  
+*Hybrid graph+vector RAG over ten companies' 10-Ks; 44 hop-stratified questions; graph wins where relationships matter (hop-2); overall gap small and CI includes zero; judge hold-out κ 0.84 (two labels corrected after seeing judge); retrieval and generation reported separately; CI fails PRs that tank recall.*
 
 ---
 
@@ -84,26 +84,24 @@ Track so we don’t thrash.
 | Hybrid vs vector-only runner | Done | `benchmark_runner.py` |
 | Suite v3, n=44, hop 0/1/2 + OOS | Done | `benchmarks/multi_company_smoke.json` |
 | LLM-as-judge vs `required_facts` | Done | `benchmark_judge.py` |
-| Headline table (three temperature-0 runs: hybrid **0.86** (0.856–0.862) / vector **0.89** (0.878–0.889)) | Done | README + `multi_company_smoke_temp0_run{1,2,3}.json` |
+| Headline table (post-fix three-run mean: hybrid **0.93** / vector **0.90**; hop-2 CI above zero) | Done | README + `three_run_means.md` + `ablation_bootstrap_three_run.md` |
 | Human ↔ judge agree **24/24** on older hybrid set | Done (agreement, not κ) | `benchmarks/judge_calibration_hybrid.md` |
 | Failure → fix loop (false refuse, NFLX AWS, planner coerce, Apple supply…) | Done | `docs/PROBLEMS_AND_FIXES.md` |
-| HANDOFF / agents notes out of root | Done | `docs/dev-notes/` |
+| Internal build notes out of public surface | Done | `docs/archive/dev-notes/` |
 
-**Still weak vs plan ship gate:** no gold-chunk retrieval metrics, no weighted κ, no CI gate, README “what didn’t work” / demo still thin, no bootstrap CI on the ablation.
+**Ship gate:** all §3 boxes checked. Project 1 is closed.
 
 ---
 
-## 3. Ship gate (done when all checked)
+## 3. Ship gate — **all checked; Project 1 DONE**
 
-Copy from personal plan; tick as we finish.
-
-- [x] Stratified golden set with **gold chunk IDs** versioned in repo (extend v3; don’t throw away n=44) — suite **v4**, 32/32 answerable labeled, 12 OOS empty
-- [x] **Retrieval** metrics (recall@5/10, MRR) **and** **generation** metrics, by hop, hybrid vs vector-only — retrieval table in `benchmarks/results/retrieval_v4.md`; generation table already in README
-- [x] Judge-vs-human **weighted Cohen’s κ** reported next to **self-agreement** (re-label ~15 items) — hold-out linear κ **0.84** (raw 19/20) after correcting two bad 1.0s; self-agreement κ **0.42** (13/15); rubric v1 unchanged (`benchmarks/calibration/RESULTS.md`)
-- [x] One **ablation** table with bootstrap CIs + one-paragraph recommendation — full-run overall gap 0.038, CI −0.047 to 0.126; hop-2 gap 0.005, CI −0.234 to 0.250; lead not stable (`benchmarks/results/ablation_bootstrap.md`)
-- [x] **CI gate** demonstrated failing a bad PR (e.g. recall@10 drop > ~2 points; cache LLM calls) — green push [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304); red break dispatch [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624)
-- [x] README top: results → short capture → design decisions → **what didn’t work**
-- [x] Five worst remaining failures explained in NOTES / PROBLEMS — Meta apps refuse, Meta AI competition, Meta AI glasses, NVDA auto hop-2, JPM hop-2 flake (`docs/PROBLEMS_AND_FIXES.md` §A)
+- [x] Stratified golden set with **gold chunk IDs** versioned in repo — suite **v4**, 32/32 answerable labeled, 12 OOS empty
+- [x] **Retrieval** metrics (recall@5/10, MRR) **and** **generation** metrics, by hop, hybrid vs vector-only — `retrieval_v4.md`; three-run generation in README
+- [x] Judge-vs-human **weighted Cohen’s κ** next to **self-agreement** — hold-out linear κ **0.84** (raw 19/20) after correcting two bad 1.0s; self-agreement κ **0.42**; rubric v1 unchanged
+- [x] One **ablation** table with bootstrap CIs + recommendation — pooled three-run overall gap **+0.028**, CI **−0.006 – 0.067** (includes zero); hop-2 gap **+0.116**, CI **0.024 – 0.220** (above zero) (`ablation_bootstrap_three_run.md`)
+- [x] **CI gate** demonstrated failing a bad PR — green [41779177304](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41779177304); red break [41782167624](https://github.com/Akshaj01/sec-graph-rag/actions/runs/41782167624); baseline re-pinned to **0.9115**
+- [x] README top: results → short capture → design decisions → **what didn’t work** (hop-2 lead first; stranger-readable)
+- [x] Worst remaining failures explained — hop-1 soft misses on the three-run package (`PROBLEMS_AND_FIXES.md` + README)
 
 **Explicitly out of scope for this phase:** nDCG (optional), hosted demo, gateway, new RAG features unless a metric forces a tiny fix.
 
@@ -143,7 +141,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** README reports weighted κ and self-agreement; rubric version noted.
 
 ### WP4 — Ablation + confidence intervals
-**Status:** `done` — table + recommendation in the README. Lead is higher on average and not stable (intervals do not sit entirely above zero).  
+**Status:** `done` — three-run mean + pooled bootstrap in README. Overall lead is not stable (CI includes zero); hop-2 lead is stable (CI above zero).  
 **Why:** one measured change with uncertainty > vibes.  
 **Pick one** (decide in session): hybrid vs vector-only is already the main ablation — formalize with bootstrap CIs on mean score and/or recall; **or** one config toggle (e.g. topic-gate on/off, multi-template on/off) if cheaper.  
 **Cursor:** bootstrap helper + table.  
@@ -164,7 +162,7 @@ Each package = 1–3 sessions. Update **Status** as we go: `todo` | `in_progress
 **Exit:** stranger can judge the repo in two minutes from README top.
 
 ### WP7 — Phase retrospective → gateway
-**Status:** `done` — ship gate is checked. Retrospective is below. Gateway stub is `docs/GATEWAY_PLAN.md`. No gateway code.
+**Status:** `done` — Project 1 ship gate met 2026-11-06. Retrospective below (updated). Gateway stub is `docs/GATEWAY_PLAN.md`. No gateway code until that design note.
 
 ---
 
@@ -209,7 +207,9 @@ If only **~10h/week**: keep n≈40–44, skip nDCG, one ablation (hybrid vs vect
 | `benchmarks/results/` | Reports (`retrieval_v4.md` is the WP2 table) |
 | `retrieval_metrics.py` / `retrieval_benchmark.py` | recall@k, MRR, retrieve-only runner |
 | `bootstrap_ci.py` | Paired bootstrap CI for hybrid − vector-only |
-| `benchmarks/results/ablation_bootstrap.md` | WP4 gap table |
+| `benchmarks/results/three_run_means.md` | Post-fix three-run generation means |
+| `benchmarks/results/ablation_bootstrap_three_run.md` | Published WP4 pooled bootstrap |
+| `benchmarks/results/archive/ablation_bootstrap.md` | Older single-file bootstrap (history) |
 | `recall_gate.py` | Fail if hybrid recall@10 drops more than 0.02 |
 | `benchmarks/fixtures/recall_baseline.json` | Pinned v4 hybrid recall@10 |
 | `.github/workflows/recall-gate.yml` | CI on the saved fixture |
@@ -302,21 +302,23 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 | 2026-11-03 | WP6 | README reordered: results, 60-second pass, design decisions, five remaining misses. | WP7 close the phase |
 | 2026-11-03 | WP7 | Ship gate already checked. Retrospective written. Gateway stub opened. No gateway code. | Plan P2 design note, then the first gateway piece |
 | 2026-11-04 | WP3 | Corrected two hold-out labels that contradicted the failure table: Meta AI competition 1.0→0, Meta AI glasses 1.0→0.5. Linear κ 0.00→0.84 (19/20). | — |
+| 2026-11-05 | — | Temp-0 three-run package (pre-fix): hybrid **0.86** / vector **0.89**. Retrieval hybrid recall@5 **0.83**. | Hybrid-improve fixes |
+| 2026-11-06 | — | Hybrid-improve + corpus restore + retrieval_v4 + P6 rebench; then two more temp-0 runs. Honest three-run mean **0.93** / **0.90**; pooled bootstrap; README rewrite; LICENSE; archive; recall baseline re-pin **0.9115**. | **Project 1 DONE** → gateway |
 
 ---
 
-## 10. Retrospective (2026-11-03)
+## 10. Retrospective (updated 2026-11-06)
 
-Ship gate in §3 is checked. The defendable answer to “how do you know the RAG is good?”:
+**Project 1 ship gate is met.** Defendable answer to “how do you know the RAG is good?”:
 
-- Generation, as of this 2026-11-03 close: hybrid **0.92** vs vector-only **0.89** on the 44-question full run. The paired-bootstrap gap is **0.038**, and the 95% interval **−0.047 to 0.126** includes a negative gap. One JPM hop-2 item scored 0.375 on that run and 1.0 on a later rerun. The mean uses 0.375. Later answer runs replaced this headline. The current README number is three temperature-0 runs on 2026-11-05: hybrid **0.86** (0.856–0.862) vs vector **0.89** (0.878–0.889).
-- Retrieval: hybrid recall@5 **0.83**, vector **0.82**. Vector still leads recall@10 (**0.93** vs **0.92**) and MRR (**0.67** vs **0.64**). Graph edges are ranked by question-word hits, then extraction confidence. The earlier graph-first hybrid recall@5 was **0.67**.
-- The judge is not a large panel. The first hold-out pass scored every item 1.0 (κ **0.00**). Two of those labels contradicted the required facts, so Meta AI competition is now 0 and Meta AI glasses is 0.5. Corrected linear κ is **0.84** (19/20). Self-agreement is κ **0.42** (13/15). Rubric v1 was not edited.
-- The recall gate is a saved-file check. It fails when committed hybrid recall@10 drops more than 0.02. It does not re-run ingest. Green push and red break dispatch are both on Actions.
-- Five misses stay open: Meta apps refused, Meta AI competition, Meta AI glasses, NVIDIA auto hop-2, and the JPM hop-2 score that moved from 0.375 to 1.0.
+- **Generation:** three temperature-0 runs after the hybrid-improve pass. Mean hybrid **0.93** (0.901–0.940) vs vector **0.90** (0.874–0.920). Paired gap **+0.028**. Pooled-item bootstrap: overall CI **−0.006 – 0.067** (includes zero); hop-2 gap **+0.116**, CI **0.024 – 0.220** (above zero). The graph helps where relationships matter; the suite-wide lead is not stable.
+- **Retrieval (`retrieval_v4`):** hybrid recall@5 **0.84** / @10 **0.91** / MRR **0.70**. Vector **0.84 / 0.94 / 0.70**. Ties on @5 and MRR; vector leads @10. Graph-only ~0.41 and is planner-noisy.
+- **Judge:** hold-out linear κ **0.84** (19/20) after two post-hoc label corrections (not a fully blind panel). Self-agreement κ **0.42**. Rubric v1 unchanged. A fresh blind 30–40 pass was deferred.
+- **CI gate:** saved-file recall@10 check; baseline **0.9115**; max drop 0.02; green on main; deliberate-break dispatch still the red demo.
+- **Open soft misses** (three-run hybrid means): compete-with-Meta 0.00, JPM credit-risk definition 0.50, NVDA/Waymo/MSFT/Meta AI product-list softness. Detail in README and `PROBLEMS_AND_FIXES.md`.
 
-Demo recording and a LinkedIn line were optional and were not done.
+Demo recording and LinkedIn one-liner were optional and were not done.
 
 ## 11. After this phase
 
-**Plan P2 · Run it** is open as a stub: [`docs/GATEWAY_PLAN.md`](GATEWAY_PLAN.md). Circuit breakers, semantic cache, chaos demo, then point model calls through it. The next session writes the design note before any gateway code. Plan P3 (agent / red-team) stays closed.
+**Plan P2 · Run it** is next: [`docs/GATEWAY_PLAN.md`](GATEWAY_PLAN.md). Circuit breakers, semantic cache, chaos demo, then point model calls through it. Write the design note before any gateway code. Plan P3 (agent / red-team) stays closed.
