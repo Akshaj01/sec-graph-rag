@@ -3,7 +3,7 @@
 Living log of failures hit while building SEC GraphRAG, why they happened, and what changed. Each closed item is symptom, root cause, and fix.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Last updated:** 2026-11-06 (P6 headline hybrid 0.90 > vector 0.87)
+**Last updated:** 2026-11-06 (three-run mean hybrid 0.93 / vector 0.90; hop-2 CI above zero)
 
 ---
 
@@ -196,7 +196,7 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Root cause** | Over-fetch capped at 15, and flat needle boost saturated on almost every META chunk. A weak “AI + competit*” extra boost also lifted already-high generic chunks, so it could not close the gap. Short-acronym `AI` needles alone (§A0) did not help. |
 | **Fix** | (1) `over_fetch_k`: floor 25, ceil 40 (`k=10` → 30). (2) `competition_cooccurrence_boost`: when the question is competition-shaped and the passage has competition language **and** a named rival marker (TikTok, YouTube, OpenAI, …), add **+0.30** outside the needle cap. |
 | **Where** | `vector_retriever.py`, `test_answer_evidence.py` |
-| **Verify** | META-targeted retrieve: `benchmarks/results/retrieval_meta_ai_overfetch_comp_boost.json`. Vector/hybrid recall@5 **0.67 → 1.0**, recall@10 **0.67 → 1.0**, MRR **0.50 → 1.0**. Gold ranks: `Item1A:0` **#1**, `Item1:0` #3, `Item1A:3` #4. |
+| **Verify** | META-targeted retrieve: `benchmarks/results/archive/retrieval_meta_ai_overfetch_comp_boost.json`. Vector/hybrid recall@5 **0.67 → 1.0**, recall@10 **0.67 → 1.0**, MRR **0.50 → 1.0**. Gold ranks: `Item1A:0` **#1**, `Item1:0` #3, `Item1A:3` #4. |
 | **Follow-on** | Full 32-item `retrieval_v4` rebuild after P4 (2026-11-06): hybrid **0.84 / 0.91 / 0.70**, vector **0.84 / 0.94 / 0.70**. |
 | **Generation follow-up** | Window miss fixed in §17. Final one-item resmoke: hybrid/vector **0.875**. |
 
@@ -210,8 +210,8 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Root cause** | `truncate_passage_for_query` (1200 chars) centered on early “Summary Risk Factors / Product Offerings / pressures” needles. **TikTok sits at char ~5092**. `query_needles` also dropped `AI` (`len < 3`). |
 | **Fix** | (1) Keep short acronyms in `query_needles` via `_SHORT_TOPIC_KEEP`. (2) On competition asks, prefer `first_named_competitor_span` as the window center; demote weak needles `products` / `pressures` / `around` / `core`. |
 | **Where** | `answer.py`, `vector_retriever.py` (`is_competition_ask`, `first_named_competitor_span`), `test_answer_evidence.py` |
-| **Verify** | `benchmarks/results/hop1_meta_ai_competition_window_resmoke.json` — hybrid **0.875**, vector_only **0.875**. Both required facts hit; TikTok named. Judge still docks for framing some AI points as regulation rather than rival AI companies. |
-| **Not done** | Full 44-question generation rebench / hop table refresh. Overall headline still the three-run **0.86 / 0.89**. |
+| **Verify** | `benchmarks/results/archive/hop1_meta_ai_competition_window_resmoke.json` — hybrid **0.875**, vector_only **0.875**. Both required facts hit; TikTok named. Judge still docks for framing some AI points as regulation rather than rival AI companies. |
+| **Done later** | Three-run post-fix headline published: hybrid **0.93** / vector **0.90** ([`three_run_means.md`](../benchmarks/results/three_run_means.md)). |
 
 ---
 
@@ -223,8 +223,8 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Root cause** | Own-product GRAPH edges (streaming / CDN) counted as on-topic; unjustified-refuse repair / laundry-list answers left `refused=false`. |
 | **Fix** | `looks_like_false_premise_for_others` + `evidence_supports_produce_for_others`; topic gate false for own-product packs; skip unjustified-refuse repair on these asks; final safety forces `refused=true`. |
 | **Where** | `answer.py`, `test_answer_evidence.py` |
-| **Verify** | NFLX grown; `benchmarks/results/oos_nflx_ai_compute_for_others_resmoke.json` — hybrid **1.0** (`refuse=True`, route graph), vector_only **1.0**. |
-| **Not done** | Headline table still uses the three-run means (this item was 0.00 there). |
+| **Verify** | NFLX grown; `benchmarks/results/archive/oos_nflx_ai_compute_for_others_resmoke.json` — hybrid **1.0** (`refuse=True`, route graph), vector_only **1.0**. |
+| **Done later** | Item is **1.0** on the post-fix three-run package. |
 
 ---
 
@@ -235,9 +235,9 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Symptom** | `hop1_msft_products` hybrid three-run mean **0.13** — named M365/Dynamics/Windows/Bing, missed Azure and Xbox. |
 | **Root cause on this PC** | Dense MSFT Item 1 extract truncated when `EXTRACTION_MAX_TOKENS` was too low / unset in `.env` (defaults must be **16384**). Incomplete graph → pack without Azure/Xbox prominence. |
 | **Fix** | Confirm `EXTRACTION_MAX_TOKENS=16384` (config default + local `.env`). Grow MSFT fully (148 entities / 178 rels). `MSFT_AZURE` / `MSFT_XBOX` present. |
-| **Verify** | `benchmarks/results/hop1_msft_products_resmoke.json` — hybrid **1.0**; vector_only still **0.125** (Azure/Xbox still easy to omit from vector-only pack). |
-| **Follow-on** | Same MSFT grow unblocked `hop2_msft_cloud_and_geo_risk`: resmoke hybrid/vector **1.0** (`benchmarks/results/hop2_msft_cloud_and_geo_risk_resmoke.json`) — no extra code. |
-| **Not done** | Vector-only product-list ranking; headline table still has hybrid 0.13 / 0.50 for these items. |
+| **Verify** | `benchmarks/results/archive/hop1_msft_products_resmoke.json` — hybrid **1.0**; vector_only still **0.125** (Azure/Xbox still easy to omit from vector-only pack). |
+| **Follow-on** | Same MSFT grow unblocked `hop2_msft_cloud_and_geo_risk`: resmoke hybrid/vector **1.0** (`benchmarks/results/archive/hop2_msft_cloud_and_geo_risk_resmoke.json`) — no extra code. |
+| **Still soft** | Three-run hybrid mean on this item is **0.71** (flake across runs); vector mean **0.25**. |
 
 ---
 
@@ -249,8 +249,8 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Root cause** | Gold brand names sit ~5k chars into Item 1; 1200-char query window centered on early boilerplate ("VR headsets and AI glasses") and skipped the SKUs. Same pattern as §17 TikTok window miss. |
 | **Fix** | `is_hardware_product_ask` + `first_named_hardware_span` (prefer Ray-Ban/Oakley over earlier Quest); `_hardware_marker_hit` + strip weak needles (`glasses`, `hardware`, …) in `truncate_passage_for_query`. |
 | **Where** | `vector_retriever.py`, `answer.py`, `test_answer_evidence.py` |
-| **Verify** | `benchmarks/results/hop0_meta_ai_glasses_resmoke.json` — hybrid **1.0**, vector_only **1.0** (Ray-Ban + Oakley Meta + Quest in summary). |
-| **Not done** | Headline table still has hybrid 0.50 for this item. |
+| **Verify** | `benchmarks/results/archive/hop0_meta_ai_glasses_resmoke.json` — hybrid **1.0**, vector_only **1.0** (Ray-Ban + Oakley Meta + Quest in summary). |
+| **Done later** | Three-run hybrid mean on this item is **1.0**. |
 
 ---
 
@@ -261,8 +261,8 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Symptom** | `hop2_nvda_auto_competitors_risks` three-run hybrid mean **0.42**; `hop1_nvda_automotive` earlier hybrid **0.50** — partnerships without naming DRIVE / auto competitors. |
 | **Root cause on this PC** | NVDA not in local Neo4j + pgvector (corpus restore gap). |
 | **Fix** | Full `grow_corpus.py NVDA --confirm` with `MAX_EXTRACTION_BUDGET_USD=8` (est. **$5.57**; default per-ticker cap is **$5.0**). 190 entities / 218 rels / 19 chunks embedded. |
-| **Verify** | `benchmarks/results/nvda_drive_resmoke.json` — `hop1_nvda_automotive` hybrid/vector **1.0**; `hop2_nvda_auto_competitors_risks` hybrid **1.0**, vector_only **0.7125**. |
-| **Not done** | Headline table still has the old means; vector hop-2 still soft on competitor naming. |
+| **Verify** | `benchmarks/results/archive/nvda_drive_resmoke.json` — `hop1_nvda_automotive` hybrid/vector **1.0**; `hop2_nvda_auto_competitors_risks` hybrid **1.0**, vector_only **0.7125**. |
+| **Done later** | Both items **1.0** hybrid on the post-fix three-run package; hop-2 vector mean **0.88**. |
 
 ---
 
@@ -273,8 +273,8 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Symptom** | `hop1_nflx_aws_relationship` earlier hybrid **0.50** — AWS dependence without Amazon retail compete. |
 | **Root cause on this PC** | Thin or missing NFLX graph before corpus grow; dual fact needs both DEPENDS_ON/SUPPLIED_BY and COMPETES_WITH evidence. |
 | **Fix** | NFLX already grown for §18; no new code. |
-| **Verify** | `benchmarks/results/hop1_nflx_aws_relationship_resmoke.json` — hybrid **1.0** (route graph), vector_only **1.0**. |
-| **Not done** | Headline table still has the older 0.50. |
+| **Verify** | `benchmarks/results/archive/hop1_nflx_aws_relationship_resmoke.json` — hybrid **1.0** (route graph), vector_only **1.0**. |
+| **Done later** | Three-run hybrid/vector mean on this item is **1.0**. |
 
 ---
 
@@ -288,13 +288,13 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 | **Hypothesis** | `lexical_needles` dropped tokens with `len < 3`, so **AI** never boosted passages. |
 | **Fix shipped** | Allowlist short domain acronyms (`ai`, `aws`, `vr`, …). Kept as correctness; insufficient alone. |
 | **Result** | **No recall move** (`retrieval_meta_ai_needle_check.json`). Retrieve gap closed in §16; generation window gap closed in §17. |
-| **Where** | `vector_retriever.py`, `test_answer_evidence.py`, `benchmarks/results/retrieval_meta_ai_needle_check.json` |
+| **Where** | `vector_retriever.py`, `test_answer_evidence.py`, `benchmarks/results/archive/retrieval_meta_ai_needle_check.json` |
 
 ---
 
-### A. Three temperature-0 answer runs (2026-11-05)
+### A. Three temperature-0 answer runs (2026-11-05) — history
 
-Source: `benchmarks/results/multi_company_smoke_temp0_run1.json`, `run2`, and `run3`. Hybrid mean of means **0.860**. Vector-only mean of means **0.885**. Gap **−0.026**. The three paired gaps are **−0.033**, **−0.016**, and **−0.027**.
+Source (archived): `benchmarks/results/archive/multi_company_smoke_temp0_run1.json`, `run2`, and `run3`. Hybrid mean of means **0.860**. Vector-only mean of means **0.885**. Gap **−0.026**. The three paired gaps are **−0.033**, **−0.016**, and **−0.027**. Superseded by the post-fix three-run package (`temp0_p6` + `run2` + `run3`): hybrid **0.93** / vector **0.90**.
 
 Items that moved inside these three runs:
 
@@ -323,13 +323,13 @@ The single rerun from earlier the same night, before this temperature pin, was h
 | `hop1_meta_apps` | 0.75 | 0.00 | No longer a refusal. Family of Apps and Reality Labs. |
 | `hop1_googl_waymo` | 0.938 | 1.0 | Waymo is covered. A small fact is still short. |
 
-### B. Labeled set growth (v3 smoke, not yet headline)
+### B. Labeled set growth (v3 → published headline)
 
 | | |
 |--|--|
 | **Symptom** | The suite outgrew the first n=24 sync. |
-| **Status** | Three temperature-0 answer runs on 2026-11-05. Hybrid **0.86** (0.856–0.862), vector-only **0.89** (0.878–0.889). Retrieval is separate: hybrid recall@5 **0.83** vs vector **0.82**; vector still leads recall@10 and MRR. |
-| **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; v3 items are already single-ticker. |
+| **Status** | Published: three-run mean hybrid **0.93** / vector **0.90**; retrieval_v4 hybrid **0.84 / 0.91 / 0.70**, vector **0.84 / 0.94 / 0.70**. |
+| **Not doing now** | Multi-ticker retrieve (`tickers[]`) / LLM question fan-out — deferred; suite items are already single-ticker. |
 
 ---
 
@@ -380,7 +380,7 @@ The single rerun from earlier the same night, before this temperature pin, was h
 ## Short versions
 
 **Card 1 — Metric lied**  
-Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge. Three temperature-0 runs: hybrid **0.86** (0.856–0.862), vector-only **0.89** (0.878–0.889). Hold-out κ is **0.84** after two mistaken 1.0 labels were corrected.
+Keyword gave J&J / JPM 1.0 on bad answers → fact-checklist LLM judge. Post-fix three temperature-0 runs: hybrid **0.93** (0.901–0.940), vector-only **0.90** (0.874–0.920), gap **+0.028**; pooled bootstrap overall CI includes zero; hop-2 gap CI stays above zero. Hold-out κ is **0.84** after two mistaken 1.0 labels were corrected (not a fully blind panel).
 
 **Card 2 — Eval → systems fix**  
 Apple products cited Meta accession → global Company + Meta-written `PRODUCES_PRODUCT` → issuer write gate + chunk ticker filter + Neo4j cleanup. Same filter then erased Meta-stamped `COMPETES_WITH` → exempt cross-company rels.
@@ -440,5 +440,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | P4 complete: AMZN/GOOGL/JNJ/XOM grown. All 10 suite issuers present. `hop1_googl_waymo` hybrid **0.5** / vector **0.125** — open. |
 | 2026-11-06 | P5 `retrieval_v4` rebuild (n=32). Hybrid **0.84 / 0.91 / 0.70** (was 0.83 / 0.92 / 0.64). Vector **0.84 / 0.94 / 0.70** (was 0.82 / 0.93 / 0.67). |
 | 2026-11-06 | P6 full temp-0 rebench: hybrid **0.90** / vector **0.87** (paired **+0.026**). Hop-2 hybrid **1.00**. README/HANDOFF headline updated. |
+| 2026-11-06 | Two more temp-0 runs + pooled bootstrap. Three-run mean hybrid **0.93** / vector **0.90** (gap **+0.028**). Overall CI includes zero; hop-2 CI **0.024–0.220**. README lead rewritten; LICENSE; results archived; `docs/dev-notes` moved to `docs/archive/dev-notes`. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

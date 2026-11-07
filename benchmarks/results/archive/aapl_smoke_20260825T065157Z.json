@@ -1,0 +1,152 @@
+{
+  "suite_name": "aapl_smoke",
+  "suite_version": "1",
+  "hybrid": {
+    "suite_name": "aapl_smoke",
+    "suite_version": "1",
+    "mode": "hybrid",
+    "results": [
+      {
+        "item_id": "hop0_applecare",
+        "mode": "hybrid",
+        "question": "What is AppleCare?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "AppleCare is Apple's portfolio of fee-based service and support products. The offerings provide priority access to Apple technical support, access to the global Apple authorized service network for repair and replacement services, and in many cases additional coverage for instances of accidental damage or theft and loss, depending on the country and type of product.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AppleCare",
+          "support",
+          "service"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 10468.8,
+        "estimated_cost_usd": 0.044166,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_products",
+        "mode": "hybrid",
+        "question": "What product lines does Apple produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces a wide range of product lines including hardware devices (iPhone, iPad, Mac, Apple Watch, Apple Vision Pro, Apple TV 4K, AirPods, HomePod), digital services (Apple Music, Apple TV+, Apple Arcade, Apple News+, App Store, Apple Fitness+), payment services (Apple Pay, Apple Card), support services (AppleCare), and educational programs (Apple University).",
+        "claim_count": 18,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1"
+        ],
+        "route_effective": "graph",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "iPad"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 18900.7,
+        "estimated_cost_usd": 0.012369,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 1.0,
+      "hop_1": 1.0,
+      "hop_2": null,
+      "oos": null
+    },
+    "mean_latency_ms": 14684.8,
+    "mean_cost_usd": 0.028267,
+    "mean_score": 1.0,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); nan hop = no items run"
+  },
+  "vector_only": {
+    "suite_name": "aapl_smoke",
+    "suite_version": "1",
+    "mode": "vector_only",
+    "results": [
+      {
+        "item_id": "hop0_applecare",
+        "mode": "vector_only",
+        "question": "What is AppleCare?",
+        "hop": 0,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "AppleCare is Apple's portfolio of fee-based service and support products. The offerings provide priority access to Apple technical support, access to the global Apple authorized service network for repair and replacement services, and in many cases additional coverage for instances of accidental damage or theft and loss, depending on the country and type of product.",
+        "claim_count": 4,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "AppleCare",
+          "support",
+          "service"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 8819.8,
+        "estimated_cost_usd": 0.043686,
+        "error": null,
+        "score": 1.0
+      },
+      {
+        "item_id": "hop1_products",
+        "mode": "vector_only",
+        "question": "What product lines does Apple produce?",
+        "hop": 1,
+        "must_refuse": false,
+        "refused": false,
+        "citations_valid": true,
+        "regenerated": false,
+        "summary": "Apple produces five main product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables, Home and Accessories (which includes smartwatches, wireless headphones, spatial computers, media streaming devices, and smart speakers), and Services (including advertising, AppleCare, cloud services, digital content, and payment services).",
+        "claim_count": 5,
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ],
+        "route_effective": "vector",
+        "keyword_hits": [
+          "iPhone",
+          "Mac",
+          "iPad"
+        ],
+        "keyword_misses": [],
+        "keyword_recall": 1.0,
+        "correct_refuse": null,
+        "latency_ms": 13406.1,
+        "estimated_cost_usd": 0.046221,
+        "error": null,
+        "score": 1.0
+      }
+    ],
+    "accuracy_by_hop": {
+      "hop_0": 1.0,
+      "hop_1": 1.0,
+      "hop_2": null,
+      "oos": null
+    },
+    "mean_latency_ms": 11113.0,
+    "mean_cost_usd": 0.044954,
+    "mean_score": 1.0,
+    "notes": "score=keyword_recall (or refuse accuracy for OOS); nan hop = no items run"
+  },
+  "notes": "Step R comparison; paste accuracy_by_hop into README in Step S."
+}

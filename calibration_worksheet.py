@@ -21,7 +21,9 @@ from calibration_metrics import raw_agreement, snap_score, spearman, weighted_ka
 
 ROOT = Path(__file__).resolve().parent
 SUITE_PATH = ROOT / "benchmarks" / "multi_company_smoke.json"
-JUDGED_PATH = ROOT / "benchmarks" / "results" / "multi_company_smoke_judged.json"
+JUDGED_PATH = (
+    ROOT / "benchmarks" / "results" / "archive" / "multi_company_smoke_judged.json"
+)
 LEGACY_PATH = ROOT / "benchmarks" / "judge_calibration_hybrid.md"
 KEYS_PATH = ROOT / "benchmarks" / "calibration" / "keys.json"
 HOLDOUT_PATH = ROOT / "benchmarks" / "calibration" / "kappa_holdout.md"

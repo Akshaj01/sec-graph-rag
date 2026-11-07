@@ -1,0 +1,93 @@
+{
+  "n_runs": 3,
+  "paths": [
+    "multi_company_smoke_temp0_p6.json",
+    "multi_company_smoke_temp0_p6_run2.json",
+    "multi_company_smoke_temp0_p6_run3.json"
+  ],
+  "runs": [
+    {
+      "path": "multi_company_smoke_temp0_p6.json",
+      "hybrid": 0.9006,
+      "vector_only": 0.8741,
+      "gap": 0.026499999999999968,
+      "hybrid_by_hop": {
+        "hop_0": 0.9375,
+        "hop_1": 0.7578,
+        "hop_2": 1.0,
+        "oos": 1.0
+      },
+      "vector_by_hop": {
+        "hop_0": 0.9375,
+        "hop_1": 0.7969,
+        "hop_2": 0.7766,
+        "oos": 1.0
+      }
+    },
+    {
+      "path": "multi_company_smoke_temp0_p6_run2.json",
+      "hybrid": 0.9403,
+      "vector_only": 0.9034,
+      "gap": 0.036900000000000044,
+      "hybrid_by_hop": {
+        "hop_0": 0.9375,
+        "hop_1": 0.8672,
+        "hop_2": 1.0,
+        "oos": 1.0
+      },
+      "vector_by_hop": {
+        "hop_0": 0.9375,
+        "hop_1": 0.7969,
+        "hop_2": 0.9375,
+        "oos": 1.0
+      }
+    },
+    {
+      "path": "multi_company_smoke_temp0_p6_run3.json",
+      "hybrid": 0.9403,
+      "vector_only": 0.9205,
+      "gap": 0.01980000000000004,
+      "hybrid_by_hop": {
+        "hop_0": 0.9375,
+        "hop_1": 0.8672,
+        "hop_2": 1.0,
+        "oos": 1.0
+      },
+      "vector_by_hop": {
+        "hop_0": 0.9375,
+        "hop_1": 0.8438,
+        "hop_2": 0.9375,
+        "oos": 1.0
+      }
+    }
+  ],
+  "hybrid_mean": 0.9270666666666667,
+  "hybrid_min": 0.9006,
+  "hybrid_max": 0.9403,
+  "vector_mean": 0.8993333333333333,
+  "vector_min": 0.8741,
+  "vector_max": 0.9205,
+  "gap_mean": 0.027733333333333388,
+  "by_hop": {
+    "hop_0": {
+      "hybrid_mean": 0.9375,
+      "vector_mean": 0.9375,
+      "gap_mean": 0.0
+    },
+    "hop_1": {
+      "hybrid_mean": 0.8307333333333333,
+      "vector_mean": 0.8125333333333334,
+      "gap_mean": 0.018199999999999883
+    },
+    "hop_2": {
+      "hybrid_mean": 1.0,
+      "vector_mean": 0.8838666666666667,
+      "gap_mean": 0.11613333333333331
+    },
+    "oos": {
+      "hybrid_mean": 1.0,
+      "vector_mean": 1.0,
+      "gap_mean": 0.0
+    }
+  }
+}
