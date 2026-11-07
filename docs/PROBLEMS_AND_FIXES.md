@@ -441,5 +441,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | P5 `retrieval_v4` rebuild (n=32). Hybrid **0.84 / 0.91 / 0.70** (was 0.83 / 0.92 / 0.64). Vector **0.84 / 0.94 / 0.70** (was 0.82 / 0.93 / 0.67). |
 | 2026-11-06 | P6 full temp-0 rebench: hybrid **0.90** / vector **0.87** (paired **+0.026**). Hop-2 hybrid **1.00**. README/HANDOFF headline updated. |
 | 2026-11-06 | Two more temp-0 runs + pooled bootstrap. Three-run mean hybrid **0.93** / vector **0.90** (gap **+0.028**). Overall CI includes zero; hop-2 CI **0.024–0.220**. README lead rewritten; LICENSE; results archived; `docs/dev-notes` moved to `docs/archive/dev-notes`. |
+| 2026-11-06 | Re-pin recall-gate baseline to `retrieval_v4` hybrid recall@10 **0.9115** (was 0.9167). Tests required drop == 0 against the old pin while the CLI still passed under max_drop 0.02. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

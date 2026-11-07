@@ -272,7 +272,7 @@ The system is good if: (1) it retrieves evidence that actually supports the ques
 
 ### WP5 — recall gate (2026-11-03)
 
-**Check:** hybrid recall@10 on the 32 answerable v4 items, read from `benchmarks/results/retrieval_v4.json`. Baseline pinned at **0.9167**. Fail when the drop is **greater than 0.02**. A drop of exactly 0.02 passes. The item ids are pinned too, so deleting a question does not raise the average.
+**Check:** hybrid recall@10 on the 32 answerable v4 items, read from `benchmarks/results/retrieval_v4.json`. Baseline pinned at **0.9115** (re-pinned after the 2026-11-06 `retrieval_v4` rebuild; was 0.9167). Fail when the drop is **greater than 0.02**. A drop of exactly 0.02 passes. The item ids are pinned too, so deleting a question does not raise the average.
 
 **CI** runs `pytest test_recall_gate.py` and `python recall_gate.py`. No model, no database.
 

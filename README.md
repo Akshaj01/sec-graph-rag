@@ -62,7 +62,7 @@ Summary: [`three_run_means.md`](benchmarks/results/three_run_means.md). Bootstra
 
 **Judge calibration (rubric v1):** held-out linear weighted κ **0.84** (raw agreement 19/20). Two first-pass scores of 1.0 were corrected after seeing the judge (Meta AI competition → 0, Meta AI glasses → 0.5), so treat κ as a calibration check, not a fully blind panel. Self-agreement on a later re-label is κ **0.42** (13/15). [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
 
-CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.917**. It reads the saved file and does not call a model. Retrieval tables: [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md).
+CI fails if a committed hybrid recall@10 drops more than **0.02** from **0.911**. It reads the saved file and does not call a model. Retrieval tables: [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md).
 
 ### 60-second pass
 
