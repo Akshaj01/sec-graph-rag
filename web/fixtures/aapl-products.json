@@ -1,0 +1,311 @@
+{
+  "saved_run": true,
+  "id": "aapl-products",
+  "label": "Apple products",
+  "ticker": "AAPL",
+  "note": "Saved run from POST /ask. This is a stored response, not a live call.",
+  "response": {
+    "question": "What product lines does Apple produce?",
+    "summary": "Apple produces several major product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables (including Apple Watch smartwatches, AirPods wireless headphones, and spatial computers), Home and Accessories, and services. The company also offers Apple University programs.",
+    "claims": [
+      {
+        "text": "Apple's iPhone line is a series of smartphones based on its iOS operating system, including models such as iPhone 17 Pro, iPhone Air, iPhone 17, iPhone 16, and iPhone 16e.",
+        "citation_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ]
+      },
+      {
+        "text": "Apple's Mac line consists of personal computers based on its macOS operating system, including laptops (MacBook Air and MacBook Pro) and desktops (iMac, Mac mini, Mac Studio, and Mac Pro).",
+        "citation_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ]
+      },
+      {
+        "text": "Apple's iPad line includes multipurpose tablets based on its iPadOS operating system, with models including iPad Pro, iPad Air, iPad, and iPad mini.",
+        "citation_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ]
+      },
+      {
+        "text": "Apple's Wearables, Home and Accessories category includes smartwatches (Apple Watch Series 11, Apple Watch SE 3, and Apple Watch Ultra 3 based on watchOS), wireless headphones (AirPods, AirPods Pro), and spatial computers.",
+        "citation_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ]
+      },
+      {
+        "text": "Apple produces Apple University, which offers programs on leadership, management and influence, as well as Apple culture and values.",
+        "citation_chunk_ids": [
+          "0000320193-25-000079:Item1:1"
+        ]
+      },
+      {
+        "text": "Apple designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories, and sells a variety of related services.",
+        "citation_chunk_ids": [
+          "0000320193-25-000079:Item1:0"
+        ]
+      }
+    ],
+    "refused": false,
+    "citations_valid": true,
+    "regenerated": false,
+    "attempts": 1,
+    "model": "claude-sonnet-4-5",
+    "route_effective": "graph",
+    "allowed_chunk_ids": [
+      "0000320193-25-000079:Item1:0",
+      "0000320193-25-000079:Item1:1",
+      "0000320193-25-000079:Item1A:0",
+      "0000320193-25-000079:Item1A:1",
+      "0000320193-25-000079:Item7:0"
+    ],
+    "evidence_item_count": 5,
+    "trace": {
+      "route": {
+        "effective_route": "graph",
+        "model_route": "graph",
+        "confidence": 0.92,
+        "rationale": "Requires traversing PRODUCES_PRODUCT relationships from Apple to its product lines, which is a multi-hop connection through the knowledge graph.",
+        "low_confidence_fallback": false
+      },
+      "graph": {
+        "template_ids": [
+          "company_products"
+        ],
+        "plan_rationale": "The question asks directly about Apple's product lines, which is best answered by the company_products template.",
+        "facts": [
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Advertising",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "AppleCare",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Cloud Services",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Digital Content",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "iPad",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0",
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "iPhone",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0",
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Mac",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0",
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Payment Services",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Wearables, Home and Accessories",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0",
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Services",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Apple University",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:1"
+            ]
+          }
+        ]
+      },
+      "vector": {
+        "ticker": "AAPL",
+        "k": 5,
+        "passages": [
+          {
+            "chunk_id": "0000320193-25-000079:Item1:0",
+            "section": "Item1",
+            "score": 0.8920088112457772,
+            "text_preview": "Item 1. Business Company Background The Company designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories, and sells a variety of related services. The Company\u2019s fiscal year is the 52- or 53-we..."
+          },
+          {
+            "chunk_id": "0000320193-25-000079:Item1:1",
+            "section": "Item1",
+            "score": 0.855414584703919,
+            "text_preview": "ight is solely responsible for protecting the Company\u2019s products and services. The Company believes the duration of its intellectual property rights is adequate relative to the expected lives of its products and services. Apple Inc. | 20..."
+          },
+          {
+            "chunk_id": "0000320193-25-000079:Item7:0",
+            "section": "Item7",
+            "score": 0.8300761014240631,
+            "text_preview": "Item 7. Management\u2019s Discussion and Analysis of Financial Condition and Results of Operations The following discussion should be read in conjunction with the consolidated financial statements and accompanying notes included in Part II, I..."
+          },
+          {
+            "chunk_id": "0000320193-25-000079:Item1A:1",
+            "section": "Item1A",
+            "score": 0.7865136397827757,
+            "text_preview": "nuing and timely introduction of innovative new products, services and technologies to the marketplace. The Company designs and develops nearly the entire solution for its products, including the hardware, operating system, numerous soft..."
+          },
+          {
+            "chunk_id": "0000320193-25-000079:Item1A:0",
+            "section": "Item1A",
+            "score": 0.7841374110622611,
+            "text_preview": "Item 1A. Risk Factors The following summarizes factors that could have a material adverse effect on the Company\u2019s business, reputation, results of operations, financial condition and stock price. The Company may not be able to accurately..."
+          }
+        ]
+      },
+      "evidence": {
+        "items": [
+          {
+            "source_label": "VECTOR",
+            "statement": "Item 1. Business Company Background The Company designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories, and sells a variety of related services. The Company\u2019s fiscal year is the 52- or 53-week period that ends on the last Saturday of September. Products iPhone iPhone\u00ae is\u2026",
+            "chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ],
+            "section": "Item1",
+            "score": 0.8920088112457772
+          },
+          {
+            "source_label": "GRAPH",
+            "statement": "Apple Inc. produces product Apple University. Context: The Company offers programs through Apple University on leadership, management and influence, as well as Apple culture and values",
+            "chunk_ids": [
+              "0000320193-25-000079:Item1:1"
+            ],
+            "section": null,
+            "score": 0.85
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "... of Operations The following discussion should be read in conjunction with the consolidated financial statements and accompanying notes included in Part II, Item 8 of this Form 10-K. This Item generally discusses 2025 and 2024 items and year-to-year comparisons between 2025 and 2024. Discussions of 2023 items and y\u2026",
+            "chunk_ids": [
+              "0000320193-25-000079:Item7:0"
+            ],
+            "section": "Item7",
+            "score": 0.8300761014240631
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "nuing and timely introduction of innovative new products, services and technologies to the marketplace. The Company designs and develops nearly the entire solution for its products, including the hardware, operating system, numerous software applications and related services. As a result, the Company must make signifi\u2026",
+            "chunk_ids": [
+              "0000320193-25-000079:Item1A:1"
+            ],
+            "section": "Item1A",
+            "score": 0.7865136397827757
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "...sales. In addition, the Company\u2019s global supply chain is large and complex and a majority of the Company\u2019s supplier facilities, including manufacturing and assembly sites, are located outside the U.S. As a result, the Company\u2019s operations and performance depend significantly on global and regional economic conditio\u2026",
+            "chunk_ids": [
+              "0000320193-25-000079:Item1A:0"
+            ],
+            "section": "Item1A",
+            "score": 0.7841374110622611
+          }
+        ],
+        "allowed_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:0",
+          "0000320193-25-000079:Item1A:1",
+          "0000320193-25-000079:Item7:0"
+        ]
+      },
+      "answer": {
+        "summary": "Apple produces several major product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables (including Apple Watch smartwatches, AirPods wireless headphones, and spatial computers), Home and Accessories, and services. The company also offers Apple University programs.",
+        "claims": [
+          {
+            "text": "Apple's iPhone line is a series of smartphones based on its iOS operating system, including models such as iPhone 17 Pro, iPhone Air, iPhone 17, iPhone 16, and iPhone 16e.",
+            "citation_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "text": "Apple's Mac line consists of personal computers based on its macOS operating system, including laptops (MacBook Air and MacBook Pro) and desktops (iMac, Mac mini, Mac Studio, and Mac Pro).",
+            "citation_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "text": "Apple's iPad line includes multipurpose tablets based on its iPadOS operating system, with models including iPad Pro, iPad Air, iPad, and iPad mini.",
+            "citation_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "text": "Apple's Wearables, Home and Accessories category includes smartwatches (Apple Watch Series 11, Apple Watch SE 3, and Apple Watch Ultra 3 based on watchOS), wireless headphones (AirPods, AirPods Pro), and spatial computers.",
+            "citation_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "text": "Apple produces Apple University, which offers programs on leadership, management and influence, as well as Apple culture and values.",
+            "citation_chunk_ids": [
+              "0000320193-25-000079:Item1:1"
+            ]
+          },
+          {
+            "text": "Apple designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories, and sells a variety of related services.",
+            "citation_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          }
+        ],
+        "refused": false
+      },
+      "validation": {
+        "citations_valid": true,
+        "regenerated": false,
+        "attempts": 1
+      }
+    }
+  }
+}

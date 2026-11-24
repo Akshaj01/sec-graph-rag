@@ -1,0 +1,575 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SEC GraphRAG",
+    "description": "Hybrid knowledge graph + vector RAG over SEC 10-K filings.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ask": {
+      "post": {
+        "summary": "Ask",
+        "operationId": "ask_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnswerClaim": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "A single factual claim answering part of the question."
+          },
+          "citation_chunk_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Citation Chunk Ids",
+            "description": "chunk_id values from the evidence pack that support this claim. Must be copied exactly from GRAPH or VECTOR evidence \u2014 never invented. May be empty only when refused=true."
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "AnswerClaim",
+        "description": "One atomic claim that must be backed by retrieved chunk id(s)."
+      },
+      "AskRequest": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Question",
+            "description": "Natural-language question."
+          },
+          "ticker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ticker",
+            "description": "Scope vector search (e.g. AAPL). Defaults to router/guess."
+          },
+          "vector_only": {
+            "type": "boolean",
+            "title": "Vector Only",
+            "description": "If true, skip graph retrieval (vector-only baseline).",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "title": "AskRequest"
+      },
+      "AskResponse": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerClaim"
+            },
+            "type": "array",
+            "title": "Claims"
+          },
+          "refused": {
+            "type": "boolean",
+            "title": "Refused"
+          },
+          "citations_valid": {
+            "type": "boolean",
+            "title": "Citations Valid"
+          },
+          "regenerated": {
+            "type": "boolean",
+            "title": "Regenerated"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "route_effective": {
+            "type": "string",
+            "title": "Route Effective"
+          },
+          "allowed_chunk_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Allowed Chunk Ids"
+          },
+          "evidence_item_count": {
+            "type": "integer",
+            "title": "Evidence Item Count"
+          },
+          "trace": {
+            "$ref": "#/components/schemas/AskTrace"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question",
+          "summary",
+          "claims",
+          "refused",
+          "citations_valid",
+          "regenerated",
+          "attempts",
+          "model",
+          "route_effective",
+          "allowed_chunk_ids",
+          "evidence_item_count",
+          "trace"
+        ],
+        "title": "AskResponse"
+      },
+      "AskTrace": {
+        "properties": {
+          "route": {
+            "$ref": "#/components/schemas/TraceRoute"
+          },
+          "graph": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TraceGraph"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "vector": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TraceVector"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/TraceEvidence"
+          },
+          "answer": {
+            "$ref": "#/components/schemas/TraceAnswer"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/TraceValidation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "route",
+          "evidence",
+          "answer",
+          "validation"
+        ],
+        "title": "AskTrace",
+        "description": "What the demo draws. A view of one AnswerResult, not a second retrieval."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "TraceAnswer": {
+        "properties": {
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerClaim"
+            },
+            "type": "array",
+            "title": "Claims"
+          },
+          "refused": {
+            "type": "boolean",
+            "title": "Refused"
+          }
+        },
+        "type": "object",
+        "required": [
+          "summary",
+          "claims",
+          "refused"
+        ],
+        "title": "TraceAnswer"
+      },
+      "TraceEvidence": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TraceEvidenceItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "allowed_chunk_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Allowed Chunk Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "allowed_chunk_ids"
+        ],
+        "title": "TraceEvidence"
+      },
+      "TraceEvidenceItem": {
+        "properties": {
+          "source_label": {
+            "type": "string",
+            "title": "Source Label"
+          },
+          "statement": {
+            "type": "string",
+            "title": "Statement"
+          },
+          "chunk_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Chunk Ids"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Section"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_label",
+          "statement",
+          "chunk_ids"
+        ],
+        "title": "TraceEvidenceItem"
+      },
+      "TraceFact": {
+        "properties": {
+          "source_name": {
+            "type": "string",
+            "title": "Source Name"
+          },
+          "rel_type": {
+            "type": "string",
+            "title": "Rel Type"
+          },
+          "target_name": {
+            "type": "string",
+            "title": "Target Name"
+          },
+          "source_chunk_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Source Chunk Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_name",
+          "rel_type",
+          "target_name",
+          "source_chunk_ids"
+        ],
+        "title": "TraceFact"
+      },
+      "TraceGraph": {
+        "properties": {
+          "template_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Template Ids"
+          },
+          "plan_rationale": {
+            "type": "string",
+            "title": "Plan Rationale"
+          },
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/TraceFact"
+            },
+            "type": "array",
+            "title": "Facts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "template_ids",
+          "plan_rationale",
+          "facts"
+        ],
+        "title": "TraceGraph"
+      },
+      "TracePassage": {
+        "properties": {
+          "chunk_id": {
+            "type": "string",
+            "title": "Chunk Id"
+          },
+          "section": {
+            "type": "string",
+            "title": "Section"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          },
+          "text_preview": {
+            "type": "string",
+            "title": "Text Preview"
+          }
+        },
+        "type": "object",
+        "required": [
+          "chunk_id",
+          "section",
+          "score",
+          "text_preview"
+        ],
+        "title": "TracePassage"
+      },
+      "TraceRoute": {
+        "properties": {
+          "effective_route": {
+            "type": "string",
+            "title": "Effective Route"
+          },
+          "model_route": {
+            "type": "string",
+            "title": "Model Route"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "rationale": {
+            "type": "string",
+            "title": "Rationale"
+          },
+          "low_confidence_fallback": {
+            "type": "boolean",
+            "title": "Low Confidence Fallback"
+          }
+        },
+        "type": "object",
+        "required": [
+          "effective_route",
+          "model_route",
+          "confidence",
+          "rationale",
+          "low_confidence_fallback"
+        ],
+        "title": "TraceRoute"
+      },
+      "TraceValidation": {
+        "properties": {
+          "citations_valid": {
+            "type": "boolean",
+            "title": "Citations Valid"
+          },
+          "regenerated": {
+            "type": "boolean",
+            "title": "Regenerated"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "citations_valid",
+          "regenerated",
+          "attempts"
+        ],
+        "title": "TraceValidation"
+      },
+      "TraceVector": {
+        "properties": {
+          "ticker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ticker"
+          },
+          "k": {
+            "type": "integer",
+            "title": "K"
+          },
+          "passages": {
+            "items": {
+              "$ref": "#/components/schemas/TracePassage"
+            },
+            "type": "array",
+            "title": "Passages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "k",
+          "passages"
+        ],
+        "title": "TraceVector"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

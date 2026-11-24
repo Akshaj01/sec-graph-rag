@@ -1,0 +1,255 @@
+{
+  "saved_run": true,
+  "id": "aapl-bitcoin",
+  "label": "Bitcoin on Apple's balance sheet",
+  "ticker": "AAPL",
+  "note": "Saved run from POST /ask. This is a stored response, not a live call.",
+  "response": {
+    "question": "How many Bitcoin does Apple hold on its balance sheet?",
+    "summary": "The evidence does not contain any information about Apple holding Bitcoin on its balance sheet. The provided passages discuss Apple's cash, cash equivalents, marketable securities, debt obligations, and other financial matters, but make no mention of Bitcoin or cryptocurrency holdings.",
+    "claims": [
+      {
+        "text": "The question asks for a specific quantitative figure (Bitcoin holdings) that does not appear in the provided evidence about Apple's balance sheet and financial position.",
+        "citation_chunk_ids": []
+      }
+    ],
+    "refused": true,
+    "citations_valid": true,
+    "regenerated": false,
+    "attempts": 1,
+    "model": "claude-sonnet-4-5",
+    "route_effective": "vector",
+    "allowed_chunk_ids": [
+      "0000320193-25-000079:Item1:0",
+      "0000320193-25-000079:Item1:1",
+      "0000320193-25-000079:Item1A:5",
+      "0000320193-25-000079:Item7:0",
+      "0000320193-25-000079:Item7:1"
+    ],
+    "evidence_item_count": 5,
+    "trace": {
+      "route": {
+        "effective_route": "vector",
+        "model_route": "vector",
+        "confidence": 0.85,
+        "rationale": "This is a specific factual lookup about a balance sheet line item; vector retrieval of financial statement disclosures is most appropriate.",
+        "low_confidence_fallback": false
+      },
+      "graph": {
+        "template_ids": [
+          "entity_outgoing"
+        ],
+        "plan_rationale": "Bitcoin holdings are an investment/asset position not covered by narrower templates; entity_outgoing captures broad connections including crypto/digital asset holdings.",
+        "facts": [
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Cloud Services",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Advertising",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Digital Content",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "EXPOSED_TO_RISK",
+            "target_name": "U.S. Tariffs and Trade Measures",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "iPhone",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0",
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Services",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "AppleCare",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Payment Services",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Mac",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0",
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "EXPOSED_TO_RISK",
+            "target_name": "Macroeconomic Conditions",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "Wearables, Home and Accessories",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0",
+              "0000320193-25-000079:Item7:0"
+            ]
+          },
+          {
+            "source_name": "Apple Inc.",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "iPad",
+            "source_chunk_ids": [
+              "0000320193-25-000079:Item1:0",
+              "0000320193-25-000079:Item7:0"
+            ]
+          }
+        ]
+      },
+      "vector": {
+        "ticker": "AAPL",
+        "k": 5,
+        "passages": [
+          {
+            "chunk_id": "0000320193-25-000079:Item7:0",
+            "section": "Item7",
+            "score": 0.8332094165617573,
+            "text_preview": "Item 7. Management\u2019s Discussion and Analysis of Financial Condition and Results of Operations The following discussion should be read in conjunction with the consolidated financial statements and accompanying notes included in Part II, I..."
+          },
+          {
+            "chunk_id": "0000320193-25-000079:Item7:1",
+            "section": "Item7",
+            "score": 0.823512916066999,
+            "text_preview": "Company\u2019s products and to perform final assembly and testing of finished products. The Company also obtains individual components for its products from a wide variety of individual suppliers. As of September 27, 2025, the Company had man..."
+          },
+          {
+            "chunk_id": "0000320193-25-000079:Item1:1",
+            "section": "Item1",
+            "score": 0.8037709311949419,
+            "text_preview": "ight is solely responsible for protecting the Company\u2019s products and services. The Company believes the duration of its intellectual property rights is adequate relative to the expected lives of its products and services. Apple Inc. | 20..."
+          },
+          {
+            "chunk_id": "0000320193-25-000079:Item1:0",
+            "section": "Item1",
+            "score": 0.7955370380649893,
+            "text_preview": "Item 1. Business Company Background The Company designs, manufactures and markets smartphones, personal computers, tablets, wearables and accessories, and sells a variety of related services. The Company\u2019s fiscal year is the 52- or 53-we..."
+          },
+          {
+            "chunk_id": "0000320193-25-000079:Item1A:5",
+            "section": "Item1A",
+            "score": 0.7394283878488755,
+            "text_preview": "s business practices. Noncompliance could result in significant penalties or legal liability. The Company makes statements about its use and disclosure of personal data through its privacy policy, information provided on its website, pre..."
+          }
+        ]
+      },
+      "evidence": {
+        "items": [
+          {
+            "source_label": "VECTOR",
+            "statement": "...rtially offset by a change in valuation allowance and state income taxes. The Company\u2019s effective tax rate for 2025 was lower compared to 2024 due to a $10.7 billion year-over-year decrease in the provision for income taxes related to the State Aid Decision (refer to Note 7, \u201cIncome Taxes\u201d in the Notes to Consolida\u2026",
+            "chunk_ids": [
+              "0000320193-25-000079:Item7:0"
+            ],
+            "section": "Item7",
+            "score": 0.8332094165617573
+          },
+          {
+            "source_label": "GRAPH",
+            "statement": "Apple Inc. produces product Cloud Services. Context: The Company's cloud services store and keep customers' content up-to-date and available across multiple Apple devices and Windows personal computers.",
+            "chunk_ids": [
+              "0000320193-25-000079:Item1:0"
+            ],
+            "section": null,
+            "score": 1.0
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "...se obligations of $56.2 billion, with $55.4 billion payable within 12 months. Other Purchase Obligations The Company\u2019s other purchase obligations primarily consist of noncancelable obligations to acquire capital assets, including assets related to product manufacturing, and noncancelable obligations related to supp\u2026",
+            "chunk_ids": [
+              "0000320193-25-000079:Item7:1"
+            ],
+            "section": "Item7",
+            "score": 0.823512916066999
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "ight is solely responsible for protecting the Company\u2019s products and services. The Company believes the duration of its intellectual property rights is adequate relative to the expected lives of its products and services. Apple Inc. | 2025 Form 10-K | 3 In addition to Company-owned intellectual property, many of the C\u2026",
+            "chunk_ids": [
+              "0000320193-25-000079:Item1:1"
+            ],
+            "section": "Item1",
+            "score": 0.8037709311949419
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "... rate fluctuations. The weakening of foreign currencies relative to the U.S. dollar adversely affects the U.S. dollar value of the Company\u2019s foreign currency\u2013denominated sales and earnings, and generally leads the Company to raise international pricing, potentially reducing demand for the Company\u2019s products. In som\u2026",
+            "chunk_ids": [
+              "0000320193-25-000079:Item1A:5"
+            ],
+            "section": "Item1A",
+            "score": 0.7394283878488755
+          }
+        ],
+        "allowed_chunk_ids": [
+          "0000320193-25-000079:Item1:0",
+          "0000320193-25-000079:Item1:1",
+          "0000320193-25-000079:Item1A:5",
+          "0000320193-25-000079:Item7:0",
+          "0000320193-25-000079:Item7:1"
+        ]
+      },
+      "answer": {
+        "summary": "The evidence does not contain any information about Apple holding Bitcoin on its balance sheet. The provided passages discuss Apple's cash, cash equivalents, marketable securities, debt obligations, and other financial matters, but make no mention of Bitcoin or cryptocurrency holdings.",
+        "claims": [
+          {
+            "text": "The question asks for a specific quantitative figure (Bitcoin holdings) that does not appear in the provided evidence about Apple's balance sheet and financial position.",
+            "citation_chunk_ids": []
+          }
+        ],
+        "refused": true
+      },
+      "validation": {
+        "citations_valid": true,
+        "regenerated": false,
+        "attempts": 1
+      }
+    }
+  }
+}

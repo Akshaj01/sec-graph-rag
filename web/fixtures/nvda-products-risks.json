@@ -1,0 +1,402 @@
+{
+  "saved_run": true,
+  "id": "nvda-products-risks",
+  "label": "NVIDIA products and risks",
+  "ticker": "NVDA",
+  "note": "Saved run from POST /ask. This is a stored response, not a live call.",
+  "response": {
+    "question": "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+    "summary": "NVIDIA produces compute products including GPUs for data center AI workloads (such as A100, H100, H200, H20, GB200 NVL72, B200, L4, L40, L40S), GeForce RTX GPUs for gaming PCs, and enterprise AI software like NVIDIA AI Enterprise and GeForce NOW cloud gaming service. The company is exposed to geopolitical risks including export licensing requirements for high-performance products to China and other restricted countries, increased regulatory scrutiny from competition authorities worldwide (EU, US, UK, South Korea, Japan, China), and broader risks from international trade restrictions, tariffs, sanctions, currency fluctuations, and cyber-attacks by nation-states.",
+    "claims": [
+      {
+        "text": "NVIDIA produces GPUs that excel at parallel workloads such as training and inferencing of neural networks, forming the foundation of their data center computing platform.",
+        "citation_chunk_ids": [
+          "0001045810-26-000021:Item1:1"
+        ]
+      },
+      {
+        "text": "NVIDIA's high-performance compute products subject to export licensing requirements include the A100, A800, H100, H800, L4, L40, L40S RTX 4090, GB200 NVL72, B200, and H20.",
+        "citation_chunk_ids": [
+          "0001045810-26-000021:Item1A:7"
+        ]
+      },
+      {
+        "text": "NVIDIA produces NVIDIA AI Enterprise, a comprehensive suite of enterprise-grade AI software offered through paid licenses.",
+        "citation_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1A:0"
+        ]
+      },
+      {
+        "text": "NVIDIA produces GeForce RTX GPUs for gaming desktop and laptop PCs and GeForce NOW cloud gaming service.",
+        "citation_chunk_ids": [
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1A:1"
+        ]
+      },
+      {
+        "text": "The U.S. government requires licenses for export to China (including Hong Kong and Macau) and other restricted countries of NVIDIA products exceeding certain performance thresholds, including H20 integrated circuits, which resulted in a $4.5 billion charge in Q1 fiscal 2026.",
+        "citation_chunk_ids": [
+          "0001045810-26-000021:Item1A:7"
+        ]
+      },
+      {
+        "text": "NVIDIA faces increased regulatory scrutiny from competition authorities in the European Union, United States, United Kingdom, China, South Korea, and Japan regarding GPU sales, supply allocation, and AI-related partnerships.",
+        "citation_chunk_ids": [
+          "0001045810-26-000021:Item1A:6"
+        ]
+      },
+      {
+        "text": "NVIDIA is exposed to geopolitical risks including restrictions on international trade such as tariffs and sanctions, currency fluctuations, acts of war or military actions, terrorism, and cyber-attacks by nation-states and nation-state-supported actors.",
+        "citation_chunk_ids": [
+          "0001045810-26-000021:Item1A:3"
+        ]
+      }
+    ],
+    "refused": false,
+    "citations_valid": true,
+    "regenerated": false,
+    "attempts": 1,
+    "model": "claude-sonnet-4-5",
+    "route_effective": "both",
+    "allowed_chunk_ids": [
+      "0001045810-26-000021:Item1:0",
+      "0001045810-26-000021:Item1:1",
+      "0001045810-26-000021:Item1:3",
+      "0001045810-26-000021:Item1A:0",
+      "0001045810-26-000021:Item1A:1",
+      "0001045810-26-000021:Item1A:10",
+      "0001045810-26-000021:Item1A:3",
+      "0001045810-26-000021:Item1A:6",
+      "0001045810-26-000021:Item1A:7",
+      "0001045810-26-000021:Item1A:8",
+      "0001045810-26-000021:Item7:0"
+    ],
+    "evidence_item_count": 9,
+    "trace": {
+      "route": {
+        "effective_route": "both",
+        "model_route": "both",
+        "confidence": 0.88,
+        "rationale": "Requires both graph traversal to identify PRODUCES_PRODUCT relationships for compute products and narrative retrieval of geopolitical risk disclosures from the filing.",
+        "low_confidence_fallback": false
+      },
+      "graph": {
+        "template_ids": [
+          "company_products",
+          "company_risks"
+        ],
+        "plan_rationale": "NVIDIA's compute products and geopolitical risks are distinct aspects requiring both product and risk templates to comprehensively answer the question.",
+        "facts": [
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "NVIDIA RTX PRO",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:1"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "NVIDIA AI Enterprise",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:0",
+              "0001045810-26-000021:Item1:1",
+              "0001045810-26-000021:Item1A:0"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "CUDA",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:1"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "NVIDIA Blackwell",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:0",
+              "0001045810-26-000021:Item1:1"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "H200",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:3",
+              "0001045810-26-000021:Item1A:7",
+              "0001045810-26-000021:Item7:0"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "A100",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:3",
+              "0001045810-26-000021:Item1A:6",
+              "0001045810-26-000021:Item1A:7"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "GeForce",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:0",
+              "0001045810-26-000021:Item1:1"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "GeForce NOW",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:1",
+              "0001045810-26-000021:Item1A:1"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "DRIVE Hyperion",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:1"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "H100",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:3",
+              "0001045810-26-000021:Item1A:6",
+              "0001045810-26-000021:Item1A:7"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "H20",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:3",
+              "0001045810-26-000021:Item1A:6",
+              "0001045810-26-000021:Item1A:7",
+              "0001045810-26-000021:Item7:0",
+              "0001045810-26-000021:Item7:2"
+            ]
+          },
+          {
+            "source_name": "NVIDIA Corporation",
+            "rel_type": "PRODUCES_PRODUCT",
+            "target_name": "NVIDIA Rubin",
+            "source_chunk_ids": [
+              "0001045810-26-000021:Item1:1"
+            ]
+          }
+        ]
+      },
+      "vector": {
+        "ticker": "NVDA",
+        "k": 5,
+        "passages": [
+          {
+            "chunk_id": "0001045810-26-000021:Item1A:3",
+            "section": "Item1A",
+            "score": 0.976801866394899,
+            "text_preview": "de the United States. The market in China, where our offerings are limited by export controls, is highly competitive and we expect it to remain competitive going forward. The global nature of our business subjects us to a number of risks..."
+          },
+          {
+            "chunk_id": "0001045810-26-000021:Item1:1",
+            "section": "Item1",
+            "score": 0.9285609569329121,
+            "text_preview": "to help bring our products to market. We also have partnerships in automotive, healthcare, financial services, manufacturing, retail, and technology among others, to accelerate the adoption of AI. At the foundation of the NVIDIA accelera..."
+          },
+          {
+            "chunk_id": "0001045810-26-000021:Item1A:7",
+            "section": "Item1A",
+            "score": 0.9272126927771503,
+            "text_preview": "our products exceeding certain performance thresholds, including, but not limited to, the A100, A800, H100, H800, L4, L40, L40S RTX 4090, GB200 NVL72, and B200. The licensing requirements also apply to the export of products exceeding ce..."
+          },
+          {
+            "chunk_id": "0001045810-26-000021:Item1A:6",
+            "section": "Item1A",
+            "score": 0.9268209670056157,
+            "text_preview": "ity to manufacture and supply our products and operate our business. For example, 24 we may face increased compliance costs as a result of changes or increases in antitrust legislation, regulation, administrative rule making, increased f..."
+          },
+          {
+            "chunk_id": "0001045810-26-000021:Item1A:1",
+            "section": "Item1A",
+            "score": 0.9267864405427007,
+            "text_preview": "tely estimate demand, or our customers change orders, as we have experienced in the past, we may not be able to reduce our supply commitments in time, at the same rate, or at all. Significant mismatches between supply and demand have var..."
+          }
+        ]
+      },
+      "evidence": {
+        "items": [
+          {
+            "source_label": "VECTOR",
+            "statement": "...rnational business and cultural practices, disruptions to capital markets, counter-inflation policies, currency fluctuations, natural disasters, acts of war or other military actions, terrorism, public health issues, restrictions on international trade, such as tariffs, sanctions, and other controls on imports or e\u2026",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1A:3"
+            ],
+            "section": "Item1A",
+            "score": 0.976801866394899
+          },
+          {
+            "source_label": "GRAPH",
+            "statement": "NVIDIA Corporation is exposed to risk Corporate Sustainability Scrutiny. Context: Scrutiny from shareholders, regulators and others regarding NVIDIA's corporate sustainability practices could result in additional costs or risks and adverse...",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1A:8"
+            ],
+            "section": null,
+            "score": 0.96
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "to help bring our products to market. We also have partnerships in automotive, healthcare, financial services, manufacturing, retail, and technology among others, to accelerate the adoption of AI. At the foundation of the NVIDIA accelerated computing platform are our GPUs, which excel at parallel workloads such as the\u2026",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1:1"
+            ],
+            "section": "Item1",
+            "score": 0.9285609569329121
+          },
+          {
+            "source_label": "GRAPH",
+            "statement": "NVIDIA Corporation produces product NVIDIA AI Enterprise. Context: we offer paid licenses to NVIDIA AI Enterprise, a comprehensive suite of enterprise-grade AI software",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1:0",
+              "0001045810-26-000021:Item1:1",
+              "0001045810-26-000021:Item1A:0"
+            ],
+            "section": null,
+            "score": 1.0
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "our products exceeding certain performance thresholds, including, but not limited to, the A100, A800, H100, H800, L4, L40, L40S RTX 4090, GB200 NVL72, and B200. The licensing requirements also apply to the export of products exceeding certain performance thresholds to a party headquartered in, or with an ultimate pare\u2026",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1A:7"
+            ],
+            "section": "Item1A",
+            "score": 0.9272126927771503
+          },
+          {
+            "source_label": "GRAPH",
+            "statement": "NVIDIA Corporation produces product H200. Context: the USG granted a license that would allow us to ship small amounts of H200 products to specific China-based customers",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1:3",
+              "0001045810-26-000021:Item1A:7",
+              "0001045810-26-000021:Item7:0"
+            ],
+            "section": null,
+            "score": 1.0
+          },
+          {
+            "source_label": "VECTOR",
+            "statement": "ity to manufacture and supply our products and operate our business. For example, 24 we may face increased compliance costs as a result of changes or increases in antitrust legislation, regulation, administrative rule making, increased focus from regulators on cybersecurity vulnerabilities and risks. Our position in m\u2026",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1A:6"
+            ],
+            "section": "Item1A",
+            "score": 0.9268209670056157
+          },
+          {
+            "source_label": "GRAPH",
+            "statement": "NVIDIA Corporation produces product GeForce NOW. Context: Our products for the gaming market include GeForce RTX GPUs for gaming desktop and laptop PCs, GeForce NOW cloud gaming service",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1:1",
+              "0001045810-26-000021:Item1A:1"
+            ],
+            "section": null,
+            "score": 1.0
+          },
+          {
+            "source_label": "GRAPH",
+            "statement": "NVIDIA Corporation is exposed to risk Change of Control Prevention Risk. Context: Delaware law and our certificate of incorporation, bylaws and agreement with Microsoft could delay or prevent a change in control. These provisions could del...",
+            "chunk_ids": [
+              "0001045810-26-000021:Item1A:10"
+            ],
+            "section": null,
+            "score": 1.0
+          }
+        ],
+        "allowed_chunk_ids": [
+          "0001045810-26-000021:Item1:0",
+          "0001045810-26-000021:Item1:1",
+          "0001045810-26-000021:Item1:3",
+          "0001045810-26-000021:Item1A:0",
+          "0001045810-26-000021:Item1A:1",
+          "0001045810-26-000021:Item1A:10",
+          "0001045810-26-000021:Item1A:3",
+          "0001045810-26-000021:Item1A:6",
+          "0001045810-26-000021:Item1A:7",
+          "0001045810-26-000021:Item1A:8",
+          "0001045810-26-000021:Item7:0"
+        ]
+      },
+      "answer": {
+        "summary": "NVIDIA produces compute products including GPUs for data center AI workloads (such as A100, H100, H200, H20, GB200 NVL72, B200, L4, L40, L40S), GeForce RTX GPUs for gaming PCs, and enterprise AI software like NVIDIA AI Enterprise and GeForce NOW cloud gaming service. The company is exposed to geopolitical risks including export licensing requirements for high-performance products to China and other restricted countries, increased regulatory scrutiny from competition authorities worldwide (EU, US, UK, South Korea, Japan, China), and broader risks from international trade restrictions, tariffs, sanctions, currency fluctuations, and cyber-attacks by nation-states.",
+        "claims": [
+          {
+            "text": "NVIDIA produces GPUs that excel at parallel workloads such as training and inferencing of neural networks, forming the foundation of their data center computing platform.",
+            "citation_chunk_ids": [
+              "0001045810-26-000021:Item1:1"
+            ]
+          },
+          {
+            "text": "NVIDIA's high-performance compute products subject to export licensing requirements include the A100, A800, H100, H800, L4, L40, L40S RTX 4090, GB200 NVL72, B200, and H20.",
+            "citation_chunk_ids": [
+              "0001045810-26-000021:Item1A:7"
+            ]
+          },
+          {
+            "text": "NVIDIA produces NVIDIA AI Enterprise, a comprehensive suite of enterprise-grade AI software offered through paid licenses.",
+            "citation_chunk_ids": [
+              "0001045810-26-000021:Item1:0",
+              "0001045810-26-000021:Item1:1",
+              "0001045810-26-000021:Item1A:0"
+            ]
+          },
+          {
+            "text": "NVIDIA produces GeForce RTX GPUs for gaming desktop and laptop PCs and GeForce NOW cloud gaming service.",
+            "citation_chunk_ids": [
+              "0001045810-26-000021:Item1:1",
+              "0001045810-26-000021:Item1A:1"
+            ]
+          },
+          {
+            "text": "The U.S. government requires licenses for export to China (including Hong Kong and Macau) and other restricted countries of NVIDIA products exceeding certain performance thresholds, including H20 integrated circuits, which resulted in a $4.5 billion charge in Q1 fiscal 2026.",
+            "citation_chunk_ids": [
+              "0001045810-26-000021:Item1A:7"
+            ]
+          },
+          {
+            "text": "NVIDIA faces increased regulatory scrutiny from competition authorities in the European Union, United States, United Kingdom, China, South Korea, and Japan regarding GPU sales, supply allocation, and AI-related partnerships.",
+            "citation_chunk_ids": [
+              "0001045810-26-000021:Item1A:6"
+            ]
+          },
+          {
+            "text": "NVIDIA is exposed to geopolitical risks including restrictions on international trade such as tariffs and sanctions, currency fluctuations, acts of war or military actions, terrorism, and cyber-attacks by nation-states and nation-state-supported actors.",
+            "citation_chunk_ids": [
+              "0001045810-26-000021:Item1A:3"
+            ]
+          }
+        ],
+        "refused": false
+      },
+      "validation": {
+        "citations_valid": true,
+        "regenerated": false,
+        "attempts": 1
+      }
+    }
+  }
+}

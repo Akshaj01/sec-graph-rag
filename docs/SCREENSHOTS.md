@@ -43,6 +43,15 @@ LIMIT 15
 
 In `README.md`, remove the HTML comment wrappers around the `<img>` block under **Architecture**.
 
+## 4. `docs/images/ask-trace.png`
+
+The recruiter demo, after `cd web && npm run dev`.
+
+1. Open http://localhost:3000
+2. Click **Apple products** (or switch to **Saved runs** if the API is down)
+3. Wait until all five stages are visible: Route, Graph, Filings, Answer, Check
+4. Screenshot the trace, including the route and at least one chunk id, and save it as `docs/images/ask-trace.png`
+
 ## Optional
 
 - 30–60s Loom: ask one graph question + one vector question, show citations. Link from README.

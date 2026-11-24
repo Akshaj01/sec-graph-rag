@@ -19,3 +19,6 @@ RESUME_BRIEF.md
 *.pdf
 .DS_Store
 **/.DS_Store
+web/node_modules/
+web/.next/
+web/tsconfig.tsbuildinfo

@@ -4,6 +4,8 @@ Question answering over ten companies' 10-K filings that combines a **knowledge 
 
 On 44 hop-stratified questions, the graph path wins where relationships matter (multi-relation / hop-2: **1.00** vs **0.88**). Overall the gap is small — three temperature-0 runs average hybrid **0.93** vs vector-only **0.90** (gap **+0.028**); the paired bootstrap 95% CI for that gap includes zero. Vector-only retrieves as well or better (ties recall@5 / MRR; leads recall@10). LLM judge hold-out κ **0.84** (two labels corrected after seeing judge scores).
 
+The [demo](#demo) is a Next.js page. One question fills in as a trace: the route, the graph edges, the filing passages, the answer, and the citation check. Saved runs play with the API off.
+
 Companies: AAPL, META, MSFT, NVDA, GOOGL, AMZN, JPM, NFLX, XOM, JNJ.
 
 ## Results
@@ -43,6 +45,7 @@ Question → Haiku router (graph | vector | both)
   → graph: allowlisted Cypher templates only (multi-template for hop-2)
   → vector: HNSW top-k
   → grounded answer + citation validation → FastAPI POST /ask
+  → Next.js demo reads the trace on that response
 ```
 
 **Ontology (6 / 8):** Company, Subsidiary, Supplier, ProductLine, RiskFactor, Executive · OWNS_SUBSIDIARY, SUPPLIED_BY, COMPETES_WITH, EXPOSED_TO_RISK, PRODUCES_PRODUCT, DEPENDS_ON, LED_BY, OPERATES_IN_SEGMENT
@@ -90,7 +93,7 @@ Summary: [`three_run_means.md`](benchmarks/results/three_run_means.md). Bootstra
 ### 60-second pass
 
 1. Generation: three-run hybrid **0.93** vs vector **0.90**; hop-2 **1.00** vs **0.88** with a CI above zero; overall CI includes zero.
-2. One graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`.
+2. One graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`. Or open the [demo](#demo) and click Apple products. That saved run does not call a model.
 3. One refusal: a question the 10-K corpus cannot answer (Tesla battery supply, Bitcoin on Apple's balance sheet).
 4. Soft misses still open on hop-1 product / competition asks. See **What didn't work**.
 
@@ -154,6 +157,43 @@ python -m uvicorn api:app --host 127.0.0.1 --port 8000
 # {"question":"What product lines does Apple produce?","ticker":"AAPL"}
 ```
 
+The browser version of that same call is the [demo](#demo).
+
+## Demo
+
+[`web/`](web/) is a Next.js app. Ask a question, or click a sample, and the page shows what this retrieval did:
+
+1. **Route** — `graph`, `vector`, or `both`, with the router’s confidence and rationale.
+2. **Graph** — the edges that came back, and the chunk ids on them.
+3. **Filings** — the vector passages, with section and score.
+4. **Answer** — the summary and each claim, linked to its chunk ids.
+5. **Check** — whether every citation was in this retrieval’s allowlist, and whether the model refused.
+
+`POST /ask` returns that trace. The answer is still produced in `answer.py`. The page does not run retrieval itself.
+
+Three saved runs ship in [`web/fixtures/`](web/fixtures/). They are real `POST /ask` responses, labeled as saved runs. They play with no model call, and a matching one plays if the local API is down.
+
+| Run | Question | What it shows |
+|-----|----------|----------------|
+| Apple products | What product lines does Apple produce? | route `graph` |
+| NVIDIA products and risks | What compute products does NVIDIA produce, and what geopolitical risks is it exposed to? | route `both` |
+| Bitcoin on Apple’s balance sheet | How many Bitcoin does Apple hold on its balance sheet? | refusal |
+
+```bash
+cd web && npm install && npm run dev
+```
+
+Open http://localhost:3000. Choose **Saved runs** for the table above. A live ask also needs the API on port 8000 (`python -m uvicorn api:app --host 127.0.0.1 --port 8000`), plus Docker, a built corpus, and the keys in `.env`.
+
+Other pages: **Results** is the hop table above. **How it works** is the pipeline and the closed ontology.
+
+Regenerate the TypeScript types after changing `AskResponse`:
+
+```bash
+.venv/bin/python -c "import json; from api import app; json.dump(app.openapi(), open('web/openapi.json','w'), indent=2)"
+cd web && npm run generate:types
+```
+
 **Benchmark** (paid answer run; the judge is the cheaper Haiku). The full suite needs all ten companies in the corpus:
 
 ```bash
@@ -173,6 +213,7 @@ Neo4j Browser: http://localhost:7474 (`neo4j` / `password` by default) · API do
 | Ingest / extract / resolve / write | `ingest.py`, `extractor.py`, `resolver.py`, `graph_writer.py` |
 | Vectors | `embedder.py`, `vector_db.py` |
 | Retrieve / answer / API | `router.py`, `graph_retriever.py`, `vector_retriever.py`, `answer.py`, `api.py` |
+| Demo UI | `web/` — Next.js ask page, results, and how-it-works |
 | Batch growth / budget | `grow_corpus.py`, `budget.py` |
 | Eval | `benchmarks/`, `benchmark_runner.py`, `benchmark_judge.py`, `retrieval_benchmark.py`, `retrieval_metrics.py`, `bootstrap_ci.py`, `calibration_metrics.py`, `recall_gate.py` |
 | Tests | `test_*.py` |
