@@ -20,6 +20,13 @@ export type Sample = {
 
 export const SAMPLES: Sample[] = [
   {
+    id: "nvda-products-risks",
+    label: "NVIDIA products and risks",
+    question:
+      "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
+    ticker: "NVDA",
+  },
+  {
     id: "aapl-products",
     label: "Apple products",
     question: "What product lines does Apple produce?",
@@ -30,13 +37,6 @@ export const SAMPLES: Sample[] = [
     label: "AppleCare",
     question: "What is AppleCare?",
     ticker: "AAPL",
-  },
-  {
-    id: "nvda-products-risks",
-    label: "NVIDIA products and risks",
-    question:
-      "What compute products does NVIDIA produce, and what geopolitical risks is it exposed to?",
-    ticker: "NVDA",
   },
   {
     id: "aapl-bitcoin",

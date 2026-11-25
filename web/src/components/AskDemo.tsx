@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRef, useState } from "react";
 
 import { TraceReveal } from "@/components/TraceReveal";
@@ -202,6 +203,12 @@ export function AskDemo() {
             <span className="ml-2 text-slate">{sample.ticker}</span>
           </button>
         ))}
+        <Link
+          href="/results#side-by-side"
+          className="mt-2 text-sm text-pine underline decoration-rule underline-offset-4 hover:decoration-pine"
+        >
+          Hybrid and vector-only on one hop-2 question →
+        </Link>
       </div>
 
       <div aria-live="polite">

@@ -3,7 +3,7 @@
   "id": "aapl-products",
   "label": "Apple products",
   "ticker": "AAPL",
-  "note": "Saved run from POST /ask. This is a stored response, not a live call.",
+  "note": "Saved run from POST /ask. This is a stored response, not a live call. Known mistake: Apple University is Apple's internal training program, not a product line. The extractor tagged it PRODUCES_PRODUCT, and the answer repeated it.",
   "response": {
     "question": "What product lines does Apple produce?",
     "summary": "Apple produces several major product lines: iPhone (smartphones), Mac (personal computers), iPad (tablets), Wearables (including Apple Watch smartwatches, AirPods wireless headphones, and spatial computers), Home and Accessories, and services. The company also offers Apple University programs.",

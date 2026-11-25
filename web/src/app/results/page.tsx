@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { SideBySide } from "@/components/SideBySide";
+
 export const metadata: Metadata = {
   title: "Results",
   description:
@@ -67,6 +69,8 @@ export default function ResultsPage() {
           ))}
         </tbody>
       </table>
+
+      <SideBySide />
 
       <p className="mt-10 max-w-[62ch] leading-relaxed">
         Retrieval is scored separately, on 32 answerable items. Hybrid and

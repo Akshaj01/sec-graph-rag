@@ -18,8 +18,8 @@ function asSavedRun(value: unknown): SavedRun {
 }
 
 export const SAVED_RUNS: SavedRun[] = [
-  asSavedRun(aaplProducts),
   asSavedRun(nvdaProductsRisks),
+  asSavedRun(aaplProducts),
   asSavedRun(aaplBitcoin),
 ];
 
