@@ -6,10 +6,16 @@ import { useRef, useState } from "react";
 import { TraceReveal } from "@/components/TraceReveal";
 import { apiUrl, askQuestion } from "@/lib/api";
 import { findSavedRun } from "@/lib/fixtures";
+import { SAVED_RUNS_ONLY } from "@/lib/mode";
 import { SAMPLES, TICKERS } from "@/lib/samples";
 import type { AskResponse } from "@/lib/types";
 
 type Mode = "live" | "saved";
+
+// A saved-runs-only build lists only the samples it can play.
+const VISIBLE_SAMPLES = SAVED_RUNS_ONLY
+  ? SAMPLES.filter((sample) => findSavedRun(sample.question, sample.ticker))
+  : SAMPLES;
 
 type Shown = {
   id: number;
@@ -19,7 +25,7 @@ type Shown = {
 };
 
 export function AskDemo() {
-  const [mode, setMode] = useState<Mode>("live");
+  const [mode, setMode] = useState<Mode>(SAVED_RUNS_ONLY ? "saved" : "live");
   const [ticker, setTicker] = useState<string>("AAPL");
   const [question, setQuestion] = useState("");
   const [shown, setShown] = useState<Shown | null>(null);
@@ -58,7 +64,9 @@ export function AskDemo() {
       const found = presentSaved(q, nextTicker, false);
       if (!found) {
         setNote(
-          "No saved run for this question. Saved runs cover Apple products, NVIDIA products and risks, and the Bitcoin refusal.",
+          SAVED_RUNS_ONLY
+            ? "This hosted demo has no live API, and there is no saved run for this question. Saved runs cover Apple products, NVIDIA products and risks, and the Bitcoin refusal. Clone the repo to ask your own."
+            : "No saved run for this question. Saved runs cover Apple products, NVIDIA products and risks, and the Bitcoin refusal.",
         );
       }
       return;
@@ -142,43 +150,47 @@ export function AskDemo() {
           >
             {mutation.isPending ? "Asking…" : "Ask"}
           </button>
-          <div role="group" aria-label="Where the answer comes from">
-            <button
-              type="button"
-              aria-pressed={mode === "live"}
-              onClick={() => setMode("live")}
-              className={
-                mode === "live"
-                  ? "border-b-2 border-pine px-1 py-2 text-sm text-ink"
-                  : "border-b-2 border-transparent px-1 py-2 text-sm text-slate"
-              }
-            >
-              Live API
-            </button>
-            <button
-              type="button"
-              aria-pressed={mode === "saved"}
-              onClick={() => setMode("saved")}
-              className={
-                mode === "saved"
-                  ? "border-b-2 border-pine px-1 py-2 text-sm text-ink"
-                  : "border-b-2 border-transparent px-1 py-2 text-sm text-slate"
-              }
-            >
-              Saved runs
-            </button>
-          </div>
+          {!SAVED_RUNS_ONLY && (
+            <div role="group" aria-label="Where the answer comes from">
+              <button
+                type="button"
+                aria-pressed={mode === "live"}
+                onClick={() => setMode("live")}
+                className={
+                  mode === "live"
+                    ? "border-b-2 border-pine px-1 py-2 text-sm text-ink"
+                    : "border-b-2 border-transparent px-1 py-2 text-sm text-slate"
+                }
+              >
+                Live API
+              </button>
+              <button
+                type="button"
+                aria-pressed={mode === "saved"}
+                onClick={() => setMode("saved")}
+                className={
+                  mode === "saved"
+                    ? "border-b-2 border-pine px-1 py-2 text-sm text-ink"
+                    : "border-b-2 border-transparent px-1 py-2 text-sm text-slate"
+                }
+              >
+                Saved runs
+              </button>
+            </div>
+          )}
         </div>
       </form>
 
       <p className="mt-4 max-w-[42rem] text-sm text-slate">
-        {mode === "live"
-          ? "A live question calls the local API, which calls the model. If that API is down, a matching saved run is shown instead."
-          : "Saved runs are stored responses. They do not call the model."}
+        {SAVED_RUNS_ONLY
+          ? "This hosted demo plays saved runs: real POST /ask responses, stored. It never calls the model. Clone the repo and run the API to ask your own questions."
+          : mode === "live"
+            ? "A live question calls the local API, which calls the model. If that API is down, a matching saved run is shown instead."
+            : "Saved runs are stored responses. They do not call the model."}
       </p>
 
       <div className="mt-6 flex flex-col items-start gap-2">
-        {SAMPLES.map((sample) => (
+        {VISIBLE_SAMPLES.map((sample) => (
           <button
             key={sample.id}
             type="button"

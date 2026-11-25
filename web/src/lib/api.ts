@@ -1,3 +1,4 @@
+import { SAVED_RUNS_ONLY } from "./mode";
 import type { AskResponse } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
@@ -10,6 +11,10 @@ export async function askQuestion(body: {
   question: string;
   ticker: string;
 }): Promise<AskResponse> {
+  if (SAVED_RUNS_ONLY) {
+    throw new Error("This build plays saved runs only.");
+  }
+
   let response: Response;
   try {
     response = await fetch(`${API_URL}/ask`, {

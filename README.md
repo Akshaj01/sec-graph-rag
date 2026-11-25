@@ -185,6 +185,8 @@ cd web && npm install && npm run dev
 
 Open http://localhost:3000. Choose **Saved runs** for the table above. A live ask also needs the API on port 8000 (`python -m uvicorn api:app --host 127.0.0.1 --port 8000`), plus Docker, a built corpus, and the keys in `.env`.
 
+**Hosted copy.** A build on Vercel plays the three saved runs only. It never calls the API, so it costs nothing in model calls. To deploy, import the repo in Vercel and set Root Directory to `web`. Nothing else needs setting. `SAVED_RUNS_ONLY=1` gives the same build anywhere else, and `SAVED_RUNS_ONLY=0` turns it off.
+
 Other pages: **Results** is the hop table above. **How it works** is the pipeline and the closed ontology.
 
 Regenerate the TypeScript types after changing `AskResponse`:

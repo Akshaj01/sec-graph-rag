@@ -6,13 +6,21 @@ export const metadata: Metadata = {
     "Hybrid versus vector-only scores on 44 hop-stratified 10-K questions.",
 };
 
-const ANSWER_ROWS = [
+type AnswerRow = {
+  hop: string;
+  hybrid: string;
+  vector: string;
+  n: string;
+  lead: "hybrid" | "vector" | "tie";
+};
+
+const ANSWER_ROWS: readonly AnswerRow[] = [
   { hop: "Hop 0, definitions", hybrid: "0.94", vector: "0.94", n: "8", lead: "tie" },
   { hop: "Hop 1, single edge", hybrid: "0.83", vector: "0.81", n: "16", lead: "hybrid" },
   { hop: "Hop 2, compare / multi-rel", hybrid: "1.00", vector: "0.88", n: "8", lead: "hybrid" },
   { hop: "Out of scope, must refuse", hybrid: "1.00", vector: "1.00", n: "12", lead: "tie" },
   { hop: "Overall mean", hybrid: "0.93", vector: "0.90", n: "44", lead: "hybrid" },
-] as const;
+];
 
 const RETRIEVAL_ROWS = [
   { name: "Graph", recall5: "0.41", recall10: "0.46", mrr: "0.40" },
