@@ -1,10 +1,12 @@
 # SEC GraphRAG
 
+**Live demo: [sec-graph-rag.vercel.app](https://sec-graph-rag.vercel.app)**. It plays saved runs and makes no model calls.
+
 Question answering over ten companies' 10-K filings that combines a **knowledge graph** (for relationships like *who competes with whom* or *which risks attach to which company*) with **vector search** (for everything else). Every answer cites the exact filing passages it came from, and citations to anything that wasn't retrieved are rejected.
 
 On 44 hop-stratified questions, the graph path wins where relationships matter (multi-relation / hop-2: **1.00** vs **0.88**). Overall the gap is small — three temperature-0 runs average hybrid **0.93** vs vector-only **0.90** (gap **+0.028**); the paired bootstrap 95% CI for that gap includes zero. Vector-only retrieves as well or better (ties recall@5 / MRR; leads recall@10). LLM judge hold-out κ **0.84** (two labels corrected after seeing judge scores).
 
-The [demo](#demo) is a Next.js page. One question fills in as a trace: the route, the graph edges, the filing passages, the answer, and the citation check. Saved runs play with the API off.
+The [demo](#demo) is a Next.js page, [hosted here](https://sec-graph-rag.vercel.app). One question fills in as a trace: the route, the graph edges, the filing passages, the answer, and the citation check. Saved runs play with the API off.
 
 Companies: AAPL, META, MSFT, NVDA, GOOGL, AMZN, JPM, NFLX, XOM, JNJ.
 
@@ -185,7 +187,7 @@ cd web && npm install && npm run dev
 
 Open http://localhost:3000. Choose **Saved runs** for the table above. A live ask also needs the API on port 8000 (`python -m uvicorn api:app --host 127.0.0.1 --port 8000`), plus Docker, a built corpus, and the keys in `.env`.
 
-**Hosted copy.** A build on Vercel plays the three saved runs only. It never calls the API, so it costs nothing in model calls. To deploy, import the repo in Vercel and set Root Directory to `web`. Nothing else needs setting. `SAVED_RUNS_ONLY=1` gives the same build anywhere else, and `SAVED_RUNS_ONLY=0` turns it off.
+**Hosted copy.** [sec-graph-rag.vercel.app](https://sec-graph-rag.vercel.app) is a Vercel build that plays the three saved runs only. It never calls the API, so it costs nothing in model calls. To deploy, import the repo in Vercel and set Root Directory to `web`. Nothing else needs setting. `SAVED_RUNS_ONLY=1` gives the same build anywhere else, and `SAVED_RUNS_ONLY=0` turns it off.
 
 Other pages: **Results** is the hop table above. **How it works** is the pipeline and the closed ontology.
 
