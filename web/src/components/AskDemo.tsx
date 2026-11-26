@@ -103,113 +103,156 @@ export function AskDemo() {
         is allowed to cite.
       </p>
 
-      <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Issuer">
-        {TICKERS.map((item) => {
-          const selected = item === ticker;
-          return (
-            <button
-              key={item}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => setTicker(item)}
-              className={
-                selected
-                  ? "border-b-2 border-pine px-1 py-1 text-sm text-ink"
-                  : "border-b-2 border-transparent px-1 py-1 text-sm text-slate"
-              }
-            >
-              {item}
-            </button>
-          );
-        })}
-      </div>
-
-      <form
-        className="mt-6"
-        onSubmit={(event) => {
-          event.preventDefault();
-          ask(question, ticker);
-        }}
-      >
-        <label htmlFor="question" className="text-sm text-slate">
-          Question about {ticker}
-        </label>
-        <textarea
-          id="question"
-          value={question}
-          onChange={(event) => setQuestion(event.target.value)}
-          rows={3}
-          required
-          placeholder="What product lines does Apple produce?"
-          className="mt-2 w-full resize-y border border-rule bg-sheet px-4 py-4 font-serif text-2xl leading-snug"
-        />
-        <div className="mt-3 flex flex-wrap items-center gap-3">
-          <button
-            type="submit"
-            disabled={mutation.isPending || question.trim().length === 0}
-            className="border border-ink bg-ink px-4 py-2 text-sheet disabled:cursor-wait disabled:opacity-60"
+      {SAVED_RUNS_ONLY ? (
+        <div className="mt-8">
+          <p className="max-w-[42rem] text-sm text-slate">
+            Pick a question. These are recorded answers: real POST /ask
+            responses, stored. This hosted demo never calls the model. Clone the
+            repo and run the API to ask your own.
+          </p>
+          <div
+            className="mt-4 grid gap-3 sm:grid-cols-3"
+            role="group"
+            aria-label="Saved questions"
           >
-            {mutation.isPending ? "Asking…" : "Ask"}
-          </button>
-          {!SAVED_RUNS_ONLY && (
-            <div role="group" aria-label="Where the answer comes from">
-              <button
-                type="button"
-                aria-pressed={mode === "live"}
-                onClick={() => setMode("live")}
-                className={
-                  mode === "live"
-                    ? "border-b-2 border-pine px-1 py-2 text-sm text-ink"
-                    : "border-b-2 border-transparent px-1 py-2 text-sm text-slate"
-                }
-              >
-                Live API
-              </button>
-              <button
-                type="button"
-                aria-pressed={mode === "saved"}
-                onClick={() => setMode("saved")}
-                className={
-                  mode === "saved"
-                    ? "border-b-2 border-pine px-1 py-2 text-sm text-ink"
-                    : "border-b-2 border-transparent px-1 py-2 text-sm text-slate"
-                }
-              >
-                Saved runs
-              </button>
-            </div>
-          )}
+            {VISIBLE_SAMPLES.map((sample) => {
+              const active = shown?.response.question === sample.question;
+              return (
+                <button
+                  key={sample.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => ask(sample.question, sample.ticker)}
+                  className={
+                    active
+                      ? "flex flex-col justify-start border-2 border-pine bg-sheet px-4 py-4 text-left"
+                      : "flex flex-col justify-start border-2 border-rule bg-sheet px-4 py-4 text-left hover:border-ink"
+                  }
+                >
+                  <span className="block text-sm text-slate">
+                    {sample.label} · {sample.ticker}
+                  </span>
+                  <span className="mt-2 block font-serif text-lg leading-snug text-ink">
+                    {sample.question}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <Link
+            href="/results#side-by-side"
+            className="mt-4 inline-block text-sm text-pine underline decoration-rule underline-offset-4 hover:decoration-pine"
+          >
+            Hybrid and vector-only, side by side →
+          </Link>
         </div>
-      </form>
+      ) : (
+        <>
+          <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Issuer">
+            {TICKERS.map((item) => {
+              const selected = item === ticker;
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setTicker(item)}
+                  className={
+                    selected
+                      ? "border-b-2 border-pine px-1 py-1 text-sm text-ink"
+                      : "border-b-2 border-transparent px-1 py-1 text-sm text-slate"
+                  }
+                >
+                  {item}
+                </button>
+              );
+            })}
+          </div>
 
-      <p className="mt-4 max-w-[42rem] text-sm text-slate">
-        {SAVED_RUNS_ONLY
-          ? "This hosted demo plays saved runs: real POST /ask responses, stored. It never calls the model. Clone the repo and run the API to ask your own questions."
-          : mode === "live"
-            ? "A live question calls the local API, which calls the model. If that API is down, a matching saved run is shown instead."
-            : "Saved runs are stored responses. They do not call the model."}
-      </p>
-
-      <div className="mt-6 flex flex-col items-start gap-2">
-        {VISIBLE_SAMPLES.map((sample) => (
-          <button
-            key={sample.id}
-            type="button"
-            onClick={() => ask(sample.question, sample.ticker)}
-            disabled={mutation.isPending}
-            className="text-left text-ink underline decoration-rule underline-offset-4 hover:decoration-pine disabled:opacity-60"
+          <form
+            className="mt-6"
+            onSubmit={(event) => {
+              event.preventDefault();
+              ask(question, ticker);
+            }}
           >
-            {sample.label}
-            <span className="ml-2 text-slate">{sample.ticker}</span>
-          </button>
-        ))}
-        <Link
-          href="/results#side-by-side"
-          className="mt-2 text-sm text-pine underline decoration-rule underline-offset-4 hover:decoration-pine"
-        >
-          Hybrid and vector-only, side by side →
-        </Link>
-      </div>
+            <label htmlFor="question" className="text-sm text-slate">
+              Question about {ticker}
+            </label>
+            <textarea
+              id="question"
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              rows={3}
+              required
+              placeholder="What product lines does Apple produce?"
+              className="mt-2 w-full resize-y border border-rule bg-sheet px-4 py-4 font-serif text-2xl leading-snug"
+            />
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <button
+                type="submit"
+                disabled={mutation.isPending || question.trim().length === 0}
+                className="border border-ink bg-ink px-4 py-2 text-sheet disabled:cursor-wait disabled:opacity-60"
+              >
+                {mutation.isPending ? "Asking…" : "Ask"}
+              </button>
+              <div role="group" aria-label="Where the answer comes from">
+                <button
+                  type="button"
+                  aria-pressed={mode === "live"}
+                  onClick={() => setMode("live")}
+                  className={
+                    mode === "live"
+                      ? "border-b-2 border-pine px-1 py-2 text-sm text-ink"
+                      : "border-b-2 border-transparent px-1 py-2 text-sm text-slate"
+                  }
+                >
+                  Live API
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={mode === "saved"}
+                  onClick={() => setMode("saved")}
+                  className={
+                    mode === "saved"
+                      ? "border-b-2 border-pine px-1 py-2 text-sm text-ink"
+                      : "border-b-2 border-transparent px-1 py-2 text-sm text-slate"
+                  }
+                >
+                  Saved runs
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <p className="mt-4 max-w-[42rem] text-sm text-slate">
+            {mode === "live"
+              ? "A live question calls the local API, which calls the model. If that API is down, a matching saved run is shown instead."
+              : "Saved runs are stored responses. They do not call the model."}
+          </p>
+
+          <div className="mt-6 flex flex-col items-start gap-2">
+            {VISIBLE_SAMPLES.map((sample) => (
+              <button
+                key={sample.id}
+                type="button"
+                onClick={() => ask(sample.question, sample.ticker)}
+                disabled={mutation.isPending}
+                className="text-left text-ink underline decoration-rule underline-offset-4 hover:decoration-pine disabled:opacity-60"
+              >
+                {sample.label}
+                <span className="ml-2 text-slate">{sample.ticker}</span>
+              </button>
+            ))}
+            <Link
+              href="/results#side-by-side"
+              className="mt-2 text-sm text-pine underline decoration-rule underline-offset-4 hover:decoration-pine"
+            >
+              Hybrid and vector-only, side by side →
+            </Link>
+          </div>
+        </>
+      )}
 
       <div aria-live="polite">
         {mutation.isPending && (
