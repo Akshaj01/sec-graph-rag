@@ -1,0 +1,93 @@
+{
+  "n_runs": 3,
+  "paths": [
+    "multi_company_smoke_temp0_p7.json",
+    "multi_company_smoke_temp0_p7_run2.json",
+    "multi_company_smoke_temp0_p7_run3.json"
+  ],
+  "runs": [
+    {
+      "path": "multi_company_smoke_temp0_p7.json",
+      "hybrid": 0.9574,
+      "vector_only": 0.9347,
+      "gap": 0.022700000000000053,
+      "hybrid_by_hop": {
+        "hop_0": 1.0,
+        "hop_1": 0.9141,
+        "hop_2": 0.9375,
+        "oos": 1.0
+      },
+      "vector_by_hop": {
+        "hop_0": 1.0,
+        "hop_1": 0.8828,
+        "hop_2": 0.875,
+        "oos": 1.0
+      }
+    },
+    {
+      "path": "multi_company_smoke_temp0_p7_run2.json",
+      "hybrid": 0.9574,
+      "vector_only": 0.946,
+      "gap": 0.011400000000000077,
+      "hybrid_by_hop": {
+        "hop_0": 1.0,
+        "hop_1": 0.9141,
+        "hop_2": 0.9375,
+        "oos": 1.0
+      },
+      "vector_by_hop": {
+        "hop_0": 1.0,
+        "hop_1": 0.8516,
+        "hop_2": 1.0,
+        "oos": 1.0
+      }
+    },
+    {
+      "path": "multi_company_smoke_temp0_p7_run3.json",
+      "hybrid": 0.9574,
+      "vector_only": 0.9489,
+      "gap": 0.008500000000000063,
+      "hybrid_by_hop": {
+        "hop_0": 1.0,
+        "hop_1": 0.9141,
+        "hop_2": 0.9375,
+        "oos": 1.0
+      },
+      "vector_by_hop": {
+        "hop_0": 1.0,
+        "hop_1": 0.8594,
+        "hop_2": 1.0,
+        "oos": 1.0
+      }
+    }
+  ],
+  "hybrid_mean": 0.9574000000000001,
+  "hybrid_min": 0.9574,
+  "hybrid_max": 0.9574,
+  "vector_mean": 0.9432,
+  "vector_min": 0.9347,
+  "vector_max": 0.9489,
+  "gap_mean": 0.014200000000000101,
+  "by_hop": {
+    "hop_0": {
+      "hybrid_mean": 1.0,
+      "vector_mean": 1.0,
+      "gap_mean": 0.0
+    },
+    "hop_1": {
+      "hybrid_mean": 0.9141,
+      "vector_mean": 0.8645999999999999,
+      "gap_mean": 0.0495000000000001
+    },
+    "hop_2": {
+      "hybrid_mean": 0.9375,
+      "vector_mean": 0.9583333333333334,
+      "gap_mean": -0.02083333333333337
+    },
+    "oos": {
+      "hybrid_mean": 1.0,
+      "vector_mean": 1.0,
+      "gap_mean": 0.0
+    }
+  }
+}
