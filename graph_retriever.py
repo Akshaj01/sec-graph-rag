@@ -25,6 +25,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from config import settings
 from chunk_ticker import filter_chunk_ids_for_ticker
+from pinned_filings import keep_pinned
 from graph_writer import ISSUER_OWNED_REL_TYPES, get_driver
 from resolver import normalize_name
 
@@ -234,6 +235,26 @@ def _dedupe_facts(facts: List[GraphFact]) -> List[GraphFact]:
             continue
         seen.add(key)
         out.append(f)
+    return out
+
+
+def filter_facts_to_pinned(facts: List[GraphFact]) -> List[GraphFact]:
+    """
+    Keep only provenance from pinned 10-Ks (pinned_filings.py).
+
+    An edge MERGEd from two fiscal years keeps its pinned-year chunk ids. An
+    edge whose chunk ids all come from an unpinned filing is dropped, so a
+    product that only appears in a newer 10-K cannot reach the answer.
+    """
+    out: List[GraphFact] = []
+    for fact in facts:
+        if not fact.source_chunk_ids:
+            out.append(fact)
+            continue
+        kept = keep_pinned(fact.source_chunk_ids)
+        if not kept:
+            continue
+        out.append(fact.model_copy(update={"source_chunk_ids": kept}))
     return out
 
 
@@ -586,6 +607,7 @@ def retrieve_graph(
             limit=limit,
             driver=driver,
         )
+        facts = filter_facts_to_pinned(facts)
         facts = filter_facts_for_ticker(facts, ticker)
         return GraphRetrievalResult(
             question=question,

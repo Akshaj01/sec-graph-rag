@@ -94,3 +94,134 @@ def test_score_keywords_case_insensitive():
     assert hits == ["applecare"]
     assert misses == ["SERVICE"]
     assert recall == 0.5
+
+
+# --- Rubric v2: the judge is grounded in the cited passages -----------------
+
+import sqlite3
+from types import SimpleNamespace
+
+import chunk_ticker
+from benchmark_judge import (
+    JudgeOutput,
+    SuspectClaim,
+    is_major_hallucination,
+    judge_answer,
+    render_passages,
+)
+from calibration_worksheet import rescored_holdout_keys
+
+
+def _claim(supported: bool, contradicts: bool = False) -> SuspectClaim:
+    return SuspectClaim(
+        claim="Apple sells the MacBook Neo.",
+        supported_by_cited_passage=supported,
+        contradicts_gold=contradicts,
+    )
+
+
+def test_a_claim_a_cited_passage_supports_is_never_a_hallucination():
+    assert not is_major_hallucination([_claim(True, contradicts=True)], has_evidence=True)
+    assert is_major_hallucination([_claim(False)], has_evidence=True)
+
+
+def test_without_passages_only_a_gold_contradiction_counts():
+    # The judge's own knowledge is never the test.
+    assert not is_major_hallucination([_claim(False)], has_evidence=False)
+    assert is_major_hallucination([_claim(False, contradicts=True)], has_evidence=False)
+
+
+def test_render_passages_keeps_whole_chunks():
+    long_text = "x" * 13000 + " MacBook Neo"
+    rendered = render_passages([("A:Item1:0", long_text), ("A:Item1:1", "  ")])
+    assert rendered.endswith("MacBook Neo")
+    assert "A:Item1:1" not in rendered
+
+
+class _FakeJudge:
+    def __init__(self, output: JudgeOutput):
+        self.output = output
+        self.calls: list[dict] = []
+        self.messages = SimpleNamespace(create=self._create)
+
+    def _create(self, **kwargs):
+        self.calls.append(kwargs)
+        return self.output
+
+
+def _apple_item() -> BenchmarkItem:
+    return BenchmarkItem(
+        id="hop2_aapl_hardware_services",
+        question="What hardware devices and services does Apple produce?",
+        hop=HopBucket.HOP_2,
+        required_facts=["Mentions two hardware devices", "Mentions a service"],
+        gold_answer="iPhone, Mac, iPad; AppleCare and other services.",
+    )
+
+
+def _covered_output(claims: list[SuspectClaim]) -> JudgeOutput:
+    return JudgeOutput(
+        fact_judgments=[
+            FactJudgment(fact="Mentions two hardware devices", covered=True),
+            FactJudgment(fact="Mentions a service", covered=True),
+        ],
+        overall_correctness=1.0,
+        suspect_claims=claims,
+        rationale="Covers both facts.",
+    )
+
+
+def test_supported_new_product_names_are_not_capped():
+    fake = _FakeJudge(_covered_output([_claim(True)]))
+    verdict = judge_answer(
+        _apple_item(),
+        "iPhone 17e, MacBook Neo, and services.",
+        evidence=[("0000320193-25-000079:Item1:0", "Apple's products include MacBook Neo.")],
+        client=fake,
+    )
+    assert verdict.has_major_hallucination is False
+    assert verdict.overall_correctness == 1.0
+    prompt = fake.calls[0]["messages"][0]["content"]
+    assert "Cited passages:" in prompt and "MacBook Neo" in prompt
+    assert fake.calls[0]["response_model"] is JudgeOutput
+
+
+def test_an_unsupported_claim_is_still_capped():
+    fake = _FakeJudge(_covered_output([_claim(False)]))
+    verdict = judge_answer(
+        _apple_item(),
+        "iPhone 99 and services.",
+        evidence=[("0000320193-25-000079:Item1:0", "Apple sells the iPhone.")],
+        client=fake,
+    )
+    assert verdict.has_major_hallucination is True
+    assert verdict.overall_correctness == 0.5
+
+
+def test_chunk_texts_reads_the_ingest_cache(tmp_path, monkeypatch):
+    db = tmp_path / "ingest_cache.db"
+    with sqlite3.connect(db) as conn:
+        conn.execute("CREATE TABLE chunks (chunk_id TEXT PRIMARY KEY, text TEXT)")
+        conn.executemany(
+            "INSERT INTO chunks VALUES (?, ?)",
+            [("A:Item1:0", "first"), ("A:Item1:1", "second")],
+        )
+    monkeypatch.setattr(chunk_ticker.settings, "INGEST_CACHE_PATH", str(db))
+    monkeypatch.setattr(
+        "vector_db.get_connection",
+        lambda: (_ for _ in ()).throw(RuntimeError("no pgvector in tests")),
+    )
+    got = chunk_ticker.chunk_texts(["A:Item1:1", "missing:Item1:0", "A:Item1:0", "A:Item1:1"])
+    assert got == [("A:Item1:1", "second"), ("A:Item1:0", "first")]
+
+
+def test_calibration_takes_judge_scores_from_a_rejudged_file(tmp_path):
+    keys = {"holdout": [{"id": "a", "judge_score": 0.5}, {"id": "b", "judge_score": 1.0}]}
+    judged = tmp_path / "rejudged.json"
+    judged.write_text(
+        '{"hybrid": {"results": [{"item_id": "a", "score": 1.0}, {"item_id": "b", "score": 1.0}]}}'
+    )
+    assert rescored_holdout_keys(keys, judged) == [
+        {"id": "a", "judge_score": 1.0},
+        {"id": "b", "judge_score": 1.0},
+    ]

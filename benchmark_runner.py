@@ -35,6 +35,7 @@ from benchmark_schema import (
     BenchmarkReport,
     BenchmarkSuite,
 )
+from chunk_ticker import chunk_texts
 from config import settings
 from router import RetrievalRoute
 
@@ -90,10 +91,12 @@ def _score_answer_fields(
     refused: bool,
     citations_valid: bool,
     score_mode: ScoreMode,
+    cited_chunk_ids: Sequence[str] = (),
 ) -> dict:
     """
     Returns scoring kwargs for BenchmarkItemResult.
     OOS refuse is binary; non-OOS uses judge (primary) and/or keywords.
+    The judge sees the full text of the cited chunks.
     """
     if item.must_refuse:
         correct = bool(refused)
@@ -149,7 +152,14 @@ def _score_answer_fields(
         out["score"] = kw_score
         return out
 
-    verdict = judge_answer(item, answer_text, refused=False)
+    evidence = chunk_texts(cited_chunk_ids)
+    if cited_chunk_ids and not evidence:
+        print(
+            f"  WARNING {item.id}: no passage text found for its citations "
+            "(ingest cache and pgvector). The judge ran without evidence.",
+            flush=True,
+        )
+    verdict = judge_answer(item, answer_text, refused=False, evidence=evidence)
     out.update(apply_verdict_to_fields(verdict))
     return out
 
@@ -212,6 +222,7 @@ def run_one(
             refused=answer.draft.refused,
             citations_valid=answer.citations_valid,
             score_mode=score_mode,
+            cited_chunk_ids=sorted(set(cited)),
         )
         return BenchmarkItemResult(
             item_id=item.id,
@@ -394,6 +405,7 @@ def rejudge_comparison(
                 refused=row.refused,
                 citations_valid=row.citations_valid,
                 score_mode=score_mode,
+                cited_chunk_ids=row.cited_chunk_ids,
             )
             data = row.model_dump()
             data.update(scoring)
@@ -491,7 +503,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         # OOS + refused still need scoring but are free (no LLM).
         print(
             f"Rejudge {args.rejudge} with suite v{suite.version} "
-            f"score_mode={score_mode.value} (~{n_judge} Haiku judge calls, ~${round(n_judge * 0.003, 3)})."
+            f"score_mode={score_mode.value} (~{n_judge} Haiku judge calls with cited passages, "
+            f"~${round(n_judge * 0.015, 2)})."
         )
         if n_judge > 4 and not args.confirm:
             print("Refusing: more than 4 judge calls without --confirm.")

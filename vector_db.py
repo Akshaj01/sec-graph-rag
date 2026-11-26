@@ -14,6 +14,7 @@ import psycopg
 from pgvector.psycopg import register_vector
 
 from config import settings
+from pinned_filings import PINNED_ACCESSIONS
 
 
 def get_connection() -> psycopg.Connection:
@@ -108,6 +109,9 @@ def search_similar_chunks(
     """
     Cosine nearest-neighbor search over chunk_embeddings.
 
+    Only chunks from pinned 10-Ks (pinned_filings.py) are searched, so an
+    older or newer filing left in the table cannot enter an answer.
+
     Returns chunk_id, section, text, score (1 - cosine distance), entity_ids.
     """
     if k < 1:
@@ -116,17 +120,18 @@ def search_similar_chunks(
     with get_connection() as conn:
         ensure_schema(conn)
         with conn.cursor() as cur:
+            pinned = sorted(PINNED_ACCESSIONS)
             if ticker:
                 cur.execute(
                     """
                     SELECT chunk_id, section, text, entity_ids,
                            1 - (embedding <=> %s::vector) AS score
                     FROM chunk_embeddings
-                    WHERE ticker = %s
+                    WHERE ticker = %s AND accession_number = ANY(%s)
                     ORDER BY embedding <=> %s::vector
                     LIMIT %s
                     """,
-                    (list(query_embedding), ticker.upper(), list(query_embedding), k),
+                    (list(query_embedding), ticker.upper(), pinned, list(query_embedding), k),
                 )
             else:
                 cur.execute(
@@ -134,10 +139,11 @@ def search_similar_chunks(
                     SELECT chunk_id, section, text, entity_ids,
                            1 - (embedding <=> %s::vector) AS score
                     FROM chunk_embeddings
+                    WHERE accession_number = ANY(%s)
                     ORDER BY embedding <=> %s::vector
                     LIMIT %s
                     """,
-                    (list(query_embedding), list(query_embedding), k),
+                    (list(query_embedding), pinned, list(query_embedding), k),
                 )
             rows = cur.fetchall()
 

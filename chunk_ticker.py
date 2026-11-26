@@ -1,5 +1,6 @@
 """
-Map chunk_id → filing ticker for retrieve-time issuer filters.
+Map chunk_id → filing ticker for retrieve-time issuer filters, and
+chunk_id → passage text for the benchmark judge.
 
 chunk_id shape: {accession_number}:{section}:{index}
 Lookups prefer the local ingest SQLite cache, then pgvector metadata.
@@ -10,7 +11,7 @@ from __future__ import annotations
 import sqlite3
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Sequence
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 from config import settings
 
@@ -138,3 +139,44 @@ def filter_chunk_ids_for_ticker(
 def clear_chunk_ticker_caches() -> None:
     _sqlite_chunk_tickers.cache_clear()
     _sqlite_accession_tickers.cache_clear()
+
+
+def chunk_texts(chunk_ids: Sequence[str]) -> List[Tuple[str, str]]:
+    """
+    Full passage text for each chunk id, in the order given, skipping ids
+    that cannot be found. Reads the ingest SQLite cache, then pgvector.
+
+    Not filtered to pinned filings: the judge must see whatever an answer
+    actually cited, including an older run's citations.
+    """
+    ids = [c for c in dict.fromkeys(chunk_ids) if c]
+    if not ids:
+        return []
+    found: Dict[str, str] = {}
+    path = Path(settings.INGEST_CACHE_PATH)
+    if path.exists():
+        try:
+            with sqlite3.connect(path) as conn:
+                marks = ",".join("?" for _ in ids)
+                rows = conn.execute(
+                    f"SELECT chunk_id, text FROM chunks WHERE chunk_id IN ({marks})",
+                    ids,
+                ).fetchall()
+                found.update({str(cid): str(text) for cid, text in rows if text})
+        except sqlite3.Error:
+            pass
+    missing = [c for c in ids if c not in found]
+    if missing:
+        try:
+            from vector_db import get_connection
+
+            with get_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "SELECT chunk_id, text FROM chunk_embeddings WHERE chunk_id = ANY(%s)",
+                        (missing,),
+                    )
+                    found.update({str(cid): str(text) for cid, text in cur.fetchall() if text})
+        except Exception:
+            pass
+    return [(c, found[c]) for c in ids if c in found]

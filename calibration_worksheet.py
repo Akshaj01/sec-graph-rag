@@ -204,10 +204,28 @@ def write_sheets() -> None:
     print(f"wrote {KEYS_PATH.relative_to(ROOT)}")
 
 
-def score_sheets() -> int:
+def rescored_holdout_keys(keys: dict, judged_path: Path) -> list[dict]:
+    """
+    Hold-out key rows with judge_score taken from a re-judged results file.
+
+    The human labels stay as they are. Re-judge the same saved answers the
+    labels were written against (JUDGED_PATH), or κ compares different text.
+    """
+    report = json.loads(judged_path.read_text())
+    scores = {row["item_id"]: row["score"] for row in report["hybrid"]["results"]}
+    missing = [row["id"] for row in keys["holdout"] if row["id"] not in scores]
+    if missing:
+        raise SystemExit(f"{judged_path} is missing hold-out items: {', '.join(missing)}")
+    return [{"id": row["id"], "judge_score": scores[row["id"]]} for row in keys["holdout"]]
+
+
+def score_sheets(judged_path: Optional[Path] = None) -> int:
     if not KEYS_PATH.exists():
         raise SystemExit("keys.json missing; run: python calibration_worksheet.py write")
     keys = json.loads(KEYS_PATH.read_text())
+    if judged_path is not None:
+        keys["holdout"] = rescored_holdout_keys(keys, judged_path)
+        print(f"judge scores from {judged_path}")
     holdout_scores = parse_filled_scores(HOLDOUT_PATH.read_text())
     self_scores = parse_filled_scores(SELF_PATH.read_text())
     holdout_ready = _aligned(keys["holdout"], holdout_scores, "judge_score", "kappa hold-out")
@@ -308,11 +326,17 @@ Your earlier score is hidden. Same scale: `0`, `0.5`, or `1`.
 def main() -> None:
     parser = argparse.ArgumentParser(description="Write or score WP3 calibration sheets")
     parser.add_argument("command", choices=("write", "score"))
+    parser.add_argument(
+        "--judged",
+        type=Path,
+        default=None,
+        help="score: take hold-out judge scores from this re-judged results file",
+    )
     args = parser.parse_args()
     if args.command == "write":
         write_sheets()
     else:
-        raise SystemExit(score_sheets())
+        raise SystemExit(score_sheets(args.judged))
 
 
 if __name__ == "__main__":

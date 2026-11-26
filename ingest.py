@@ -2,7 +2,7 @@
 Step C: SEC 10-K fetching, section-aware chunking, and SQLite hash caching.
 
 Pipeline:
-  ticker -> fetch latest 10-K (Item 1, 1A, 7) -> hash content ->
+  ticker -> fetch pinned 10-K (Item 1, 1A, 7) -> hash content ->
   return cached chunks OR chunk + persist -> list[DocumentChunk]
 
 Out of scope: LLM extraction (Step D), Neo4j writes (Step F).
@@ -15,12 +15,13 @@ import re
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from edgar import Company, set_identity
 from pydantic import BaseModel, Field
 
 from config import settings
+from pinned_filings import pinned_accession
 
 # Locked Step C scope: highest signal sections for our closed-world ontology.
 TARGET_SECTIONS: Dict[str, str] = {
@@ -214,9 +215,33 @@ class IngestCache:
             )
 
 
+def select_pinned_filing(ticker: str, filings: Any) -> Any:
+    """
+    Return the filing pinned for `ticker` in pinned_filings.PINNED_10K.
+
+    WHY: "latest 10-K" drifts every year. A re-ingest after a new filing
+    silently mixes fiscal years and breaks gold answers written against the
+    pinned one. An unpinned ticker is an error, not a fallback to latest.
+    """
+    wanted = pinned_accession(ticker)
+    if wanted is None:
+        latest = filings[0]
+        raise ValueError(
+            f"{ticker.upper()} has no pinned 10-K. Add it to PINNED_10K in "
+            f"pinned_filings.py. Latest is {getattr(latest, 'accession_number', '?')} "
+            f"filed {getattr(latest, 'filing_date', '?')}."
+        )
+    for filing in filings:
+        if str(getattr(filing, "accession_number", "")) == wanted:
+            return filing
+    raise ValueError(
+        f"Pinned 10-K {wanted} for {ticker.upper()} was not in EDGAR's 10-K list."
+    )
+
+
 def fetch_10k_sections(ticker: str) -> Tuple[dict, Dict[str, str]]:
     """
-    Fetch the latest 10-K and return metadata + selected section text.
+    Fetch the pinned 10-K and return metadata + selected section text.
 
     Returns:
         meta: ticker/cik/accession/filing_date
@@ -229,7 +254,7 @@ def fetch_10k_sections(ticker: str) -> Tuple[dict, Dict[str, str]]:
     if filings is None or len(filings) == 0:
         raise ValueError(f"No 10-K filings found for ticker={ticker}")
 
-    filing = filings[0]
+    filing = select_pinned_filing(ticker, filings)
     tenk = filing.obj()
 
     sections: Dict[str, str] = {}
