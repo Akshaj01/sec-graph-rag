@@ -184,6 +184,8 @@ def render_passages(evidence: Sequence[Tuple[str, str]]) -> str:
 
 
 JUDGE_ATTEMPTS = 3
+# With full cited passages the judge writes longer notes; 1024 cut some replies off.
+JUDGE_MAX_TOKENS = 4096
 FORMAT_REMINDER = (
     "\n\nReturn fact_judgments and suspect_claims as JSON arrays of objects, "
     "not as strings. Include every required field."
@@ -206,7 +208,7 @@ def _call_judge(cli: instructor.Instructor, user: str) -> JudgeOutput:
         try:
             return cli.messages.create(
                 model=settings.ROUTER_MODEL,
-                max_tokens=min(1024, settings.ROUTER_MAX_TOKENS * 2),
+                max_tokens=JUDGE_MAX_TOKENS,
                 temperature=0.0,
                 system=JUDGE_SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": content}],

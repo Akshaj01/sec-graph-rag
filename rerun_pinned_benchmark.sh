@@ -6,7 +6,9 @@
 # Cost is about $6: three answer runs (~$2.70), their judging (~$2.75), and
 # re-judging the kappa hold-out (~$0.90). Takes about an hour.
 #
-# Safe to run again after a failure: a step whose output file exists is skipped.
+# Safe to run again after a failure: finished steps are skipped and errored
+# rows are re-run. Three failures in a row stop it (for example, out of
+# API credit) without writing a bad file.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -32,26 +34,13 @@ fi
 echo "== 2/4 Three temperature-0 runs on pinned filings, judged with cited passages"
 for out in "${RUNS[@]}"; do
   if [ -f "$out" ]; then
-    echo "   $out exists, skipping"
+    echo "   $out exists"
   else
     "$PY" benchmark_runner.py --suite "$SUITE" --confirm --out "$out"
   fi
+  # Re-run any errored rows (an errored row is scored 0). Free when there are none.
+  "$PY" benchmark_runner.py --suite "$SUITE" --confirm --repair "$out"
 done
-
-# An errored row is scored 0 and would pull the means down without saying so.
-"$PY" - "${RUNS[@]}" <<'PYCHECK'
-import json, sys
-bad = []
-for path in sys.argv[1:]:
-    report = json.load(open(path))
-    for mode in ("hybrid", "vector_only"):
-        bad += [f"{path} {mode} {r['item_id']}: {r['error']}" for r in report[mode]["results"] if r.get("error")]
-if bad:
-    print("Rows with errors (delete that run's file and run this script again):")
-    print("\n".join(bad))
-    sys.exit(1)
-print("   all three runs completed with no errored rows")
-PYCHECK
 
 echo "== 3/4 Retrieve-only recall on pinned filings"
 if [ -f "$RETRIEVAL" ]; then

@@ -281,3 +281,54 @@ def test_unparseable_string_still_fails_loudly():
 
     with pytest.raises(ValidationError):
         JudgeOutput.model_validate({"overall_correctness": 1.0, "fact_judgments": "not a list"})
+
+
+# --- Run safety: stop on an error streak, repair errored rows --------------
+
+import benchmark_runner
+from benchmark_schema import BenchmarkComparison, BenchmarkItemResult, BenchmarkMode, BenchmarkSuite
+
+
+def _row(item_id: str, mode: BenchmarkMode, *, error: str | None = None, score: float = 1.0):
+    return BenchmarkItemResult(
+        item_id=item_id, mode=mode, question="q", hop=HopBucket.HOP_1, must_refuse=False,
+        error=error, score=0.0 if error else score,
+    )
+
+
+def test_three_errors_in_a_row_stop_the_run():
+    import pytest
+
+    streak = 0
+    for _ in range(2):
+        streak = benchmark_runner._check_streak(_row("a", BenchmarkMode.HYBRID, error="credit"), streak)
+    assert benchmark_runner._check_streak(_row("a", BenchmarkMode.HYBRID), streak) == 0
+    with pytest.raises(benchmark_runner.TooManyErrors):
+        s = 0
+        for _ in range(3):
+            s = benchmark_runner._check_streak(_row("a", BenchmarkMode.HYBRID, error="credit"), s)
+
+
+def test_repair_reruns_only_errored_rows(monkeypatch):
+    items = [
+        BenchmarkItem(id=f"hop1_{n}", question="q", hop=HopBucket.HOP_1, required_facts=["x"])
+        for n in ("a", "b")
+    ]
+    suite = BenchmarkSuite(name="t", version="1", items=items)
+    H, V = BenchmarkMode.HYBRID, BenchmarkMode.VECTOR_ONLY
+    comp = BenchmarkComparison(
+        suite_name="t",
+        suite_version="1",
+        hybrid=benchmark_runner.aggregate_report(suite, H, [_row("hop1_a", H), _row("hop1_b", H, error="max_tokens")]),
+        vector_only=benchmark_runner.aggregate_report(suite, V, [_row("hop1_a", V, score=0.5), _row("hop1_b", V)]),
+    )
+    calls = []
+    monkeypatch.setattr(
+        benchmark_runner, "run_one",
+        lambda item, mode, score_mode: calls.append((item.id, mode)) or _row(item.id, mode, score=0.75),
+    )
+    repaired, remaining = benchmark_runner.repair_comparison(suite, comp)
+    assert calls == [("hop1_b", H)]
+    assert remaining == 0
+    assert [r.score for r in repaired.hybrid.results] == [1.0, 0.75]
+    assert [r.score for r in repaired.vector_only.results] == [0.5, 1.0]

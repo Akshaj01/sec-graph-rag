@@ -321,6 +321,28 @@ def estimate_suite_cost_usd(n_items: int, modes: Sequence[BenchmarkMode]) -> flo
     return round(n_items * len(list(modes)) * per, 2)
 
 
+MAX_CONSECUTIVE_ERRORS = 3
+
+
+class TooManyErrors(RuntimeError):
+    """Raised when several items fail in a row (out of credits, API down)."""
+
+
+def _check_streak(row: BenchmarkItemResult, streak: int) -> int:
+    """
+    Count consecutive errored rows and stop the run at MAX_CONSECUTIVE_ERRORS.
+
+    WHY: when the API key ran out of credit, every remaining item failed
+    instantly and the run still wrote a file of errored rows.
+    """
+    streak = streak + 1 if row.error else 0
+    if streak >= MAX_CONSECUTIVE_ERRORS:
+        raise TooManyErrors(
+            f"Stopping: {streak} items failed in a row. Last error: {row.error}"
+        )
+    return streak
+
+
 def run_suite(
     suite: BenchmarkSuite,
     items: Sequence[BenchmarkItem],
@@ -331,6 +353,7 @@ def run_suite(
     hybrid_results: List[BenchmarkItemResult] = []
     vector_results: List[BenchmarkItemResult] = []
 
+    streak = 0
     for mode in modes:
         print(f"\n=== mode={mode.value} items={len(items)} score_mode={score_mode.value} ===")
         bucket = hybrid_results if mode == BenchmarkMode.HYBRID else vector_results
@@ -344,6 +367,7 @@ def run_suite(
                 f"refuse={row.refused} route={row.route_effective}",
                 flush=True,
             )
+            streak = _check_streak(row, streak)
 
     hybrid_report = aggregate_report(
         suite,
@@ -369,6 +393,52 @@ def run_suite(
             "correctness vs required_facts (keyword_recall secondary)."
         ),
     )
+
+
+def repair_comparison(
+    suite: BenchmarkSuite,
+    comp: BenchmarkComparison,
+    *,
+    score_mode: ScoreMode = ScoreMode.JUDGE,
+) -> tuple[BenchmarkComparison, int]:
+    """
+    Re-run only the errored rows of a saved run, in place.
+
+    Returns the updated comparison and how many rows still have errors. Stops
+    early (keeping the rows repaired so far) after several failures in a row.
+    """
+    items_by_id = {i.id: i for i in suite.items}
+    reports = {"hybrid": comp.hybrid, "vector_only": comp.vector_only}
+    streak = 0
+    stopped: Optional[TooManyErrors] = None
+    for name, report in reports.items():
+        rows = list(report.results)
+        for idx, row in enumerate(rows):
+            if stopped is not None or not row.error:
+                continue
+            item = items_by_id.get(row.item_id)
+            if item is None:
+                continue
+            print(f"repair {report.mode.value} {row.item_id} ...", flush=True)
+            new_row = run_one(item, report.mode, score_mode=score_mode)
+            rows[idx] = new_row
+            print(f"  -> {'score=' + str(new_row.score) if not new_row.error else 'ERROR ' + new_row.error}", flush=True)
+            try:
+                streak = _check_streak(new_row, streak)
+            except TooManyErrors as exc:
+                stopped = exc
+        if rows:
+            reports[name] = aggregate_report(suite, report.mode, rows)
+    repaired = BenchmarkComparison(
+        suite_name=comp.suite_name,
+        suite_version=comp.suite_version,
+        hybrid=reports["hybrid"],
+        vector_only=reports["vector_only"],
+    )
+    remaining = sum(1 for r in (*repaired.hybrid.results, *repaired.vector_only.results) if r.error)
+    if stopped is not None:
+        print(str(stopped), flush=True)
+    return repaired, remaining
 
 
 def _result_answer_text(row: BenchmarkItemResult) -> str:
@@ -486,10 +556,33 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         default=None,
         help="Write JSON report path (default under benchmarks/results/)",
     )
+    parser.add_argument(
+        "--repair",
+        type=Path,
+        default=None,
+        help="Re-run only the errored rows of this saved run and write it back",
+    )
     args = parser.parse_args(list(argv) if argv is not None else None)
 
     suite = load_suite(args.suite)
     score_mode = ScoreMode(args.score_mode)
+
+    if args.repair is not None:
+        comp_in = BenchmarkComparison.model_validate(
+            json.loads(args.repair.read_text(encoding="utf-8"))
+        )
+        n_bad = sum(1 for r in (*comp_in.hybrid.results, *comp_in.vector_only.results) if r.error)
+        if n_bad == 0:
+            print(f"{args.repair}: no errored rows")
+            return 0
+        print(f"{args.repair}: {n_bad} errored rows to re-run")
+        if n_bad > 4 and not args.confirm:
+            print("Refusing: more than 4 paid re-runs without --confirm.")
+            return 2
+        comp, remaining = repair_comparison(suite, comp_in, score_mode=score_mode)
+        args.repair.write_text(comp.model_dump_json(indent=2), encoding="utf-8")
+        print(f"Wrote {args.repair} ({remaining} errored rows left)")
+        return 0 if remaining == 0 else 1
 
     if args.rejudge is not None:
         raw = json.loads(args.rejudge.read_text(encoding="utf-8"))
@@ -544,7 +637,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
         return 2
 
-    comp = run_suite(suite, items, modes, score_mode=score_mode)
+    try:
+        comp = run_suite(suite, items, modes, score_mode=score_mode)
+    except TooManyErrors as exc:
+        print(f"\n{exc}\nNo results file written.")
+        return 1
     _print_summary(comp)
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
