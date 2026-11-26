@@ -254,3 +254,30 @@ def test_judge_retries_as_fresh_requests_without_reask():
     assert verdict.overall_correctness == 1.0
     assert len(fake.calls) == 2
     assert all(call["max_retries"] == 1 for call in fake.calls)
+    first, second = (call["messages"][0]["content"] for call in fake.calls)
+    assert "JSON arrays" not in first and second.endswith("Include every required field.")
+
+
+def test_stringified_fact_judgments_are_parsed():
+    # The exact shape Haiku returned on hop2_nvda_auto_competitors_risks.
+    raw = {
+        "overall_correctness": 0.67,
+        "rationale": "Covers automotive and competitors.",
+        "fact_judgments": (
+            '[\n  {\n    "fact": "Describes NVIDIA automotive / DRIVE involvement",\n'
+            '    "covered": true,\n    "note": "DRIVE platform."\n  },\n'
+            '  {\n    "fact": "Names a competitor",\n    "covered": true,\n    "note": "Ambarella."\n  }\n].\n'
+        ),
+        "suspect_claims": '[{"claim": "Broadcom competes in SoCs", "supported_by_cited_passage": true}]',
+    }
+    out = JudgeOutput.model_validate(raw)
+    assert [j.covered for j in out.fact_judgments] == [True, True]
+    assert out.suspect_claims[0].supported_by_cited_passage is True
+
+
+def test_unparseable_string_still_fails_loudly():
+    import pytest
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        JudgeOutput.model_validate({"overall_correctness": 1.0, "fact_judgments": "not a list"})

@@ -19,11 +19,12 @@ after the judge model's training cutoff.
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence, Tuple
+import json
+from typing import Any, List, Optional, Sequence, Tuple
 
 import anthropic
 import instructor
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from benchmark_schema import BenchmarkItem
 from config import settings
@@ -67,6 +68,23 @@ class JudgeOutput(BaseModel):
         description="Material claims that may be invented. Empty if none.",
     )
     rationale: str = Field(default="", description="One or two sentences.")
+
+    @field_validator("fact_judgments", "suspect_claims", mode="before")
+    @classmethod
+    def _parse_stringified_list(cls, value: Any) -> Any:
+        """
+        Haiku sometimes returns a nested array as a JSON string, with stray
+        text after the closing bracket (seen on hop2_nvda_auto_competitors_risks).
+        At temperature 0 a retry repeats it, so parse it here.
+        """
+        if isinstance(value, str):
+            start, end = value.find("["), value.rfind("]")
+            if start != -1 and end > start:
+                try:
+                    return json.loads(value[start : end + 1])
+                except json.JSONDecodeError:
+                    return value
+        return value
 
 
 class JudgeVerdict(BaseModel):
@@ -166,6 +184,10 @@ def render_passages(evidence: Sequence[Tuple[str, str]]) -> str:
 
 
 JUDGE_ATTEMPTS = 3
+FORMAT_REMINDER = (
+    "\n\nReturn fact_judgments and suspect_claims as JSON arrays of objects, "
+    "not as strings. Include every required field."
+)
 
 
 def _call_judge(cli: instructor.Instructor, user: str) -> JudgeOutput:
@@ -178,13 +200,16 @@ def _call_judge(cli: instructor.Instructor, user: str) -> JudgeOutput:
     """
     last: Optional[Exception] = None
     for attempt in range(1, JUDGE_ATTEMPTS + 1):
+        # At temperature 0 an identical retry repeats the same malformed reply,
+        # so later attempts add a format reminder.
+        content = user if attempt == 1 else user + FORMAT_REMINDER
         try:
             return cli.messages.create(
                 model=settings.ROUTER_MODEL,
                 max_tokens=min(1024, settings.ROUTER_MAX_TOKENS * 2),
                 temperature=0.0,
                 system=JUDGE_SYSTEM_PROMPT,
-                messages=[{"role": "user", "content": user}],
+                messages=[{"role": "user", "content": content}],
                 response_model=JudgeOutput,
                 max_retries=1,
             )
