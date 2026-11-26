@@ -4,7 +4,7 @@
 
 Question answering over ten companies' 10-K filings that combines a **knowledge graph** (for relationships like *who competes with whom* or *which risks attach to which company*) with **vector search** (for everything else). Every answer cites the exact filing passages it came from, and citations to anything that wasn't retrieved are rejected.
 
-On 44 hop-stratified questions, the graph path wins where relationships matter (multi-relation / hop-2: **1.00** vs **0.88**). Overall the gap is small — three temperature-0 runs average hybrid **0.93** vs vector-only **0.90** (gap **+0.028**); the paired bootstrap 95% CI for that gap includes zero. Vector-only retrieves as well or better (ties recall@5 / MRR; leads recall@10). LLM judge hold-out κ **0.84** (two labels corrected after seeing judge scores).
+On 44 hop-stratified questions, hybrid and vector-only **tie**: three temperature-0 runs average **0.96** vs **0.94**, and the paired bootstrap 95% interval on the gap includes zero overall and on every hop. An earlier "hop-2 win" (1.00 vs 0.88, interval above zero) did not survive an audit of the eval: the LLM judge marked real products newer than its training data as invented, and Apple had two fiscal years of filings in the index. Both are fixed, and every number here is from the re-run. Retrieval also ties (recall@10 0.93 vs 0.94). The judge's held-out κ against hand labels is **0.79**.
 
 The [demo](#demo) is a Next.js page, [hosted here](https://sec-graph-rag.vercel.app). One question fills in as a trace: the route, the graph edges, the filing passages, the answer, and the citation check. Saved runs play with the API off.
 
@@ -12,27 +12,27 @@ Companies: AAPL, META, MSFT, NVDA, GOOGL, AMZN, JPM, NFLX, XOM, JNJ.
 
 ## Results
 
-44 questions. The score is an LLM judge against required facts. Out of scope means a correct refuse. Cells are the **mean of three** temperature-0 runs ([`three_run_means.md`](benchmarks/results/three_run_means.md)).
+44 questions, one pinned 10-K per company. The score is an LLM judge against required facts, reading the passages each answer cites. Out of scope means a correct refuse. Cells are the **mean of three** temperature-0 runs ([`three_run_means_p7.md`](benchmarks/results/three_run_means_p7.md)).
 
-| Hop / bucket | Hybrid | Vector-only | n |
-|--------------|-------:|------------:|--:|
-| Hop 0 (definitions) | **0.94** | **0.94** | 8 |
-| Hop 1 (single edge) | **0.83** | 0.81 | 16 |
-| Hop 2 (compare / multi-rel) | **1.00** | 0.88 | 8 |
-| OOS (must refuse) | **1.00** | **1.00** | 12 |
-| **Overall (mean of runs)** | **0.93** | 0.90 | 44 |
+| Hop / bucket | Hybrid | Vector-only | Gap (95% CI) | n |
+|--------------|-------:|------------:|--------------|--:|
+| Hop 0 (definitions) | 1.00 | 1.00 | 0.000 | 8 |
+| Hop 1 (single edge) | 0.91 | 0.87 | +0.049 (−0.14 – +0.26) | 16 |
+| Hop 2 (compare / multi-rel) | 0.94 | 0.96 | −0.021 (−0.17 – +0.08) | 8 |
+| OOS (must refuse) | 1.00 | 1.00 | 0.000 | 12 |
+| **Overall (mean of runs)** | **0.96** | **0.94** | +0.014 (−0.06 – +0.09) | 44 |
 
-Hop-2 is the real finding. Per-item means across the three runs, then paired bootstrap: hop-2 gap **+0.116** (95% CI **0.024 – 0.220**, entirely above zero). Overall gap **+0.028** (95% CI **−0.006 – 0.067**, includes zero). Hop-2 is only 8 questions, and the interval reflects that. See [`ablation_bootstrap_three_run.md`](benchmarks/results/ablation_bootstrap_three_run.md).
+No gap is significant. The tie hides a split, though: on a few questions one system wins in every run. Hybrid wins "Does Apple compete with Meta?" through a cross-company graph edge, and names Waymo where vector-only does not. Vector-only wins Microsoft's product lines, Microsoft cloud + geopolitical risk, and Netflix–AWS, where the graph route returned an incomplete list. The [Results page](https://sec-graph-rag.vercel.app/results#side-by-side) shows one each way. Bootstrap: [`ablation_bootstrap_p7.md`](benchmarks/results/ablation_bootstrap_p7.md).
 
 Retrieval is scored separately, on 32 answerable items. Out-of-scope items are skipped.
 
 | | Recall@5 | Recall@10 | MRR |
 |--|--------:|----------:|----:|
-| Graph | 0.41 | 0.46 | 0.40 |
-| Vector | **0.84** | **0.94** | **0.70** |
-| Hybrid | **0.84** | 0.91 | **0.70** |
+| Graph | 0.43 | 0.51 | 0.38 |
+| Vector | 0.84 | **0.94** | **0.70** |
+| Hybrid | **0.85** | 0.93 | 0.68 |
 
-The graph adds little to *finding* the right passage — vector search already does that well. The likely reason it still helps the *answer* on multi-relation questions: it hands the model explicit edges (company → competitor → risk) instead of leaving it to infer them from text.
+The graph adds little to *finding* the right passage: vector search already does that well. What it does add is explicit, citable edges (company → competitor, company → risk), which is why it wins the questions that turn on one relationship. It does not beat vector-only on this suite overall.
 
 ## Architecture
 
@@ -80,24 +80,26 @@ Cites include `0001045810-26-000021:Item1:0`, `…:Item1A:3`, …
 
 Suite `multi_company_smoke` v4: 44 questions across the ten companies, stratified by hop count (definitions, single relationship, multi-relationship comparisons) plus out-of-scope questions the system must refuse. Each answerable question has gold chunk IDs for retrieval scoring and required facts for answer scoring.
 
-Generation headline: mean of three temperature-0 runs —
+**Corpus:** one 10-K per company, pinned in [`pinned_filings.py`](pinned_filings.py) to the filing the gold answers were written against. Ingest fetches that filing, not the latest. Vector search and graph facts drop chunks from any other filing.
 
-- [`multi_company_smoke_temp0_p6.json`](benchmarks/results/multi_company_smoke_temp0_p6.json)
-- [`multi_company_smoke_temp0_p6_run2.json`](benchmarks/results/multi_company_smoke_temp0_p6_run2.json)
-- [`multi_company_smoke_temp0_p6_run3.json`](benchmarks/results/multi_company_smoke_temp0_p6_run3.json)
+Generation headline: mean of three temperature-0 runs, produced by [`rerun_pinned_benchmark.sh`](rerun_pinned_benchmark.sh):
 
-Summary: [`three_run_means.md`](benchmarks/results/three_run_means.md). Bootstrap on per-item three-run means: [`ablation_bootstrap_three_run.md`](benchmarks/results/ablation_bootstrap_three_run.md). An older pre-fix package (hybrid **0.86** / vector **0.89**) lives under [`benchmarks/results/archive/`](benchmarks/results/archive/).
+- [`multi_company_smoke_temp0_p7.json`](benchmarks/results/multi_company_smoke_temp0_p7.json)
+- [`multi_company_smoke_temp0_p7_run2.json`](benchmarks/results/multi_company_smoke_temp0_p7_run2.json)
+- [`multi_company_smoke_temp0_p7_run3.json`](benchmarks/results/multi_company_smoke_temp0_p7_run3.json)
 
-**Judge calibration (rubric v1):** held-out linear weighted κ **0.84** (raw agreement 19/20). Two first-pass scores of 1.0 were corrected after seeing the judge (Meta AI competition → 0, Meta AI glasses → 0.5), so treat κ as a calibration check, not a fully blind panel. Self-agreement on a later re-label is κ **0.42** (13/15); both passes are mostly 1.0, so two one-step flips move κ more than the raw rate suggests. [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
+Summary: [`three_run_means_p7.md`](benchmarks/results/three_run_means_p7.md). Bootstrap on per-item three-run means: [`ablation_bootstrap_p7.md`](benchmarks/results/ablation_bootstrap_p7.md). The superseded p6 runs (hybrid 0.93 vs 0.90, judge rubric v1, mixed Apple filings) stay in `benchmarks/results/` for comparison.
 
-**CI gate:** fails if the committed hybrid recall@10 drops more than **0.02** from **0.911**. It reads the saved results file and does not call a model, so it costs nothing to run. A manual `workflow_dispatch` with `break=true` zeroes one saved hit to show the gate failing. Retrieval tables: [`benchmarks/results/retrieval_v4.md`](benchmarks/results/retrieval_v4.md).
+**Judge (rubric v2):** the judge sees the full text of every cited chunk and lists the claims it doubts, marking each as supported by a cited passage or not. Code, not the judge, applies the hallucination cap, and a supported claim never triggers it. Held-out linear weighted κ against hand labels is **0.79** (raw agreement 19/20; the miss is Meta AI glasses, labeled 0.5 and judged 1.0). It was measured by re-judging the same saved answers the labels were written against ([`kappa_rubric_v2.txt`](benchmarks/results/kappa_rubric_v2.txt)). Rubric v1 scored 0.84 on the same sheet, but v1 used the judge's own knowledge. Two hold-out labels were corrected after seeing judge scores, so treat κ as a calibration check, not a fully blind panel. Self-agreement on a later re-label is κ **0.42** (13/15). [`benchmarks/calibration/RESULTS.md`](benchmarks/calibration/RESULTS.md).
+
+**CI gate:** fails if the committed hybrid recall@10 drops more than **0.02** from **0.927**. It reads the saved results file and does not call a model, so it costs nothing to run. A manual `workflow_dispatch` with `break=true` zeroes one saved hit to show the gate failing. Retrieval tables: [`benchmarks/results/retrieval_p7.md`](benchmarks/results/retrieval_p7.md).
 
 ### 60-second pass
 
-1. Generation: three-run hybrid **0.93** vs vector **0.90**; hop-2 **1.00** vs **0.88** with a CI above zero; overall CI includes zero.
+1. Generation: three-run hybrid **0.96** vs vector **0.94**; every gap's CI includes zero. The earlier hop-2 win was two bugs (see **What didn't work**).
 2. One graph question: `python answer.py "What product lines does Apple produce?" --ticker AAPL`. Or open the [demo](#demo) and click Apple products. That saved run does not call a model.
 3. One refusal: a question the 10-K corpus cannot answer (Tesla battery supply, Bitcoin on Apple's balance sheet).
-4. Soft misses still open on hop-1 product / competition asks. See **What didn't work**.
+4. Misses still open: Microsoft products and cloud + risk on the graph route, Netflix–AWS. See **What didn't work**.
 
 ## Design decisions
 
@@ -111,20 +113,27 @@ Summary: [`three_run_means.md`](benchmarks/results/three_run_means.md). Bootstra
 | **Hybrid merge**: alternate a vector chunk, then a graph chunk, skipping chunks already used; graph edges ordered by question-word hits, extraction confidence only as a tie-break | Keeps the strong vector ranking while making room for graph evidence | Graph-only recall varies between runs because the planner does not return the same edges every time |
 | **Separate retrieval and generation scores** | A good answer built on the wrong passage is still a retrieval miss; tells you which half failed | Needs gold chunk IDs per question, which are labeled by hand |
 | **Judge grades required facts**, not similarity to a gold answer | Rewards correct content in any wording | Requires writing required facts per question; scores are only as good as those fact lists |
+| **Judge reads the cited passages**; code applies the hallucination cap | A claim the filing supports can't be penalized because the judge model hasn't heard of it | About 12k input tokens per judge call (about $0.015 with Haiku 4.5) |
+| **One pinned 10-K per company** | Gold answers match the filing being searched; scores stay comparable over time | Newer filings are ignored until a deliberate suite update moves the pin and the gold answers together |
 
 ## What didn't work
 
-Hybrid answers with three-run mean below 1.0. Detail is in [`docs/PROBLEMS_AND_FIXES.md`](docs/PROBLEMS_AND_FIXES.md).
+**The hop-2 result was an eval bug, twice over.** The published headline was hybrid 1.00 vs 0.88 on hop-2, with an interval above zero. An audit found two problems.
 
-| Item | 3-run hybrid | What happened |
-|------|-------------:|----------------|
-| `hop1_aapl_competes_meta` | 0.00 | Graph route missed the compete edge (vector also 0) |
-| `hop0_jpm_credit_risk` | 0.50 | Partial credit-risk coverage |
-| `hop1_nvda_products` | 0.50 | Compute product list incomplete (vector 0.75) |
-| `hop1_googl_waymo` | 0.50 | Names Waymo; thin autonomous ride-hailing detail |
-| `hop1_msft_products` | 0.71 | Azure/Xbox still flaky across runs (vector 0.25) |
-| `hop1_meta_ai_competition` | 0.75 | Soft vs vector 0.875 |
-| `hop1_aapl_products` | 0.83 | Product list incomplete vs required facts |
+1. **The judge used its own knowledge.** On "What hardware and services does Apple produce?", it capped vector-only at 0.5 for naming iPhone 17e, iPhone Air and MacBook Neo as "non-existent products". All three are in Apple's fiscal 2026 10-K, which shipped after the judge model's training data. Fix: the judge now reads every cited passage, and a claim a passage supports can't be counted as invented.
+2. **Apple had two filings in the index.** Ingest took "the latest 10-K", and restoring Apple after Nov 3, 2026 added fiscal 2026 next to fiscal 2025, which the gold answers were written against. Fix: one pinned filing per company, enforced at ingest and at retrieval.
+
+After both fixes and a full re-run, hop-2 is 0.94 vs 0.96 and nothing is significant. Removing the Apple penalty alone already pulled the old interval's lower bound to 0.000.
+
+Questions hybrid still misses (three-run mean below 1.0):
+
+| Item | 3-run hybrid | 3-run vector | What happened |
+|------|-------------:|-------------:|----------------|
+| `hop1_msft_products` | 0.13 | 0.88 | Graph route listed Microsoft 365, Dynamics, Windows, Bing; no Azure or Xbox |
+| `hop2_msft_cloud_and_geo_risk` | 0.50 | 1.00 | Says "cloud computing" but never names Azure or datacenter infrastructure |
+| `hop1_nflx_aws_relationship` | 0.50 | 1.00 | Gets AWS as a supplier; misses that Amazon's retail side also competes |
+
+Judge issues still open: in 2 of 189 judged answers the judge's own reasoning disagrees with its score. Waymo vector-only got 0.13, but its reasoning says one of two facts was covered. Microsoft cloud vs. personal, vector-only run 1, was capped as a hallucination while the reasoning says "well-supported". The judge's list of doubted claims is not saved in the results yet, so that cap can't be audited.
 
 Earlier systems bugs worth saying anyway: keyword overlap scored wrong answers as 1.0 (which is why the judge grades required facts now), a 1200-character window hid AppleCare and Azure, and an Apple product answer once cited Meta's 10-K (which led to the ticker-scoped write gate).
 

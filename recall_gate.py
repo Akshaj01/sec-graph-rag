@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Optional, Sequence
 
 DEFAULT_RESULTS = (
-    Path(__file__).resolve().parent / "benchmarks" / "results" / "retrieval_v4.json"
+    Path(__file__).resolve().parent / "benchmarks" / "results" / "retrieval_p7.json"
 )
 DEFAULT_BASELINE = (
     Path(__file__).resolve().parent / "benchmarks" / "fixtures" / "recall_baseline.json"

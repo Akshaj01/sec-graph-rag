@@ -3,7 +3,7 @@
 Living log of failures hit while building SEC GraphRAG, why they happened, and what changed. Each closed item is symptom, root cause, and fix.
 
 **Repo:** https://github.com/Akshaj01/sec-graph-rag  
-**Last updated:** 2026-11-06 (three-run mean hybrid 0.93 / vector 0.90; hop-2 CI above zero)
+**Last updated:** 2026-11-26 (pinned filings + grounded judge: three-run hybrid 0.96 / vector 0.94; no gap significant, hop-2 included)
 
 ---
 
@@ -278,7 +278,44 @@ Living log of failures hit while building SEC GraphRAG, why they happened, and w
 
 ---
 
+### 23. Judge called real products "non-existent" (training cutoff)
+
+| | |
+|--|--|
+| **Symptom** | `hop2_aapl_hardware_services` vector-only scored 0.5 in two of three p6 runs. The judge listed iPhone 17e, iPhone Air, iPhone Duo and MacBook Neo as "hallucinations ... that do not exist". |
+| **Root cause** | Rubric v1 let the judge flag hallucinations from its own knowledge. Those products are in Apple's fiscal 2026 10-K (filed 2026-11-03), after the judge model's training data. The answer cited that filing. |
+| **Impact** | This item alone carried the hop-2 claim. Scoring it 1.0 moves the p6 hop-2 gap from +0.116 (CI 0.024–0.220) to +0.074 (CI 0.000–0.167). |
+| **Fix** | Rubric v2: the judge receives the full text of every cited chunk and returns suspect claims, each marked `supported_by_cited_passage`. `is_major_hallucination` in code applies the cap, so a supported claim never counts. Without passages, only a contradiction of the gold answer counts. Re-checked κ on the hold-out: **0.79**. |
+| **Where** | `benchmark_judge.py`, `chunk_ticker.chunk_texts`, `benchmark_runner.py`, `calibration_worksheet.py score --judged`, `test_benchmark_judge.py` |
+
+---
+
+### 24. Two Apple 10-Ks in the index (fiscal 2025 and 2026)
+
+| | |
+|--|--|
+| **Symptom** | Apple answers cited both `0000320193-25-000079` (FY2025, the gold filing) and `0000320193-26-000026` (FY2026). The p6 runs cited the 2026 filing 60 times: 39 from hybrid, 21 from vector-only. |
+| **Root cause** | `fetch_10k_sections` took the latest 10-K. Restoring Apple after Nov 3, 2026 ingested FY2026 next to the FY2025 data already in Neo4j and pgvector. |
+| **Fix** | `pinned_filings.py` fixes one accession per issuer. Ingest fetches it and refuses an unpinned ticker. Vector search filters `accession_number`; graph facts keep only pinned provenance. The p7 runs cite the 2026 filing **0** times. Nothing was deleted from the stores. |
+| **Where** | `pinned_filings.py`, `ingest.py`, `vector_db.py`, `graph_retriever.py`, `test_pinned_filings.py` |
+
+---
+
+### 25. Re-run hardening (judge output and API failures)
+
+| | |
+|--|--|
+| **Symptom** | The rerun stopped three times: a missing `contradicts_gold` field, a `fact_judgments` list returned as a JSON string, and replies cut off at `max_tokens=1024`. Instructor's re-ask then sent a `tool_use` without a `tool_result` (400). When the API key ran out of credit, every remaining item failed and the run still wrote a file. |
+| **Fix** | Optional judge fields default; stringified lists are parsed; judge `max_tokens` 4096; retries are fresh requests with a format reminder. `run_suite` stops after 3 errored items in a row without writing; `--repair` re-runs only errored rows. |
+| **Where** | `benchmark_judge.py`, `benchmark_runner.py`, `rerun_pinned_benchmark.sh` |
+
+---
+
 ## Open / known weaknesses (not fully fixed)
+
+- **Hybrid answers changed between p6 and p7 on three questions** (`hop1_msft_products` 0.13, `hop2_msft_cloud_and_geo_risk` 0.50, `hop1_nflx_aws_relationship` 0.50 in all three p7 runs). The new answers really do omit Azure / Xbox or Amazon's competing retail side, so the judge is right. Microsoft and Netflix were not affected by the pin. Cause not diagnosed; graph planner variation is the first suspect.
+- **Judge score vs its own reasoning** in 2 of 189 judged p7 answers: `hop1_googl_waymo` vector-only scored 0.13 while the rationale says one of two facts is covered, and `hop2_msft_cloud_vs_personal` vector-only run 1 was capped while the rationale says "well-supported". Suspect claims are not saved in result rows yet, so the cap cannot be audited.
+
 
 ### A0. Meta AI competition — short-acronym needle (tried 2026-11-06, did not move recall)
 
@@ -442,5 +479,6 @@ Graph chunks sat in front of the gold passage, and a graph-only route never fetc
 | 2026-11-06 | P6 full temp-0 rebench: hybrid **0.90** / vector **0.87** (paired **+0.026**). Hop-2 hybrid **1.00**. README/HANDOFF headline updated. |
 | 2026-11-06 | Two more temp-0 runs + pooled bootstrap. Three-run mean hybrid **0.93** / vector **0.90** (gap **+0.028**). Overall CI includes zero; hop-2 CI **0.024–0.220**. README lead rewritten; LICENSE; results archived; `docs/dev-notes` moved to `docs/archive/dev-notes`. |
 | 2026-11-06 | Re-pin recall-gate baseline to `retrieval_v4` hybrid recall@10 **0.9115** (was 0.9167). Tests required drop == 0 against the old pin while the CLI still passed under max_drop 0.02. |
+| 2026-11-26 | Audit of the hop-2 headline: judge cutoff bug (§23) and two Apple filings (§24). Pinned filings + judge rubric v2, κ **0.79**. p7 three-run mean hybrid **0.96** / vector **0.94**; overall gap +0.014 (CI −0.059–0.093); hop-2 −0.021 (CI −0.167–0.083). Retrieval `retrieval_p7`: hybrid **0.85 / 0.93 / 0.68**, vector **0.84 / 0.94 / 0.70**. Recall gate re-pinned to **0.9271**. |
 
 When a new bug shows up: add a section under **Closed** or **Open** and link the files. Keep claims tied to commits and results.

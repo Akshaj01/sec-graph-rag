@@ -1,0 +1,115 @@
+{
+  "item_id": "hop1_aapl_competes_meta",
+  "suite": "multi_company_smoke v4",
+  "hop": 1,
+  "ticker": "AAPL",
+  "question": "Does Apple compete with Meta according to the knowledge graph?",
+  "required_facts": [
+    "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
+    "Frames it as competition / competitive relationship"
+  ],
+  "runs": [
+    {
+      "file": "benchmarks/results/multi_company_smoke_temp0_p7.json",
+      "hybrid": {
+        "route_effective": "graph",
+        "summary": "Yes, according to the knowledge graph, Apple competes with Meta. The graph specifically notes that Apple released changes to iOS that limit Meta's ability to target and measure ads effectively, while expanding Apple's own advertising business.",
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:2"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 1.0,
+        "judge_fact_hits": [
+          "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
+          "Frames it as competition / competitive relationship"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer directly affirms that Apple competes with Meta according to the knowledge graph and frames it as a competitive relationship. Both required facts are clearly covered: the answer states \"Apple Inc. competes with Meta according to the knowledge graph\" and provides specific details about the competitive dynamic (iOS changes limiting Meta's ad targeting while expanding Apple's advertising business), which is supported by the cited passage."
+      },
+      "vector_only": {
+        "route_effective": "vector",
+        "summary": "The evidence does not contain any knowledge graph facts about whether Apple competes with Meta. The provided evidence consists only of general narrative passages from Apple's 10-K describing its business, competitive markets, and risk factors, but does not mention Meta or list specific competitors.",
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0"
+        ],
+        "citations_valid": true,
+        "refused": true,
+        "score": 0.0,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "Non-OOS item refused; scored 0."
+      }
+    },
+    {
+      "file": "benchmarks/results/multi_company_smoke_temp0_p7_run2.json",
+      "hybrid": {
+        "route_effective": "graph",
+        "summary": "Yes, according to the knowledge graph, Apple competes with Meta. The graph specifically notes that Apple released changes to iOS that limit Meta's ability to target and measure ads effectively, while expanding Apple's own advertising business.",
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:2"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 1.0,
+        "judge_fact_hits": [
+          "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
+          "Frames it as competition / competitive relationship"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer directly affirms that Apple competes with Meta according to the knowledge graph and frames it as a competitive relationship. Both required facts are clearly covered: the answer states \"Apple Inc. competes with Meta according to the knowledge graph\" and provides specific details about the competitive dynamic (iOS changes limiting Meta's ad targeting while expanding Apple's advertising business), which is supported by the cited passage."
+      },
+      "vector_only": {
+        "route_effective": "vector",
+        "summary": "The evidence does not contain any knowledge graph facts about whether Apple competes with Meta. The provided evidence consists only of general narrative passages from Apple's 10-K describing its business, competitive markets, and risk factors, but does not mention Meta or list specific competitors.",
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0"
+        ],
+        "citations_valid": true,
+        "refused": true,
+        "score": 0.0,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "Non-OOS item refused; scored 0."
+      }
+    },
+    {
+      "file": "benchmarks/results/multi_company_smoke_temp0_p7_run3.json",
+      "hybrid": {
+        "route_effective": "graph",
+        "summary": "Yes, according to the knowledge graph, Apple competes with Meta. The graph specifically notes that Apple released changes to iOS that limit Meta's ability to target and measure ads effectively, while expanding Apple's own advertising business.",
+        "cited_chunk_ids": [
+          "0001628280-26-003942:Item1A:2"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 1.0,
+        "judge_fact_hits": [
+          "Affirms that Apple competes with Meta (or Facebook/Meta Platforms)",
+          "Frames it as competition / competitive relationship"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer directly affirms that Apple competes with Meta according to the knowledge graph and frames it as a competitive relationship. Both required facts are clearly covered: the answer states \"Apple Inc. competes with Meta according to the knowledge graph\" and provides specific details about the competitive dynamic (iOS changes limiting Meta's ad targeting while expanding Apple's advertising business), which is supported by the cited passage."
+      },
+      "vector_only": {
+        "route_effective": "vector",
+        "summary": "The evidence does not contain any knowledge graph facts about whether Apple competes with Meta. The provided evidence consists only of general narrative passages from Apple's 10-K describing its business, competitive markets, and risk factors, but does not mention Meta or list specific competitors.",
+        "cited_chunk_ids": [
+          "0000320193-25-000079:Item1A:0"
+        ],
+        "citations_valid": true,
+        "refused": true,
+        "score": 0.0,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [],
+        "judge_hallucination": null,
+        "judge_rationale": "Non-OOS item refused; scored 0."
+      }
+    }
+  ]
+}

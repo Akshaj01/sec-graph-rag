@@ -1,4 +1,19 @@
-# Calibration results (rubric v1)
+# Calibration results
+
+## Rubric v2 (2026-11-26, current)
+
+The judge reads the full text of every cited chunk, and code applies the hallucination cap, so a claim a cited passage supports cannot be penalized. κ was measured by re-judging the same saved answers the hold-out labels were written against (`benchmarks/results/kappa_rejudge_rubric_v2.json`, scored with `calibration_worksheet.py score --judged`). The human labels are unchanged.
+
+| | |
+|--|--|
+| Linear weighted κ | **0.79** |
+| Quadratic weighted κ | 0.88 |
+| Raw agreement | **0.95** (19/20) |
+| Spearman | 0.73 |
+
+Split (you / judge snapped): `hop0_meta_ai_glasses` 0.5 / 1.0. The v1 split on `hop2_nvda_auto_competitors_risks` now agrees.
+
+## Rubric v1 (history)
 
 Scores snap to 0 / 0.5 / 1. Midpoints 0.25 and 0.75 snap upward. Reported weight is linear: a one-step miss counts half of a 0-vs-1 miss. Rubric v1 was not edited after these labels.
 

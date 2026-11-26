@@ -5,8 +5,8 @@ Reads the three temperature-0 benchmark runs and copies, per run, each system's
 summary, route, citations, judge score, and required-fact hits / misses. Nothing
 is re-run or edited: the fixture is a subset of the committed result files.
 
-    python export_compare_fixture.py hop2_amzn_aws_and_prime \
-        --out web/fixtures/compare-amzn-aws-prime.json
+    python export_compare_fixture.py hop1_aapl_competes_meta \
+        --out web/fixtures/compare-aapl-competes-meta.json
 """
 
 from __future__ import annotations
@@ -18,10 +18,11 @@ from typing import Any, Dict, List
 
 ROOT = Path(__file__).resolve().parent
 SUITE = ROOT / "benchmarks" / "multi_company_smoke.json"
+# The headline runs: pinned 10-Ks, judge rubric v2 (grounded in cited passages).
 RUNS = [
-    ROOT / "benchmarks" / "results" / "multi_company_smoke_temp0_p6.json",
-    ROOT / "benchmarks" / "results" / "multi_company_smoke_temp0_p6_run2.json",
-    ROOT / "benchmarks" / "results" / "multi_company_smoke_temp0_p6_run3.json",
+    ROOT / "benchmarks" / "results" / "multi_company_smoke_temp0_p7.json",
+    ROOT / "benchmarks" / "results" / "multi_company_smoke_temp0_p7_run2.json",
+    ROOT / "benchmarks" / "results" / "multi_company_smoke_temp0_p7_run3.json",
 ]
 KEEP = (
     "route_effective",

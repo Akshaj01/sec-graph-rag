@@ -1,0 +1,146 @@
+{
+  "item_id": "hop1_msft_products",
+  "suite": "multi_company_smoke v4",
+  "hop": 1,
+  "ticker": "MSFT",
+  "question": "What product lines or segments does Microsoft produce?",
+  "required_facts": [
+    "Mentions Azure (or Intelligent Cloud cloud offerings)",
+    "Mentions Xbox (or More Personal Computing / gaming)"
+  ],
+  "runs": [
+    {
+      "file": "benchmarks/results/multi_company_smoke_temp0_p7.json",
+      "hybrid": {
+        "route_effective": "graph",
+        "summary": "Microsoft produces several product lines and segments including Microsoft 365 Commercial (productivity and collaboration), Dynamics (business solutions for financial management, ERP, CRM, and supply chain management), Windows (operating system), and Bing (search and advertising services).",
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2",
+          "0001193125-26-323660:Item1A:0",
+          "0001193125-26-323660:Item7:0",
+          "0001193125-26-323660:Item7:1"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 0.125,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)",
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers several product lines (Microsoft 365 Commercial, Dynamics, Windows, Bing) but fails to mention Azure or Xbox, which are both required facts. Azure is explicitly mentioned in the gold answer and cited passages as a core cloud offering, and Xbox is mentioned in the gold answer and extensively detailed in the cited passages as part of More Personal Computing."
+      },
+      "vector_only": {
+        "route_effective": "vector",
+        "summary": "Microsoft produces a broad portfolio of technology solutions organized around AI, cloud computing, productivity and collaboration, and personal computing. Key product lines include Dynamics (cloud-based and on-premises business solutions for ERP, CRM, and supply chain management), Office (productivity and collaboration tools), Windows (operating system), Microsoft Edge browser, Bing search engine with Copilot, and various devices.",
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 1.0,
+        "judge_fact_hits": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)",
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure (as part of Intelligent Cloud offerings) and Xbox (as part of More Personal Computing / gaming). The answer provides substantial detail on multiple product lines and segments supported by the cited passages."
+      }
+    },
+    {
+      "file": "benchmarks/results/multi_company_smoke_temp0_p7_run2.json",
+      "hybrid": {
+        "route_effective": "graph",
+        "summary": "Microsoft produces several major product lines and segments, including Microsoft 365 Commercial (productivity and collaboration tools), Dynamics (business solutions for financial management, ERP, CRM, and supply chain management), Windows (operating system), and Bing (search and advertising services).",
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2",
+          "0001193125-26-323660:Item1A:0",
+          "0001193125-26-323660:Item7:0",
+          "0001193125-26-323660:Item7:1"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 0.125,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)",
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers several product lines (Microsoft 365 Commercial, Dynamics, Windows, Bing) but fails to mention two required facts: Azure/Intelligent Cloud and Xbox/More Personal Computing gaming. These are material omissions from the required facts."
+      },
+      "vector_only": {
+        "route_effective": "vector",
+        "summary": "Microsoft produces a broad portfolio of technology solutions organized around AI, cloud computing, productivity and collaboration, and personal computing. Key product lines include Dynamics (cloud-based and on-premises business solutions for ERP, CRM, and supply chain management), Office (productivity and collaboration tools), Windows (operating system), Microsoft Edge browser, Bing search engine with Copilot, and various devices.",
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 1.0,
+        "judge_fact_hits": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)",
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_fact_misses": [],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure (as part of Intelligent Cloud offerings) and Xbox (as part of More Personal Computing / gaming). The answer provides substantial detail on multiple product lines and segments, all supported by the cited passages."
+      }
+    },
+    {
+      "file": "benchmarks/results/multi_company_smoke_temp0_p7_run3.json",
+      "hybrid": {
+        "route_effective": "graph",
+        "summary": "Microsoft produces several major product lines and segments, including Microsoft 365 Commercial (productivity and collaboration tools), Dynamics (business solutions for financial management, ERP, CRM, and supply chain management), Windows (operating system), and Bing (search and advertising services). These products span AI, cloud computing, productivity and collaboration, and personal computing.",
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2",
+          "0001193125-26-323660:Item1A:0",
+          "0001193125-26-323660:Item7:0",
+          "0001193125-26-323660:Item7:1"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 0.125,
+        "judge_fact_hits": [],
+        "judge_fact_misses": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)",
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer covers several product lines (Microsoft 365 Commercial, Dynamics, Windows, Bing) but fails to mention Azure or Xbox, which are both required facts. Azure is a critical omission as it is explicitly mentioned in the required facts and is a major segment (Intelligent Cloud). Xbox is also explicitly required and is a significant part of the More Personal Computing segment."
+      },
+      "vector_only": {
+        "route_effective": "vector",
+        "summary": "Microsoft produces a broad portfolio of technology solutions organized around AI, cloud computing, productivity and collaboration, and personal computing. Key product lines include Dynamics (cloud-based and on-premises business solutions for ERP, CRM, and supply chain management), Office (productivity and collaboration tools), Windows (operating system), Microsoft Edge browser, Bing search engine with Copilot, and devices (computers and tablets).",
+        "cited_chunk_ids": [
+          "0001193125-26-323660:Item1:0",
+          "0001193125-26-323660:Item1:1",
+          "0001193125-26-323660:Item1:2"
+        ],
+        "citations_valid": true,
+        "refused": false,
+        "score": 0.625,
+        "judge_fact_hits": [
+          "Mentions Xbox (or More Personal Computing / gaming)"
+        ],
+        "judge_fact_misses": [
+          "Mentions Azure (or Intelligent Cloud cloud offerings)"
+        ],
+        "judge_hallucination": false,
+        "judge_rationale": "The model answer comprehensively covers both required facts: it explicitly mentions Azure (as part of Intelligent Cloud offerings) and Xbox (as part of More Personal Computing / gaming). The answer provides substantial detail on multiple product lines supported by the cited passages."
+      }
+    }
+  ]
+}

@@ -207,7 +207,7 @@ export function AskDemo() {
           href="/results#side-by-side"
           className="mt-2 text-sm text-pine underline decoration-rule underline-offset-4 hover:decoration-pine"
         >
-          Hybrid and vector-only on one hop-2 question →
+          Hybrid and vector-only, side by side →
         </Link>
       </div>
 
