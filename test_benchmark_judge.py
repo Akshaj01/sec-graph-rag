@@ -225,3 +225,32 @@ def test_calibration_takes_judge_scores_from_a_rejudged_file(tmp_path):
         {"id": "a", "judge_score": 1.0},
         {"id": "b", "judge_score": 1.0},
     ]
+
+
+def test_suspect_claim_without_contradicts_gold_still_validates():
+    # Haiku left contradicts_gold out on hop1_msft_products and crashed the run.
+    raw = {
+        "overall_correctness": 0.5,
+        "rationale": "Misses Azure and Xbox.",
+        "fact_judgments": [{"fact": "Mentions Azure", "covered": False}],
+        "suspect_claims": [
+            {"claim": "Microsoft produces Dynamics 365.", "supported_by_cited_passage": True, "note": "In Item 1."}
+        ],
+    }
+    out = JudgeOutput.model_validate(raw)
+    assert out.suspect_claims[0].contradicts_gold is False
+
+
+def test_judge_retries_as_fresh_requests_without_reask():
+    class _Flaky(_FakeJudge):
+        def _create(self, **kwargs):
+            self.calls.append(kwargs)
+            if len(self.calls) == 1:
+                raise RuntimeError("malformed tool output")
+            return self.output
+
+    fake = _Flaky(_covered_output([]))
+    verdict = judge_answer(_apple_item(), "iPhone, Mac, and AppleCare.", client=fake)
+    assert verdict.overall_correctness == 1.0
+    assert len(fake.calls) == 2
+    assert all(call["max_retries"] == 1 for call in fake.calls)

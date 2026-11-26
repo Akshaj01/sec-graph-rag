@@ -46,9 +46,10 @@ class SuspectClaim(BaseModel):
         "Judge only against the passages, not your own knowledge.",
     )
     contradicts_gold: bool = Field(
-        ...,
+        default=False,
         description="True if the claim contradicts the gold answer or a required fact.",
     )
+    note: str = Field(default="", description="Brief justification.")
 
 
 class JudgeOutput(BaseModel):
@@ -65,7 +66,7 @@ class JudgeOutput(BaseModel):
         default_factory=list,
         description="Material claims that may be invented. Empty if none.",
     )
-    rationale: str = Field(..., description="One or two sentences.")
+    rationale: str = Field(default="", description="One or two sentences.")
 
 
 class JudgeVerdict(BaseModel):
@@ -164,6 +165,36 @@ def render_passages(evidence: Sequence[Tuple[str, str]]) -> str:
     return "\n\n".join(blocks)
 
 
+JUDGE_ATTEMPTS = 3
+
+
+def _call_judge(cli: instructor.Instructor, user: str) -> JudgeOutput:
+    """
+    One judge call, retried as fresh requests.
+
+    WHY: instructor's own re-ask (max_retries > 1) resends the failed tool_use
+    without a tool_result, which the API rejects with a 400, so one malformed
+    reply ended the whole run. Each attempt here is a clean request.
+    """
+    last: Optional[Exception] = None
+    for attempt in range(1, JUDGE_ATTEMPTS + 1):
+        try:
+            return cli.messages.create(
+                model=settings.ROUTER_MODEL,
+                max_tokens=min(1024, settings.ROUTER_MAX_TOKENS * 2),
+                temperature=0.0,
+                system=JUDGE_SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": user}],
+                response_model=JudgeOutput,
+                max_retries=1,
+            )
+        except Exception as exc:  # noqa: BLE001 — retried, then re-raised
+            last = exc
+            print(f"  judge attempt {attempt}/{JUDGE_ATTEMPTS} failed: {type(exc).__name__}", flush=True)
+    assert last is not None
+    raise last
+
+
 def judge_answer(
     item: BenchmarkItem,
     answer_text: str,
@@ -213,15 +244,7 @@ def judge_answer(
     )
 
     cli = client or _build_client()
-    output = cli.messages.create(
-        model=settings.ROUTER_MODEL,
-        max_tokens=min(1024, settings.ROUTER_MAX_TOKENS * 2),
-        temperature=0.0,
-        system=JUDGE_SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": user}],
-        response_model=JudgeOutput,
-        max_retries=settings.ROUTER_MAX_RETRIES,
-    )
+    output = _call_judge(cli, user)
     verdict = JudgeVerdict(
         fact_judgments=output.fact_judgments,
         overall_correctness=output.overall_correctness,
